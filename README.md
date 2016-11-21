@@ -7,7 +7,7 @@ The idea is to enable governmental institutions to autonomously deploy drones in
 
 Scope of POC:
 
-Each UAV will be equipped with MAVlink compatible flight controller, GPS module, Raspbery PI connected to USB GPRS modem. Raspberry pie will host the following software: DroneKit, custom developed status reporting service, as well as RESTfull server to enable processing of ground station commands.
+Each UAV will be equipped with MAVlink compatible flight controller, GPS module, Raspbery PI connected to USB GPRS modem. Raspberry pie will host the following software: DroneKit, custom developed status reporting service, as well as custom RESTfull server to enable processing of ground station commands.
 
 "Ground station" is based on an HTTP RESTfull service deployed and available via public internet.
 
