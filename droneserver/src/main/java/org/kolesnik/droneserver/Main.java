@@ -22,6 +22,9 @@ import spark.Response;
 
 
 /**
+ * 
+ * Starts the server, defines and dispatches http requests
+ * 
  * @author mkolesnik
  *
  */
