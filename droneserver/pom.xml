@@ -7,29 +7,18 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>droneserver</name>
 
-
 	<properties>
 		<slf4jVersion>1.6.1</slf4jVersion>
-
 		<sparkVersion>2.5</sparkVersion>
-
-
 		<servletVersion>3.0</servletVersion>
-
-
 	</properties>
 
-
-
 	<dependencies>
-
 		<dependency>
 			<groupId>com.sparkjava</groupId>
 			<artifactId>spark-core</artifactId>
 			<version>${sparkVersion}</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -66,21 +55,17 @@
 			<version>${slf4jVersion}</version>
 			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>${servletVersion}</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
@@ -91,7 +76,6 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.5.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.sql2o</groupId>
 			<artifactId>sql2o</artifactId>
@@ -119,11 +103,15 @@
 			<version>2.3.1</version>
 			<scope>test</scope>
 		</dependency>
-
-
-
-
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>maven central</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
@@ -138,6 +126,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
