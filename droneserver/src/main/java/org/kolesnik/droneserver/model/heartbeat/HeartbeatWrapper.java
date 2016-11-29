@@ -11,8 +11,6 @@ import org.kolesnik.droneserver.model.common.Wrapper;
  */
 public class HeartbeatWrapper extends Wrapper {
 	
-	private String unitHostAddress;
-	
 	private Heartbeat heartbeat;
 	
 	/**
@@ -26,17 +24,5 @@ public class HeartbeatWrapper extends Wrapper {
 	 */
 	public void setHeartbeat(Heartbeat heartbeat) {
 		this.heartbeat = heartbeat;
-	}
-	/**
-	 * @return the unitHostAddress
-	 */
-	public String getUnitHostAddress() {
-		return unitHostAddress;
-	}
-	/**
-	 * @param unitHostAddress the unitHostAddress to set
-	 */
-	public void setUnitHostAddress(String unitHostAddress) {
-		this.unitHostAddress = unitHostAddress;
 	}
 }

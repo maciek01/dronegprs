@@ -2,31 +2,89 @@
 package org.kolesnik.droneserver.model.heartbeat;
 
 /**
- * 
+ * This clas is a model of the current UAV state. UAV transmits its state in 3 different reporting intervals
+ * 1 sec - position critical data
+ * 5 sec - general status data
+ * 30 sec - "relatively" static data TODO: needs more precose specification
  * @author mkolesnik
  *
  */
 public class Heartbeat {
 	
+	/** assigned id */
 	private String unitId;			//1 Hz expected reporting
+
+	//1 sec reporting
+	/** */
+	private long stateTimestampMS;
+	private String gpsLatLong;
+	private String gpsAlt;
+	private String gpsSpeed;
+	private String airSpeed;
+	private String baroAlt;
+	private String sonarAlt;
 	
-	private String gpsLatLong;		//1 Hz expected reporting
-	private String gpsAlt;			//1 Hz expected reporting
-	private String gpsSpeed;		//1 Hz expected reporting
-	private String gpsNumSats;		//1/5 Hz expected reporting
-	private String gpsLock;			//1/5 Hz expected reporting
-	private String gpsHError;		//1/5 Hz expected reporting
-	private String gpsVError;		//1/5 Hz expected reporting
-	private long gpsTimestampMS;	//1 Hz expected reporting
+	//5 sec reporting
+	private String gpsNumSats;
+	private String gpsLock;
+	private String gpsHError;
+	private String gpsVError;
 	
-	private String baroAlt;			//1/5 Hz expected reporting
-	private String sonarAlt;		//1/5 Hz expected reporting
 	
-	private String currVolts;		//1/5 Hz expected reporting
-	private String currMah;			//1/5 Hz expected reporting
+	private String currVolts;
+	private String currMah;
 	
-	private String unitHostAddress;	//server side
-	private String unitCallbackPort;//1 Hz expected reporting
+	//30 sec reporting
+	private String unitCallbackPort;
+
+	//server calculated
+	private String unitHostAddress;
+	
+	/**
+	 * Update this object
+	 * @param heartbeat
+	 */
+	public void update(Heartbeat heartbeat) {
+		if (heartbeat.gpsLatLong != null) {
+			this.gpsLatLong = heartbeat.gpsLatLong;
+		}
+		if (heartbeat.gpsAlt != null) {
+			this.gpsAlt = heartbeat.gpsAlt;
+		}
+		if (heartbeat.gpsSpeed != null) {
+			this.gpsSpeed = heartbeat.gpsSpeed;
+		}
+		if (heartbeat.gpsNumSats != null) {
+			this.gpsNumSats = heartbeat.gpsNumSats;
+		}
+		if (heartbeat.gpsLock != null) {
+			this.gpsLock = heartbeat.gpsLock;
+		}
+		if (heartbeat.gpsHError != null) {
+			this.gpsHError = heartbeat.gpsHError;
+		}
+		if (heartbeat.gpsVError != null) {
+			this.gpsVError = heartbeat.gpsVError;
+		}
+		if (heartbeat.stateTimestampMS != 0) {
+			this.stateTimestampMS = heartbeat.stateTimestampMS;
+		}
+		if (heartbeat.baroAlt != null) {
+			this.baroAlt = heartbeat.baroAlt;
+		}
+		if (heartbeat.sonarAlt != null) {
+			this.sonarAlt = heartbeat.sonarAlt;
+		}
+		if (heartbeat.currVolts != null) {
+			this.currVolts = heartbeat.currVolts;
+		}
+		if (heartbeat.currMah != null) {
+			this.currMah = heartbeat.currMah;
+		}
+		if (heartbeat.unitCallbackPort != null) {
+			this.unitCallbackPort = heartbeat.unitCallbackPort;
+		}
+	}
 	
 	//auto gen getters setters
 	
@@ -178,14 +236,14 @@ public class Heartbeat {
 	/**
 	 * @return the gpsTimestampMS
 	 */
-	public long getGpsTimestampMS() {
-		return gpsTimestampMS;
+	public long getStateTimestampMS() {
+		return stateTimestampMS;
 	}
 	/**
 	 * @param gpsTimestampMS the gpsTimestampMS to set
 	 */
-	public void setGpsTimestampMS(long gpsTimestampMS) {
-		this.gpsTimestampMS = gpsTimestampMS;
+	public void setStateTimestampMS(long stateTimestampMS) {
+		this.stateTimestampMS = stateTimestampMS;
 	}
 	/**
 	 * @return the unitHostAddress
@@ -210,6 +268,20 @@ public class Heartbeat {
 	 */
 	public void setUnitCallbackPort(String unitCallbackPort) {
 		this.unitCallbackPort = unitCallbackPort;
+	}
+
+	/**
+	 * @return the airSpeed
+	 */
+	public String getAirSpeed() {
+		return airSpeed;
+	}
+
+	/**
+	 * @param airSpeed the airSpeed to set
+	 */
+	public void setAirSpeed(String airSpeed) {
+		this.airSpeed = airSpeed;
 	}
 
 }

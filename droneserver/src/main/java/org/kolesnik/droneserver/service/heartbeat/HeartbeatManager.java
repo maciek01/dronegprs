@@ -30,5 +30,5 @@ public interface HeartbeatManager {
 	 * @param heartbeat
 	 * @return
 	 */
-	public HeartbeatWrapper getHeartbeat(Heartbeat heartbeat);
+	public HeartbeatWrapper getHeartbeat(String id);
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.kolesnik.droneserver.Main;
 import org.kolesnik.droneserver.model.heartbeat.Heartbeat;
 import org.kolesnik.droneserver.model.heartbeat.HeartbeatWrapper;
 import org.kolesnik.droneserver.model.heartbeat.HeartbeatsWrapper;
@@ -21,21 +22,40 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 	
 	private Map<String, HeartbeatWrapper> activeUnits= new HashMap<>();
 	
+	//TODO replace with database
 	private AtomicLong idCounter = new AtomicLong(0);
-	
 	
 	
 	@Override
 	public HeartbeatWrapper createHeartbeat(Heartbeat heartbeat) {
+
+		spark.Request request = (spark.Request)Main.SERVICE_CONTEXT.get().getAttribute(Main.ATTR_HTTP_REQUEST);
+		heartbeat.setUnitHostAddress(request.ip());
 		
-		HeartbeatWrapper wrapper = new HeartbeatWrapper();
-		wrapper.setReceivedTimestampMS(System.currentTimeMillis());
-		wrapper.setHeartbeat(heartbeat);
-		wrapper.setId(idCounter.incrementAndGet());//generate request id
+		HeartbeatWrapper lastHeartbeat = activeUnits.get(heartbeat.getUnitId());
 		
-		activeUnits.put(heartbeat.getUnitId(), wrapper);
+		if (lastHeartbeat == null) {
+			lastHeartbeat = new HeartbeatWrapper();
+			lastHeartbeat.setId(idCounter.incrementAndGet());//generate request id
+			lastHeartbeat.setReceivedTimestampMS(System.currentTimeMillis());
+			lastHeartbeat.setHeartbeat(heartbeat);
+			
+			
+			activeUnits.put(heartbeat.getUnitId(), lastHeartbeat);
+			return lastHeartbeat;
+		}
 		
-		return wrapper;
+		Heartbeat currentHeartbeat = new Heartbeat();
+		
+		currentHeartbeat.update(lastHeartbeat.getHeartbeat());
+		currentHeartbeat.update(heartbeat);
+		
+		lastHeartbeat.setId(idCounter.incrementAndGet());//generate request id
+		lastHeartbeat.setReceivedTimestampMS(System.currentTimeMillis());
+		lastHeartbeat.setHeartbeat(currentHeartbeat);
+		
+		
+		return lastHeartbeat;
 	}
 	
 	
@@ -49,8 +69,8 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 	
 
 	@Override
-	public HeartbeatWrapper getHeartbeat(Heartbeat key) {
-		return activeUnits.get(key.getUnitId());
+	public HeartbeatWrapper getHeartbeat(String key) {
+		return activeUnits.get(key);
 	}
 
 }

@@ -3,13 +3,16 @@
  */
 package org.kolesnik.droneserver;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.port;
+import static spark.Spark.post;
+import static spark.Spark.threadPool;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.kolesnik.droneserver.model.common.ServiceContext;
 import org.kolesnik.droneserver.model.heartbeat.Heartbeat;
-import org.kolesnik.droneserver.model.heartbeat.HeartbeatWrapper;
 import org.kolesnik.droneserver.service.heartbeat.HeartbeatManager;
 import org.kolesnik.droneserver.service.heartbeat.impl.HeartbeatManagerImpl;
 
@@ -30,6 +33,8 @@ import spark.Response;
  */
 public class Main {
 	
+	public static final String ATTR_HTTP_REQUEST = "HTTP_REQUEST";
+	public static final String ATTR_HTTP_RESPONSE = "HTTP_RESPONSE";
 	
 	private static final int HTTP_REQUEST_OK = 200;
 	private static final int HTTP_REQUEST_CLIENT_ERROR = 400;
@@ -37,6 +42,14 @@ public class Main {
 	private static final int HTTP_REQUEST_SERVER_ERROR = 500;
 	
 	public static HeartbeatManager heartbeatManagerInstance = new HeartbeatManagerImpl();
+	
+	/** TLS context */
+	public static final ThreadLocal<ServiceContext> SERVICE_CONTEXT = new ThreadLocal<ServiceContext>() {
+		@Override
+		protected ServiceContext initialValue() {
+			return new ServiceContext();
+		}
+	};
 	
 
 	/**
@@ -55,10 +68,10 @@ public class Main {
          * define heartbeat post handling
          */
         post("/heartbeat", (request, response) -> {
+        	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_REQUEST, request);
+        	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_RESPONSE, response);
             try {
-        		Heartbeat heartbeat = jsonToData(request.body(), Heartbeat.class);
-        		heartbeat.setUnitHostAddress(request.ip());
-				return processResponse(response, heartbeatManagerInstance.createHeartbeat(heartbeat).getId());
+				return processResponse(response, heartbeatManagerInstance.createHeartbeat(jsonToData(request.body(), Heartbeat.class)).getId());
             } catch (JsonParseException jpe) {
             	jpe.printStackTrace();
                 response.status(HTTP_REQUEST_CLIENT_ERROR);
@@ -67,6 +80,8 @@ public class Main {
             	ex.printStackTrace();
             	response.status(HTTP_REQUEST_SERVER_ERROR);
             	return "SERVER ERROR";
+            } finally {
+            	SERVICE_CONTEXT.remove();
             }
             
         });
@@ -89,11 +104,11 @@ public class Main {
          * define heartbeat get handling - for a specific unit
          */
         get("/heartbeat/:unitId", (request, response) -> {
-        	Heartbeat key = new Heartbeat();
-        	key.setUnitId(request.params(":unitId"));
+
             try {
             	//TODO - dont leak model, base it on exception
-        		HeartbeatWrapper heartbeat = heartbeatManagerInstance.getHeartbeat(key);
+        		Object heartbeat = heartbeatManagerInstance.getHeartbeat(request.params(":unitId"));
+        		
         		if (heartbeat == null) {
         			response.status(HTTP_REQUEST_NOT_FOUND);
                 	return "";
@@ -111,12 +126,6 @@ public class Main {
 	}
 
 
-	
-	
-	
-	
-	
-	
 
 	/**
 	 * @param response
