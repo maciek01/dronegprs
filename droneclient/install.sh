@@ -1,0 +1,4 @@
+
+sudo apt-get install python-pip
+sudo pip install httplib2
+sudo ln -s /home/pi/dronegprs/droneclient/droneclientd.sh /etc/init.d/droneclientd
