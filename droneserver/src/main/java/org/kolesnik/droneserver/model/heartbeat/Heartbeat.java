@@ -45,6 +45,9 @@ public class Heartbeat {
 	 * @param heartbeat
 	 */
 	public void update(Heartbeat heartbeat) {
+		if (heartbeat.unitId != null) {
+			this.unitId = heartbeat.unitId;
+		}
 		if (heartbeat.gpsLatLong != null) {
 			this.gpsLatLong = heartbeat.gpsLatLong;
 		}
