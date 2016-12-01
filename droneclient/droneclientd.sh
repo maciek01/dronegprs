@@ -14,12 +14,12 @@
 
 case "$1" in 
     start)
-        echo "Starting droneclient"
-        /home/pi/dronegprs/droneclient/run.sh
+        echo "Starting droneclientd"
+        sudo -u pi /home/pi/dronegprs/droneclient/run.sh
         ;;
     stop)
-        echo "Stopping servoblaster"
-        killall client.py
+        echo "Stopping droneclientd"
+        sudo -u pi killall /usr/bin/python
         ;;
     *)
         echo "Usage: /etc/init.d/droneclientd start|stop"

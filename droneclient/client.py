@@ -8,6 +8,7 @@ import sys, traceback
 
 if __name__ == '__main__':
 
+	unitID = "drone1"
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
 	content_type_header     = "application/json"
@@ -15,20 +16,13 @@ if __name__ == '__main__':
 
 	url = "http://192.168.2.9:9090/heartbeat"
 
-	data = {
-		"unitId" : "drone1",
-		"stateTimestampMS" : time.time() * 1000,
-		"gpsLatLong" : "2832.1834,N,08101.0536,W",
-		"unitCallbackPort" : "8080"
-		}
-
 	headers = {'Content-Type': content_type_header}
 
 	while True:
 		try:
 			time.sleep(1)
 			data = {
-				"unitId" : "drone1",
+				"unitId" : unitID,
 				"stateTimestampMS" : time.time() * 1000,
 				"gpsLatLong" : "2832.1834,N,08101.0536,W",
 				"unitCallbackPort" : "8080"
