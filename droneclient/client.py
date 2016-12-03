@@ -12,9 +12,9 @@ if __name__ == '__main__':
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
 	content_type_header     = "application/json"
-	host                    = "192.168.2.9"
+	host                    = "http://home.kolesnik.org:9090"
 
-	url = "http://192.168.2.9:9090/heartbeat"
+	url = host + "/heartbeat"
 
 	headers = {'Content-Type': content_type_header}
 
@@ -32,11 +32,11 @@ if __name__ == '__main__':
 				'POST',
 				json.dumps(data),
 				headers=headers)
-			print (response)
-			print (content)
+			#print (response)
+			#print (content)
 		except Exception as inst:
 			exc_type, exc_value, exc_traceback = sys.exc_info()
-			traceback.print_exc()
+			#traceback.print_exc()
 			#print repr(traceback.format_exception(exc_type, exc_value,
 			#					  exc_traceback))
 			#print traceback.format_exception(exc_type, exc_value,
