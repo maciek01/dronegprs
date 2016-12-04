@@ -10,7 +10,7 @@
 	<properties>
 		<slf4jVersion>1.6.1</slf4jVersion>
 		<sparkVersion>2.5</sparkVersion>
-		<servletVersion>3.0</servletVersion>
+		<servletVersion>2.5</servletVersion>
 	</properties>
 
 	<dependencies>
