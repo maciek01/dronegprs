@@ -87,6 +87,9 @@ public class Heartbeat {
 		if (heartbeat.unitCallbackPort != null) {
 			this.unitCallbackPort = heartbeat.unitCallbackPort;
 		}
+		if (heartbeat.unitHostAddress != null) {
+			this.unitHostAddress = heartbeat.unitHostAddress;
+		}
 	}
 	
 	//auto gen getters setters
