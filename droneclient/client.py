@@ -5,6 +5,7 @@ import json
 import time
 import datetime
 import sys, traceback
+import gps
 
 if __name__ == '__main__':
 
@@ -18,13 +19,16 @@ if __name__ == '__main__':
 
 	headers = {'Content-Type': content_type_header}
 
+	gps.gpsinit("/dev/ttyAMA0", 38400)
+
 	while True:
 		try:
 			time.sleep(1)
 			data = {
 				"unitId" : unitID,
 				"stateTimestampMS" : time.time() * 1000,
-				"gpsLatLong" : "2832.1834,N,08101.0536,W",
+				"gpsLatLong" : gps.GPSLAT + " / " + gps.GPSLON,
+				"gpsTime" : gps.GPSTIME,
 				"unitCallbackPort" : "8080"
 			}
 
@@ -32,13 +36,6 @@ if __name__ == '__main__':
 				'POST',
 				json.dumps(data),
 				headers=headers)
-			#print (response)
-			#print (content)
 		except Exception as inst:
-			exc_type, exc_value, exc_traceback = sys.exc_info()
 			#traceback.print_exc()
-			#print repr(traceback.format_exception(exc_type, exc_value,
-			#					  exc_traceback))
-			#print traceback.format_exception(exc_type, exc_value,
-			#					  exc_traceback)
 

@@ -5,20 +5,19 @@ import serial, threading
 import time, datetime
 
 
-port = "/dev/ttyAMA0"
-baud = 38400
+
 readOn = True
-
-serial_port = serial.Serial(port, baudrate=baud, timeout=None)
-
 
 buffer = ""
 getLine = ""
+
+thread = None
 
 GPSLAT = ""
 GPSLON = ""
 GPSTIME = ""
 GPSSTATUS = "INVALID"
+GPSTIMESTAMP = 0
 
 def handle_newline(line):
 	global GPSLAT
@@ -35,8 +34,6 @@ def handle_newline(line):
 		else:
 			GPSSTATUS = "INVALID"
 
-
-
 def handle_data(data):
 	global buffer
 	global getLine
@@ -48,8 +45,6 @@ def handle_data(data):
 			handle_newline(getLine)
 		else:
 			buffer = buffer + str(d)
-		
-
 
 def read_from_port(ser):
 	global readOn
@@ -60,18 +55,12 @@ def read_from_port(ser):
 		except Exception as inst:
 			traceback.print_exc()
 	
+def gpsinit(gpsport, gpsbaud):
+	global thread
+	serial_port = serial.Serial(gpsport, baudrate=gpsbaud, timeout=None)
+	thread = threading.Thread(target=read_from_port, args=(serial_port,))
+	thread.daemon = True
+	thread.start()
 
-
-thread = threading.Thread(target=read_from_port, args=(serial_port,))
-thread.daemon = True
-thread.start()
-
-
-while True:
-	print "Lat/Lon: " + GPSLAT + " / " + GPSLON
-	print "Time UTC: " + GPSTIME
-	print "Status: " + GPSSTATUS
-	print ""
-	time.sleep(1)
 
 
