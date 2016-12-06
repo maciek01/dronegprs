@@ -20,6 +20,7 @@ public class Heartbeat {
 	private String gpsLatLong;
 	private String gpsAlt;
 	private String gpsSpeed;
+	private String gpsTime;
 	private String airSpeed;
 	private String baroAlt;
 	private String sonarAlt;
@@ -89,6 +90,9 @@ public class Heartbeat {
 		}
 		if (heartbeat.unitHostAddress != null) {
 			this.unitHostAddress = heartbeat.unitHostAddress;
+		}
+		if (heartbeat.gpsTime != null) {
+			this.gpsTime = heartbeat.gpsTime;
 		}
 	}
 	
@@ -288,6 +292,20 @@ public class Heartbeat {
 	 */
 	public void setAirSpeed(String airSpeed) {
 		this.airSpeed = airSpeed;
+	}
+
+	/**
+	 * @return the gpsTime
+	 */
+	public String getGpsTime() {
+		return gpsTime;
+	}
+
+	/**
+	 * @param gpsTime the gpsTime to set
+	 */
+	public void setGpsTime(String gpsTime) {
+		this.gpsTime = gpsTime;
 	}
 
 }
