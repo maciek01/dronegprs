@@ -18,12 +18,18 @@ GPSLON = ""
 GPSTIME = ""
 GPSSTATUS = "INVALID"
 GPSTIMESTAMP = 0
+GPSLASTSTATUSMS = 0
+
+serialPort = None
+
+current_milli_time = lambda: int(time.time() * 1000)
 
 def handle_newline(line):
 	global GPSLAT
 	global GPSLON
 	global GPSTIME
 	global GPSSTATUS
+	global GPSLASTSTATUSMS
 
 	if line.startswith("$GPGLL") or line.startswith("$GNGLL") or line.startswith("$GLGLL"):
 		GPSLAT = line[7:9] + " " + line[9:17] + " " + line[18:19]
@@ -33,6 +39,7 @@ def handle_newline(line):
 			GPSSTATUS = "VALID"
 		else:
 			GPSSTATUS = "INVALID"
+		GPSLASTSTATUSMS = current_milli_time()
 
 def handle_data(data):
 	global buffer
@@ -46,8 +53,20 @@ def handle_data(data):
 		else:
 			buffer = buffer + str(d)
 
-def read_from_port(ser):
+def read_from_port(gpsport, gpsbaud):
 	global readOn
+	global serialPort
+
+	#wait to initialize the port
+	while serialPort == None:
+		time.sleep(1)
+		try:
+			serialPort = serial.Serial(gpsport, baudrate=gpsbaud, timeout=None)
+		except Exception as inst:
+			serialPort = None
+
+	#read loop
+	ser = serialPort
 	while readOn:
 		try:
 			if ser.inWaiting() > 0:
@@ -57,8 +76,7 @@ def read_from_port(ser):
 	
 def gpsinit(gpsport, gpsbaud):
 	global thread
-	serial_port = serial.Serial(gpsport, baudrate=gpsbaud, timeout=None)
-	thread = threading.Thread(target=read_from_port, args=(serial_port,))
+	thread = threading.Thread(target=read_from_port, args=(gpsport,gpsbaud,))
 	thread.daemon = True
 	thread.start()
 

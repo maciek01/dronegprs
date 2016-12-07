@@ -26,10 +26,11 @@ if __name__ == '__main__':
 			time.sleep(1)
 			data = {
 				"unitId" : unitID,
-				"stateTimestampMS" : time.time() * 1000,
+				"stateTimestampMS" : gps.current_milli_time(),
 				"gpsLatLong" : gps.GPSLAT + " / " + gps.GPSLON,
 				"gpsTime" : gps.GPSTIME,
 				"gpsStatus" : gps.GPSSTATUS,
+				"gpsLastStatusMS" : gps.GPSLASTSTATUSMS,
 				"unitCallbackPort" : "8080"
 			}
 
