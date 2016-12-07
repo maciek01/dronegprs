@@ -22,6 +22,7 @@ public class Heartbeat {
 	private String gpsSpeed;
 	private String gpsTime;
 	private String gpsStatus;
+	private long gpsLastStatusMS;
 	private String airSpeed;
 	private String baroAlt;
 	private String sonarAlt;
@@ -97,6 +98,9 @@ public class Heartbeat {
 		}
 		if (heartbeat.gpsStatus != null) {
 			this.gpsStatus = heartbeat.gpsStatus;
+		}
+		if (heartbeat.gpsLastStatusMS != 0) {
+			this.gpsLastStatusMS = heartbeat.gpsLastStatusMS;
 		}
 	}
 	
@@ -324,6 +328,20 @@ public class Heartbeat {
 	 */
 	public void setGpsStatus(String gpsStatus) {
 		this.gpsStatus = gpsStatus;
+	}
+
+	/**
+	 * @return the gpsLastStatusMS
+	 */
+	public long getGpsLastStatusMS() {
+		return gpsLastStatusMS;
+	}
+
+	/**
+	 * @param gpsLastStatusMS the gpsLastStatusMS to set
+	 */
+	public void setGpsLastStatusMS(long gpsLastStatusMS) {
+		this.gpsLastStatusMS = gpsLastStatusMS;
 	}
 
 }
