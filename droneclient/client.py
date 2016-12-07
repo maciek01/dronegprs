@@ -29,6 +29,7 @@ if __name__ == '__main__':
 				"stateTimestampMS" : time.time() * 1000,
 				"gpsLatLong" : gps.GPSLAT + " / " + gps.GPSLON,
 				"gpsTime" : gps.GPSTIME,
+				"gpsStatus" : gps.GPSSTATUS,
 				"unitCallbackPort" : "8080"
 			}
 
@@ -37,5 +38,6 @@ if __name__ == '__main__':
 				json.dumps(data),
 				headers=headers)
 		except Exception as inst:
+			noop = None
 			#traceback.print_exc()
 
