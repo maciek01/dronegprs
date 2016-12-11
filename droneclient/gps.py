@@ -59,11 +59,12 @@ def read_from_port(gpsport, gpsbaud):
 
 	#wait to initialize the port
 	while serialPort == None:
-		time.sleep(1)
 		try:
 			serialPort = serial.Serial(gpsport, baudrate=gpsbaud, timeout=None)
 		except Exception as inst:
 			serialPort = None
+			traceback.print_exc()
+			time.sleep(5)
 
 	#read loop
 	ser = serialPort
