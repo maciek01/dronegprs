@@ -45,16 +45,23 @@ def arm_and_takeoff(aTargetAltitude):
     time.sleep(1)
 
 # Initialize the takeoff sequence to 30m
-arm_and_takeoff(20)
+arm_and_takeoff(30)
 
 print("Take off complete")
 
+#go somwhere
+vehicle.airspeed=5
+
+point1 = LocationGlobalRelative(42.5231211,-71.1877078, 30)
+vehicle.simple_goto(point1)
+
 # Hover for 10 seconds
-time.sleep(10)
+time.sleep(30)
 
 
 print("Now let's land")
-vehicle.mode = VehicleMode("LAND")
+#vehicle.mode = VehicleMode("LAND")
+vehicle.mode = VehicleMode("RTL")
 
 # Close vehicle object
 vehicle.close()
