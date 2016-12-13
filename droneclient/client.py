@@ -6,6 +6,7 @@ import time
 import datetime
 import sys, traceback
 import gps
+import command_processor
 
 if __name__ == '__main__':
 
@@ -19,7 +20,12 @@ if __name__ == '__main__':
 
 	headers = {'Content-Type': content_type_header}
 
+	#initialize gps
 	gps.gpsinit("/dev/ttyAMA0", 38400)
+
+	#initialize command queue
+	command_processor.processorinit()
+
 
 	while True:
 		try:
@@ -34,11 +40,19 @@ if __name__ == '__main__':
 				"unitCallbackPort" : "8080"
 			}
 
-			response, content = http.request( url,
-				'POST',
-				json.dumps(data),
-				headers=headers)
+			response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
 		except Exception as inst:
 			noop = None
 			#traceback.print_exc()
+			continue
+
+		try:
+			if content != None:
+				commands = json.loads(content)
+				for i in commands:
+					command_processor.commandQueue.put(i)
+
+		except Exception as inst:
+			noop = None
+			traceback.print_exc()
 
