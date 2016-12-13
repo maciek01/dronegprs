@@ -71,7 +71,7 @@ public class Main {
         	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_REQUEST, request);
         	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_RESPONSE, response);
             try {
-				return processResponse(response, heartbeatManagerInstance.createHeartbeat(jsonToData(request.body(), Heartbeat.class)).getId());
+				return processResponse(response, heartbeatManagerInstance.createHeartbeat(jsonToData(request.body(), Heartbeat.class)).getCommands());
             } catch (JsonParseException jpe) {
             	jpe.printStackTrace();
                 response.status(HTTP_REQUEST_CLIENT_ERROR);

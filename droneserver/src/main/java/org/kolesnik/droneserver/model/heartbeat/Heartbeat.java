@@ -2,10 +2,10 @@
 package org.kolesnik.droneserver.model.heartbeat;
 
 /**
- * This clas is a model of the current UAV state. UAV transmits its state in 3 different reporting intervals
+ * This class is a model of the current UAV state. UAV transmits its state in 3 different reporting intervals
  * 1 sec - position critical data
  * 5 sec - general status data
- * 30 sec - "relatively" static data TODO: needs more precose specification
+ * 30 sec - "relatively" static data TODO: needs more precise specification
  * @author mkolesnik
  *
  */

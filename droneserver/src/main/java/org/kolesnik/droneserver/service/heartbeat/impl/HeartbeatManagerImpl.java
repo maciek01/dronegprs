@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.kolesnik.droneserver.Main;
+import org.kolesnik.droneserver.model.command.Command;
+import org.kolesnik.droneserver.model.command.CommandParameter;
 import org.kolesnik.droneserver.model.heartbeat.Heartbeat;
 import org.kolesnik.droneserver.model.heartbeat.HeartbeatWrapper;
 import org.kolesnik.droneserver.model.heartbeat.HeartbeatsWrapper;
@@ -34,6 +36,7 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 		
 		HeartbeatWrapper lastHeartbeat = activeUnits.get(heartbeat.getUnitId());
 		
+		
 		if (lastHeartbeat == null) {
 			lastHeartbeat = new HeartbeatWrapper();
 			lastHeartbeat.setId(idCounter.incrementAndGet());//generate request id
@@ -42,18 +45,26 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 			
 			
 			activeUnits.put(heartbeat.getUnitId(), lastHeartbeat);
-			return lastHeartbeat;
+		} else {
+			Heartbeat currentHeartbeat = new Heartbeat();
+			
+			currentHeartbeat.update(lastHeartbeat.getHeartbeat());
+			currentHeartbeat.update(heartbeat);
+			
+			lastHeartbeat.setId(idCounter.incrementAndGet());//generate request id
+			lastHeartbeat.setReceivedTimestampMS(System.currentTimeMillis());
+			lastHeartbeat.setHeartbeat(currentHeartbeat);
 		}
 		
-		Heartbeat currentHeartbeat = new Heartbeat();
-		
-		currentHeartbeat.update(lastHeartbeat.getHeartbeat());
-		currentHeartbeat.update(heartbeat);
-		
-		lastHeartbeat.setId(idCounter.incrementAndGet());//generate request id
-		lastHeartbeat.setReceivedTimestampMS(System.currentTimeMillis());
-		lastHeartbeat.setHeartbeat(currentHeartbeat);
-		
+		Command command = new Command();
+		command.setName("TAKEOFF");
+		CommandParameter parameter = new CommandParameter();
+		parameter.setName("name");
+		parameter.setValue("value");
+		CommandParameter[] parameters = new CommandParameter[] {parameter };
+		command.setParameters(parameters );
+		Command[] commands = new Command[] {command };
+		lastHeartbeat.setCommands(commands);
 		
 		return lastHeartbeat;
 	}
