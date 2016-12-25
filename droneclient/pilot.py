@@ -68,6 +68,9 @@ def pilotMonitor():
 			print vehicle.location.local_frame
 			print vehicle.gps_0
 			print vehicle.last_heartbeat
+			print vehicle.system_status
+			print vehicle
+			print "-------------------------------"
 
 			time.sleep(1)
 

@@ -21,7 +21,8 @@ if __name__ == '__main__':
 	headers = {'Content-Type': content_type_header}
 
 	#initialize gps
-	gps.gpsinit("/dev/ttyAMA0", 38400)
+	# disabled as now this port is connected to FC
+	#gps.gpsinit("/dev/ttyAMA0", 38400)
 
 	#initialize command queue
 	command_processor.processorinit()

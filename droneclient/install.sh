@@ -5,9 +5,11 @@ sudo apt-get install screen python-wxgtk2.8 python-matplotlib python-opencv pyth
 
 sudo pip install httplib2
 sudo pip install pyserial
-sudo pip install pymavlink
+#sudo pip install pymavlink
 sudo pip install mavproxy
 sudo pip install dronekit
+
+#on sim PC:
 #sudo pip install dronekit-sitl
 
 
