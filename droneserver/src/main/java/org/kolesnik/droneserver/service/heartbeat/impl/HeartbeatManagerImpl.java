@@ -56,6 +56,10 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 			lastHeartbeat.setHeartbeat(currentHeartbeat);
 		}
 		
+		
+		
+		//fetch commands from the command queue
+		
 		Command command = new Command();
 		command.setName("TAKEOFF");
 		CommandParameter parameter = new CommandParameter();

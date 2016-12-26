@@ -19,10 +19,15 @@ public class Heartbeat {
 	private long stateTimestampMS;
 	private String gpsLatLong;
 	private String gpsAlt;
+	
+	private String gpsHomeLatLong;
+	private String gpsHomeAlt;	
+	
 	private String gpsSpeed;
 	private String gpsTime;
 	private String gpsStatus;
 	private long gpsLastStatusMS;
+	
 	private String airSpeed;
 	private String baroAlt;
 	private String sonarAlt;
@@ -35,6 +40,7 @@ public class Heartbeat {
 	
 	
 	private String currVolts;
+	private String currVoltsLevel;
 	private String currMah;
 	
 	//30 sec reporting
@@ -57,6 +63,12 @@ public class Heartbeat {
 		if (heartbeat.gpsAlt != null) {
 			this.gpsAlt = heartbeat.gpsAlt;
 		}
+		if (heartbeat.gpsHomeLatLong != null) {
+			this.gpsHomeLatLong = heartbeat.gpsHomeLatLong;
+		}
+		if (heartbeat.gpsHomeAlt != null) {
+			this.gpsHomeAlt = heartbeat.gpsHomeAlt;
+		}		
 		if (heartbeat.gpsSpeed != null) {
 			this.gpsSpeed = heartbeat.gpsSpeed;
 		}
@@ -83,6 +95,9 @@ public class Heartbeat {
 		}
 		if (heartbeat.currVolts != null) {
 			this.currVolts = heartbeat.currVolts;
+		}
+		if (heartbeat.currVoltsLevel != null) {
+			this.currVoltsLevel = heartbeat.currVoltsLevel;
 		}
 		if (heartbeat.currMah != null) {
 			this.currMah = heartbeat.currMah;
@@ -342,6 +357,48 @@ public class Heartbeat {
 	 */
 	public void setGpsLastStatusMS(long gpsLastStatusMS) {
 		this.gpsLastStatusMS = gpsLastStatusMS;
+	}
+
+	/**
+	 * @return the currVoltsLevel
+	 */
+	public String getCurrVoltsLevel() {
+		return currVoltsLevel;
+	}
+
+	/**
+	 * @param currVoltsLevel the currVoltsLevel to set
+	 */
+	public void setCurrVoltsLevel(String currVoltsLevel) {
+		this.currVoltsLevel = currVoltsLevel;
+	}
+
+	/**
+	 * @return the gpsHomeLatLong
+	 */
+	public String getGpsHomeLatLong() {
+		return gpsHomeLatLong;
+	}
+
+	/**
+	 * @param gpsHomeLatLong the gpsHomeLatLong to set
+	 */
+	public void setGpsHomeLatLong(String gpsHomeLatLong) {
+		this.gpsHomeLatLong = gpsHomeLatLong;
+	}
+
+	/**
+	 * @return the gpsHomeAlt
+	 */
+	public String getGpsHomeAlt() {
+		return gpsHomeAlt;
+	}
+
+	/**
+	 * @param gpsHomeAlt the gpsHomeAlt to set
+	 */
+	public void setGpsHomeAlt(String gpsHomeAlt) {
+		this.gpsHomeAlt = gpsHomeAlt;
 	}
 
 }
