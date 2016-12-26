@@ -32,6 +32,8 @@ public class Heartbeat {
 	private String baroAlt;
 	private String sonarAlt;
 	
+	private int heading = -1;
+	
 	//5 sec reporting
 	private String gpsNumSats;
 	private String gpsLock;
@@ -92,6 +94,9 @@ public class Heartbeat {
 		}
 		if (heartbeat.sonarAlt != null) {
 			this.sonarAlt = heartbeat.sonarAlt;
+		}
+		if (heartbeat.heading != -1) {
+			this.heading = heartbeat.heading;
 		}
 		if (heartbeat.currVolts != null) {
 			this.currVolts = heartbeat.currVolts;
@@ -399,6 +404,20 @@ public class Heartbeat {
 	 */
 	public void setGpsHomeAlt(String gpsHomeAlt) {
 		this.gpsHomeAlt = gpsHomeAlt;
+	}
+
+	/**
+	 * @return the heading
+	 */
+	public int getHeading() {
+		return heading;
+	}
+
+	/**
+	 * @param heading the heading to set
+	 */
+	public void setHeading(int heading) {
+		this.heading = heading;
 	}
 
 }
