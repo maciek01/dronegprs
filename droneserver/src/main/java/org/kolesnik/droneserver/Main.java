@@ -165,6 +165,7 @@ public class Main {
             mapper.writeValue(sw, data);
             return sw.toString();
         } catch (IOException e){
+        	e.printStackTrace();
             throw new RuntimeException("IOException from a StringWriter?");
         }
     }

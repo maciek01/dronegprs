@@ -17,33 +17,38 @@ public class Heartbeat {
 	//1 sec reporting
 	/** */
 	private long stateTimestampMS;
-	private String gpsLatLong;
-	private String gpsAlt;
+	private String gpsLatLon;
+	private Double gpsLat;
+	private Double gpsLon;
+	private Double gpsAlt;
 	
-	private String gpsHomeLatLong;
-	private String gpsHomeAlt;	
+	private String homeLatLon;
+	private Double homeLat;
+	private Double homeLon;
+	private Double homeAlt;	
 	
-	private String gpsSpeed;
+	private Double gpsSpeed;
 	private String gpsTime;
 	private String gpsStatus;
 	private long gpsLastStatusMS;
 	
-	private String airSpeed;
-	private String baroAlt;
-	private String sonarAlt;
+	private Double airSpeed;
+	private Double baroAlt;
+	private Double sonarAlt;
 	
-	private int heading = -1;
+	private Integer heading;
+	private String status;
 	
 	//5 sec reporting
-	private String gpsNumSats;
-	private String gpsLock;
-	private String gpsHError;
-	private String gpsVError;
+	private Integer gpsNumSats;
+	private Integer gpsLock;
+	private Integer gpsHError;
+	private Integer gpsVError;
 	
 	
-	private String currVolts;
-	private String currVoltsLevel;
-	private String currMah;
+	private Double currVolts;
+	private Double currVoltsLevel;
+	private Double currMah;
 	
 	//30 sec reporting
 	private String unitCallbackPort;
@@ -59,17 +64,29 @@ public class Heartbeat {
 		if (heartbeat.unitId != null) {
 			this.unitId = heartbeat.unitId;
 		}
-		if (heartbeat.gpsLatLong != null) {
-			this.gpsLatLong = heartbeat.gpsLatLong;
+		if (heartbeat.gpsLatLon != null) {
+			this.gpsLatLon = heartbeat.gpsLatLon;
+		}
+		if (heartbeat.gpsLat != null) {
+			this.gpsLat = heartbeat.gpsLat;
+		}
+		if (heartbeat.gpsLon != null) {
+			this.gpsLon = heartbeat.gpsLon;
 		}
 		if (heartbeat.gpsAlt != null) {
 			this.gpsAlt = heartbeat.gpsAlt;
 		}
-		if (heartbeat.gpsHomeLatLong != null) {
-			this.gpsHomeLatLong = heartbeat.gpsHomeLatLong;
+		if (heartbeat.homeLatLon != null) {
+			this.homeLatLon = heartbeat.homeLatLon;
 		}
-		if (heartbeat.gpsHomeAlt != null) {
-			this.gpsHomeAlt = heartbeat.gpsHomeAlt;
+		if (heartbeat.homeLat != null) {
+			this.homeLat = heartbeat.homeLat;
+		}
+		if (heartbeat.homeLon != null) {
+			this.homeLon = heartbeat.homeLon;
+		}
+		if (heartbeat.homeAlt != null) {
+			this.homeAlt = heartbeat.homeAlt;
 		}		
 		if (heartbeat.gpsSpeed != null) {
 			this.gpsSpeed = heartbeat.gpsSpeed;
@@ -92,11 +109,17 @@ public class Heartbeat {
 		if (heartbeat.baroAlt != null) {
 			this.baroAlt = heartbeat.baroAlt;
 		}
+		if (heartbeat.airSpeed != null) {
+			this.airSpeed = heartbeat.airSpeed;
+		}
 		if (heartbeat.sonarAlt != null) {
 			this.sonarAlt = heartbeat.sonarAlt;
 		}
-		if (heartbeat.heading != -1) {
+		if (heartbeat.heading != null) {
 			this.heading = heartbeat.heading;
+		}
+		if (heartbeat.status != null) {
+			this.status = heartbeat.status;
 		}
 		if (heartbeat.currVolts != null) {
 			this.currVolts = heartbeat.currVolts;
@@ -140,135 +163,135 @@ public class Heartbeat {
 	}
 	
 	/**
-	 * @return the gpsLatLong
+	 * @return the gpsLatLon
 	 */
-	public String getGpsLatLong() {
-		return gpsLatLong;
+	public String getGpsLatLon() {
+		return gpsLatLon;
 	}
 	/**
-	 * @param gpsLatLong the gpsLatLong to set
+	 * @param gpsLatLon the gpsLatLon to set
 	 */
-	public void setGpsLatLong(String gpsLatLong) {
-		this.gpsLatLong = gpsLatLong;
+	public void setGpsLatLon(String gpsLatLon) {
+		this.gpsLatLon = gpsLatLon;
 	}
 	/**
 	 * @return the gpsAlt
 	 */
-	public String getGpsAlt() {
+	public Double getGpsAlt() {
 		return gpsAlt;
 	}
 	/**
 	 * @param gpsAlt the gpsAlt to set
 	 */
-	public void setGpsAlt(String gpsAlt) {
+	public void setGpsAlt(Double gpsAlt) {
 		this.gpsAlt = gpsAlt;
 	}
 	/**
 	 * @return the gpsSpeed
 	 */
-	public String getGpsSpeed() {
+	public Double getGpsSpeed() {
 		return gpsSpeed;
 	}
 	/**
 	 * @param gpsSpeed the gpsSpeed to set
 	 */
-	public void setGpsSpeed(String gpsSpeed) {
+	public void setGpsSpeed(Double gpsSpeed) {
 		this.gpsSpeed = gpsSpeed;
 	}
 	/**
 	 * @return the gpsNumSats
 	 */
-	public String getGpsNumSats() {
+	public Integer getGpsNumSats() {
 		return gpsNumSats;
 	}
 	/**
 	 * @param gpsNumSats the gpsNumSats to set
 	 */
-	public void setGpsNumSats(String gpsNumSats) {
+	public void setGpsNumSats(Integer gpsNumSats) {
 		this.gpsNumSats = gpsNumSats;
 	}
 	/**
 	 * @return the gpsLock
 	 */
-	public String getGpsLock() {
+	public Integer getGpsLock() {
 		return gpsLock;
 	}
 	/**
 	 * @param gpsLock the gpsLock to set
 	 */
-	public void setGpsLock(String gpsLock) {
+	public void setGpsLock(Integer gpsLock) {
 		this.gpsLock = gpsLock;
 	}
 	/**
 	 * @return the gpsHError
 	 */
-	public String getGpsHError() {
+	public Integer getGpsHError() {
 		return gpsHError;
 	}
 	/**
 	 * @param gpsHError the gpsHError to set
 	 */
-	public void setGpsHError(String gpsHError) {
+	public void setGpsHError(Integer gpsHError) {
 		this.gpsHError = gpsHError;
 	}
 	/**
 	 * @return the gpsVError
 	 */
-	public String getGpsVError() {
+	public Integer getGpsVError() {
 		return gpsVError;
 	}
 	/**
 	 * @param gpsVError the gpsVError to set
 	 */
-	public void setGpsVError(String gpsVError) {
+	public void setGpsVError(Integer gpsVError) {
 		this.gpsVError = gpsVError;
 	}
 	/**
 	 * @return the baroAlt
 	 */
-	public String getBaroAlt() {
+	public Double getBaroAlt() {
 		return baroAlt;
 	}
 	/**
 	 * @param baroAlt the baroAlt to set
 	 */
-	public void setBaroAlt(String baroAlt) {
+	public void setBaroAlt(Double baroAlt) {
 		this.baroAlt = baroAlt;
 	}
 	/**
 	 * @return the sonarAlt
 	 */
-	public String getSonarAlt() {
+	public Double getSonarAlt() {
 		return sonarAlt;
 	}
 	/**
 	 * @param sonarAlt the sonarAlt to set
 	 */
-	public void setSonarAlt(String sonarAlt) {
+	public void setSonarAlt(Double sonarAlt) {
 		this.sonarAlt = sonarAlt;
 	}
 	/**
 	 * @return the currVolts
 	 */
-	public String getCurrVolts() {
+	public Double getCurrVolts() {
 		return currVolts;
 	}
 	/**
 	 * @param currVolts the currVolts to set
 	 */
-	public void setCurrVolts(String currVolts) {
+	public void setCurrVolts(Double currVolts) {
 		this.currVolts = currVolts;
 	}
 	/**
 	 * @return the currMah
 	 */
-	public String getCurrMah() {
+	public Double getCurrMah() {
 		return currMah;
 	}
 	/**
 	 * @param currMah the currMah to set
 	 */
-	public void setCurrMah(String currMah) {
+	public void setCurrMah(Double currMah) {
 		this.currMah = currMah;
 	}
 	/**
@@ -311,14 +334,14 @@ public class Heartbeat {
 	/**
 	 * @return the airSpeed
 	 */
-	public String getAirSpeed() {
+	public Double getAirSpeed() {
 		return airSpeed;
 	}
 
 	/**
 	 * @param airSpeed the airSpeed to set
 	 */
-	public void setAirSpeed(String airSpeed) {
+	public void setAirSpeed(Double airSpeed) {
 		this.airSpeed = airSpeed;
 	}
 
@@ -367,57 +390,127 @@ public class Heartbeat {
 	/**
 	 * @return the currVoltsLevel
 	 */
-	public String getCurrVoltsLevel() {
+	public Double getCurrVoltsLevel() {
 		return currVoltsLevel;
 	}
 
 	/**
 	 * @param currVoltsLevel the currVoltsLevel to set
 	 */
-	public void setCurrVoltsLevel(String currVoltsLevel) {
+	public void setCurrVoltsLevel(Double currVoltsLevel) {
 		this.currVoltsLevel = currVoltsLevel;
 	}
 
 	/**
-	 * @return the gpsHomeLatLong
+	 * @return the homeLatLon
 	 */
-	public String getGpsHomeLatLong() {
-		return gpsHomeLatLong;
+	public String getHomeLatLon() {
+		return homeLatLon;
 	}
 
 	/**
-	 * @param gpsHomeLatLong the gpsHomeLatLong to set
+	 * @param homeLatLon the homeLatLon to set
 	 */
-	public void setGpsHomeLatLong(String gpsHomeLatLong) {
-		this.gpsHomeLatLong = gpsHomeLatLong;
+	public void setHomeLatLon(String homeLatLon) {
+		this.homeLatLon = homeLatLon;
 	}
 
 	/**
-	 * @return the gpsHomeAlt
+	 * @return the homeAlt
 	 */
-	public String getGpsHomeAlt() {
-		return gpsHomeAlt;
+	public Double getHomeAlt() {
+		return homeAlt;
 	}
 
 	/**
-	 * @param gpsHomeAlt the gpsHomeAlt to set
+	 * @param homeAlt the homeAlt to set
 	 */
-	public void setGpsHomeAlt(String gpsHomeAlt) {
-		this.gpsHomeAlt = gpsHomeAlt;
+	public void setHomeAlt(Double homeAlt) {
+		this.homeAlt = homeAlt;
 	}
 
 	/**
 	 * @return the heading
 	 */
-	public int getHeading() {
+	public Integer getHeading() {
 		return heading;
 	}
 
 	/**
 	 * @param heading the heading to set
 	 */
-	public void setHeading(int heading) {
+	public void setHeading(Integer heading) {
 		this.heading = heading;
+	}
+
+	/**
+	 * @return the gpsLat
+	 */
+	public Double getGpsLat() {
+		return gpsLat;
+	}
+
+	/**
+	 * @param gpsLat the gpsLat to set
+	 */
+	public void setGpsLat(Double gpsLat) {
+		this.gpsLat = gpsLat;
+	}
+
+	/**
+	 * @return the gpsLon
+	 */
+	public Double getGpsLon() {
+		return gpsLon;
+	}
+
+	/**
+	 * @param gpsLon the gpsLon to set
+	 */
+	public void setGpsLon(Double gpsLon) {
+		this.gpsLon = gpsLon;
+	}
+
+	/**
+	 * @return the homeLat
+	 */
+	public Double getHomeLat() {
+		return homeLat;
+	}
+
+	/**
+	 * @param homeLat the homeLat to set
+	 */
+	public void setHomeLat(Double homeLat) {
+		this.homeLat = homeLat;
+	}
+
+	/**
+	 * @return the homeLon
+	 */
+	public Double getHomeLon() {
+		return homeLon;
+	}
+
+	/**
+	 * @param homeLon the homeLon to set
+	 */
+	public void setHomeLon(Double homeLon) {
+		this.homeLon = homeLon;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
