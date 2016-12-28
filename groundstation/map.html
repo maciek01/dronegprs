@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Layer: drone</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+	<meta http-equiv="Access-Control-Allow-Origin" content="*">
+
+
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script>
+
+	var debug = true;
+
+	var marker = null;
+
+	var mainMap = null;   
+
+	var fakeDroneHeartbeat = {
+		heartbeat : {
+			gpsLat : 42.5224796,
+			gpsLon : -71.1868134,
+			heading : 45
+		}
+	};   
+
+	function getDroneLocationURL() {
+		return 'http://home.kolesnik.org:9090/heartbeat/drone1';
+	}
+
+
+	function fetchDroneLocation(callback) {
+
+		if (debug) {
+			callback(fakeDroneHeartbeat);
+			return;
+		}
+
+		$.getJSON(getDroneLocationURL(), function(data) {
+			callback(data);
+		});
+	}
+
+	function getDroneLocation(callback) {
+
+		if (debug) {
+
+			fakeDroneHeartbeat.heartbeat.heading += 10;
+
+			if (fakeDroneHeartbeat.heartbeat.heading > 360) fakeDroneHeartbeat.heartbeat.heading -= 360;
+
+			callback(fakeDroneHeartbeat);
+
+			return;
+		}
+
+
+		$.get(getDroneLocationURL(), {}, callback);
+	}
+
+
+
+	function initMapWithRemoteCoords() {
+		fetchDroneLocation(initMap);
+	}
+
+	function initMap(data) {
+		//center the map
+		var map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 20,
+			center: {lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon},
+		});
+
+		mainMap = map;
+
+		//setup drone marker
+		marker = new google.maps.Marker(
+				{
+					position: {lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon},
+					icon: {
+						path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+						scale: 10,
+						rotation: data.heartbeat.heading
+					},
+					draggable: false,
+					map: map
+				});   
+
+
+		// every 1 second
+		window.setInterval(updateMarker, 1000);
+	}
+
+	function updateMarker() {
+
+		if (marker == null) return;
+
+		getDroneLocation(function(data) {
+			marker.setPosition({lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon});
+			marker.setIcon({
+					path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+					scale: 10,
+					rotation: data.heartbeat.heading
+				});
+		});
+	}
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmtuMeDnxKNPTzDfkLQs5aFkeFI5PP0sY&callback=initMapWithRemoteCoords">
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
