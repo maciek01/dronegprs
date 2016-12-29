@@ -91,6 +91,7 @@ public class Main {
          */
         get("/heartbeats", (request, response) -> {
             try {
+            	response.header("Access-Control-Allow-Origin", "*");
         		return processResponse(response, heartbeatManagerInstance.listHeartbeats());
             } catch (Exception ex) {
             	ex.printStackTrace();
@@ -106,13 +107,16 @@ public class Main {
         get("/heartbeat/:unitId", (request, response) -> {
 
             try {
-            	//TODO - dont leak model, base it on exception
+            	response.header("Access-Control-Allow-Origin", "*");
+            	
+            	//TODO - dont leak model, base not found on an exception
         		Object heartbeat = heartbeatManagerInstance.getHeartbeat(request.params(":unitId"));
         		
         		if (heartbeat == null) {
         			response.status(HTTP_REQUEST_NOT_FOUND);
                 	return "";
         		}
+        		
 				return processResponse(response, heartbeat);
             } catch (Exception ex) {
             	ex.printStackTrace();
