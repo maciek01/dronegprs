@@ -45,7 +45,7 @@ def initVehicle():
 
 			except Exception as inst:
 				vehicle = None
-				traceback.print_exc()
+				#traceback.print_exc()
 				time.sleep(5)
 	finally:
 		unlockV()
@@ -60,22 +60,14 @@ def pilotMonitor():
 	#read loop
 
 	while True:
-
 		try:
-
-			print vehicle.location.global_frame
-			print vehicle.location.global_relative_frame
-			print vehicle.location.local_frame
-			print vehicle.gps_0
-			print vehicle.last_heartbeat
-			print vehicle.system_status
-			print vehicle
-			print "-------------------------------"
-
 			time.sleep(1)
+			if vehicle.last_heartbeat > 2:
+				#print "REINIT VEHICLE CONNECTION"
+				initVehicle()
 
 		except Exception as inst:
-			traceback.print_exc()
+			#traceback.print_exc()
 			initVehicle()
 
 
