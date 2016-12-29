@@ -70,7 +70,6 @@
 	}
 
 	function getDroneLocation(callback) {
-
 		if (debug) {
 			//make it rotate a bit with every refresh
 
@@ -83,10 +82,10 @@
 			return;
 		}
 		//$.getJSON(getDroneLocationURL(), callback);
-		$.get(getDroneLocationURL(), {}, callback).fail(function(){ 
-				// Handle error here
-				callback(null);
-			});;
+		$.get(getDroneLocationURL(), {}, callback).fail(function() { 
+			// Handle error here
+			callback(null);
+		});;
 	}
 
 	function initMapWithRemoteCoords() {
@@ -94,7 +93,6 @@
 	}
 
 	function initMap(data) {
-
 		if (!data || !data.heartbeat) {
 			data = {
 				heartbeat : {
@@ -108,37 +106,17 @@
 		if (data.heartbeat.gpsLat == null) data.heartbeat.gpsLat = 0;
 		if (data.heartbeat.gpsLon == null) data.heartbeat.gpsLon = 0;
 
-
 		//center the map
-		var map = new google.maps.Map(document.getElementById('map'), {
+		mainMap = new google.maps.Map(document.getElementById('map'), {
 			zoom: 20,
 			center: {lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon},
 		});
-
-		mainMap = map;
-
-		//setup drone marker
-		marker = new google.maps.Marker(
-				{
-					position: {lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon},
-					icon: {
-						path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-						scale: 10,
-						rotation: data.heartbeat.heading
-					},
-					draggable: false,
-					map: map
-				});   
-
 
 		// every 1 second
 		window.setInterval(updateMarker, 1000);
 	}
 
 	function updateMarker() {
-
-		if (marker == null) return;
-
 		getDroneLocation(function(data) {
 
 			if (!data || !data.heartbeat) {
@@ -154,12 +132,29 @@
 			if (data.heartbeat.gpsLat == null) data.heartbeat.gpsLat = 0;
 			if (data.heartbeat.gpsLon == null) data.heartbeat.gpsLon = 0;
 
-			marker.setPosition({lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon});
-			marker.setIcon({
-					path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-					scale: 10,
-					rotation: data.heartbeat.heading
+			if (marker == null) {
+				marker = new google.maps.Marker(
+                                {
+                                        position: {lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon},
+                                        icon: {
+                                                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                                                scale: 10,
+						strokeColor: "red",
+                                                rotation: data.heartbeat.heading
+                                        },
+                                        draggable: false,
+                                        map: mainMap
+                                });
+
+			} else {
+				marker.setPosition({lat: data.heartbeat.gpsLat, lng: data.heartbeat.gpsLon});
+				marker.setIcon({
+						path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+						scale: 10,
+						strokeColor: "red",
+						rotation: data.heartbeat.heading
 				});
+			}
 		});
 	}
 
