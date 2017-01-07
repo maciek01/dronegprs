@@ -2,7 +2,16 @@ cd /home/pi/dronegprs/droneclient
 
 #start gprs
 
+sleep 5
 sudo pon fonaUSB0
+sleep 5
+
+IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
+
+#sudo route del default
+#sudo route add default ppp0
+
+
 
 #start mavlink
 
