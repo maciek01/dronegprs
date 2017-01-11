@@ -18,9 +18,35 @@
         margin: 0;
         padding: 0;
       }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
     </style>
   </head>
   <body>
+  <!-- Add an input button to initiate the toggle method on the overlay. -->
+    <div id="floating-panel">
+      <label>Select vehicle</label>
+	  <select id="drones"></select>
+	  <label>Select command</label>
+      <input type="button" value="ARM" onclick="arm();"></input>
+      <input type="button" value="DISARM" onclick="disarm();"></input>
+      <input type="button" value="TAKEOFF" onclick="takeoff();"></input>
+      <input type="button" value="LAND" onclick="land();"></input>
+      <input type="button" value="RETURN HOME" onclick="returnToHome();"></input>
+      <input type="button" value="PAUSE" onclick="pause();"></input>
+
+    </div>
     <div id="map"></div>
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script>
@@ -31,7 +57,7 @@
 	var marker = null;
 
 	var mainMap = null;   
-
+	
 	var fakeDroneHeartbeat = {
 		heartbeat : {
 			"unitId" : "drone1",
@@ -64,12 +90,18 @@
 			"unitHostAddress" : "108.49.218.135"
 		}
 	};   
+	
+	var heartbeats = null;
 
-	function getDroneLocationURL() {
-		return "http://home.kolesnik.org:9090/heartbeat/drone1";
+	function getDroneLocationURL(unitId) {
+		return "http://home.kolesnik.org:9090/heartbeat/" + unitId;
 	}
 
-	function getDroneLocation(callback) {
+	function getAllDronesURL() {
+		return "http://home.kolesnik.org:9090/heartbeats";
+	}
+
+	function getDroneLocation(callback, unitId) {
 		if (debug) {
 			//make it rotate a bit with every refresh
 
@@ -81,15 +113,47 @@
 
 			return;
 		}
-		//$.getJSON(getDroneLocationURL(), callback);
-		$.get(getDroneLocationURL(), {}, callback).fail(function() { 
+		//$.getJSON(getDroneLocationURL(unitId), callback);
+		$.get(getDroneLocationURL(unitId), {}, callback).fail(function() { 
 			// Handle error here
 			callback(null);
-		});;
+		});
 	}
 
+	function getAllDrones(callback) {
+		if (debug) {
+			//make it rotate a bit with every refresh
+
+			fakeDroneHeartbeat.heartbeat.heading += 10;
+
+			if (fakeDroneHeartbeat.heartbeat.heading > 360) fakeDroneHeartbeat.heartbeat.heading -= 360;
+			
+			heartbeats = {heartbeats:[fakeDroneHeartbeat]}
+
+			callback(fakeDroneHeartbeat);
+
+			return;
+		}
+		$.get(getAllDronesURL(), {}, callback).fail(function() { 
+			// Handle error here
+			callback(null);
+		});
+	}
+	
+	
+	
 	function initMapWithRemoteCoords() {
-		getDroneLocation(initMap);
+		getDroneLocation(initMap, "drone1");
+		
+		
+		getAllDrones(function(data) {
+			heartbeats = data;
+			var options = $("#drones");
+			$.each(heartbeats.heartbeats, function() {
+			    options.append($("<option />").val(this.heartbeat.unitId).text(this.heartbeat.unitId));
+			})
+		});
+		
 	}
 
 	function initMap(data) {
@@ -116,7 +180,16 @@
 		window.setInterval(updateMarker, 1000);
 	}
 
+	function isInBounds(aMarker){
+		  return mainMap.getBounds().contains(aMarker.getPosition());
+	}
+	
 	function updateMarker() {
+
+//		a.forEach(function(element) {
+//		    console.log(element);
+//		});
+		
 		getDroneLocation(function(data) {
 
 			if (!data || !data.heartbeat) {
@@ -155,9 +228,28 @@
 						rotation: data.heartbeat.heading
 				});
 			}
-		});
+		}, "drone1");
 	}
-
+	
+	function arm() {
+		
+	}
+	function disarm() {
+		
+	}
+	function takeoff() {
+		
+	}
+	function land() {
+		
+	}
+	function returnToHome() {
+		
+	}
+	function pause() {
+		
+	}
+	
     </script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmtuMeDnxKNPTzDfkLQs5aFkeFI5PP0sY&callback=initMapWithRemoteCoords">
