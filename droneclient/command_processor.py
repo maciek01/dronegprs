@@ -24,7 +24,7 @@ def rtl(data):
 	print "RTL"
 
 
-commands = {
+actions = {
 	None : none,
 	"" : none,
 	"NONE" : none,
@@ -40,8 +40,8 @@ def processCommands():
 
         while True:
                 try:
-			command = commandQueue.get()
-			commands[command['name']](command)
+			action = commandQueue.get()
+			actions[action['command']['name']](action)
 
                 except Exception as inst:
                         noop = None
