@@ -23,11 +23,23 @@ def land(data):
 def rtl(data):
 	print "RTL"
 
+def arm(data):
+	print "ARM"
+
+def disarm(data):
+	print "DISARM"
+
+def position(data):
+	print "POSITION"
+
 
 actions = {
 	None : none,
 	"" : none,
 	"NONE" : none,
+	"ARM" : arm,
+	"DISARM" : disarm,
+	"POSITION" : position,
 	"TAKEOFF" : takeoff,
 	"LAND" : land,
 	"RTL" : rtl
