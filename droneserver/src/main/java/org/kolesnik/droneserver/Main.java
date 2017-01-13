@@ -11,8 +11,11 @@ import static spark.Spark.threadPool;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.kolesnik.droneserver.model.command.ActionRequest;
 import org.kolesnik.droneserver.model.common.ServiceContext;
 import org.kolesnik.droneserver.model.heartbeat.Heartbeat;
+import org.kolesnik.droneserver.service.command.CommandProcessor;
+import org.kolesnik.droneserver.service.command.impl.CommandProcessorImpl;
 import org.kolesnik.droneserver.service.heartbeat.HeartbeatManager;
 import org.kolesnik.droneserver.service.heartbeat.impl.HeartbeatManagerImpl;
 
@@ -42,6 +45,7 @@ public class Main {
 	private static final int HTTP_REQUEST_SERVER_ERROR = 500;
 	
 	public static HeartbeatManager heartbeatManagerInstance = new HeartbeatManagerImpl();
+	public static CommandProcessor commandProcessorInstance = new CommandProcessorImpl();
 	
 	/** TLS context */
 	public static final ThreadLocal<ServiceContext> SERVICE_CONTEXT = new ThreadLocal<ServiceContext>() {
@@ -64,14 +68,25 @@ public class Main {
         get("/ping", (req, res) -> "pong");
         
         
-        /**
+        registerHeartbeatManager();
+        
+        registerCommandProcessor();
+        
+	}
+
+
+	/**
+	 * 
+	 */
+	private static void registerHeartbeatManager() {
+		/**
          * define heartbeat post handling
          */
         post("/heartbeat", (request, response) -> {
         	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_REQUEST, request);
         	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_RESPONSE, response);
             try {
-				return processResponse(response, heartbeatManagerInstance.createHeartbeat(jsonToData(request.body(), Heartbeat.class)).getCommands());
+				return processResponse(response, heartbeatManagerInstance.createHeartbeat(jsonToData(request.body(), Heartbeat.class)).getActionRequests());
             } catch (JsonParseException jpe) {
             	jpe.printStackTrace();
                 response.status(HTTP_REQUEST_CLIENT_ERROR);
@@ -124,12 +139,41 @@ public class Main {
             	return "SERVER ERROR";
             }
         });
-        
-        
-        
 	}
 
 
+
+	/**
+	 * 
+	 */
+	private static void registerCommandProcessor() {
+		
+		
+		/**
+         * define command post handling
+         */
+        post("/action", (request, response) -> {
+        	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_REQUEST, request);
+        	SERVICE_CONTEXT.get().putAttribute(ATTR_HTTP_RESPONSE, response);
+            try {
+            	response.header("Access-Control-Allow-Origin", "*");
+				return processResponse(response, commandProcessorInstance.addActionRequest(jsonToData(request.body(), ActionRequest.class)));
+            } catch (JsonParseException jpe) {
+            	jpe.printStackTrace();
+                response.status(HTTP_REQUEST_CLIENT_ERROR);
+                return "BAD REQUEST";
+            } catch (Exception ex) {
+            	ex.printStackTrace();
+            	response.status(HTTP_REQUEST_SERVER_ERROR);
+            	return "SERVER ERROR";
+            } finally {
+            	SERVICE_CONTEXT.remove();
+            }
+            
+        });
+		
+		
+	}
 
 	/**
 	 * @param response

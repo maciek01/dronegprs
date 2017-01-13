@@ -3,7 +3,7 @@
  */
 package org.kolesnik.droneserver.model.heartbeat;
 
-import org.kolesnik.droneserver.model.command.Command;
+import org.kolesnik.droneserver.model.command.ActionRequest;
 import org.kolesnik.droneserver.model.common.Wrapper;
 
 /**
@@ -13,7 +13,7 @@ import org.kolesnik.droneserver.model.common.Wrapper;
 public class HeartbeatWrapper extends Wrapper {
 	
 	private Heartbeat heartbeat;
-	private Command[] commands;
+	private ActionRequest[] actionRequests;
 	
 	/**
 	 * @return the heartbeat
@@ -28,15 +28,15 @@ public class HeartbeatWrapper extends Wrapper {
 		this.heartbeat = heartbeat;
 	}
 	/**
-	 * @return the commands
+	 * @return the actionRequests
 	 */
-	public Command[] getCommands() {
-		return commands;
+	public ActionRequest[] getActionRequests() {
+		return actionRequests;
 	}
 	/**
-	 * @param commands the commands to set
+	 * @param actionRequests the actionRequests to set
 	 */
-	public void setCommands(Command[] commands) {
-		this.commands = commands;
+	public void setActionRequests(ActionRequest[] actionRequests) {
+		this.actionRequests = actionRequests;
 	}
 }
