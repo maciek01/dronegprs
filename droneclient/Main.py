@@ -113,8 +113,9 @@ if __name__ == '__main__':
 		try:
 			if content != None:
 				commands = json.loads(content)
-				for i in commands:
-					command_processor.commandQueue.put(i)
+				if commands != None:
+					for i in commands:
+						command_processor.commandQueue.put(i)
 
 		except Exception as inst:
 			noop = None
