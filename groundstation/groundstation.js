@@ -2,8 +2,8 @@
  * 
  */
 
-//var SERVER_URL = "http://home.kolesnik.org:9090";
-var SERVER_URL = "http://localhost:9090";
+var SERVER_URL = "http://home.kolesnik.org:9090";
+//var SERVER_URL = "http://localhost:9090";
 
 var debug = false;
 //var debug = true;
