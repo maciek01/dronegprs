@@ -112,9 +112,9 @@ if __name__ == '__main__':
 
 		try:
 			if content != None:
-				commands = json.loads(content)
-				if commands != None:
-					for i in commands:
+				actions = json.loads(content)
+				if actions != None:
+					for i in actions:
 						command_processor.commandQueue.put(i)
 
 		except Exception as inst:
