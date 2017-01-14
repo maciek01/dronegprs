@@ -2,13 +2,17 @@ cd /home/pi/dronegprs/droneclient
 
 #start gprs
 
-sleep 5
+sleep 1
+
 echo "AT" >>/dev/ttyUSB0
 echo "AT" >>/dev/ttyUSB0
 echo "AT+CFUN=1,1" >>/dev/ttyUSB0
+
 sleep 5
+
 sudo pon fonaUSB0 debug debug dump logfd 2 updetach
-sleep 5
+
+sleep 1
 
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
 echo $IP
