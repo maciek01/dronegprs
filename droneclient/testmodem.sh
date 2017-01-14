@@ -34,7 +34,7 @@ sleep 1
 
 
 echo "ATD16172816327;" >>/dev/ttyUSB0
-sleep 10
+sleep 15
 
 
 echo "ATH" >>/dev/ttyUSB0
