@@ -3,7 +3,7 @@
 import sys, traceback
 import threading
 import time, datetime, json
-import pilot
+#import pilot
 
 from dronekit import connect, VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
@@ -16,6 +16,9 @@ vehicle = None
 vehicleLock = threading.RLock()
 URL = None
 BAUD = None
+
+
+########################### THREAD HELPERS #####################################
 
 def lockV():
 	vehicleLock.acquire()
@@ -52,7 +55,7 @@ def initVehicle():
 		unlockV()
 
 
-
+####################### MAIN THREAD ############################################
 def pilotMonitor():
 
 	#wait to initialize the pilot
@@ -63,8 +66,8 @@ def pilotMonitor():
 	while True:
 		try:
 			time.sleep(1)
-			if vehicle.last_heartbeat > 2:
-				#print "REINIT VEHICLE CONNECTION"
+			if vehicle.last_heartbeat > 5:
+				print "REINIT VEHICLE CONNECTION"
 				initVehicle()
 
 		except Exception as inst:
@@ -73,7 +76,7 @@ def pilotMonitor():
 
 
 
-
+###################### INIT HANDLER ############################################
 	
 def pilotinit(url, baud):
 	global thread
@@ -85,47 +88,148 @@ def pilotinit(url, baud):
 	thread.daemon = True
 	thread.start()
 
+############################ COMMAND HANDLERS ##################################
 
-def arm():
+def arm(data):
+
+        global vehicle
+
 	lockV()
 	try:
-		# Don't let the user try to arm until autopilot is ready
+		print "ARM"
+		
 		while not vehicle.is_armable:
 			print " Waiting for vehicle to initialise..."
 			time.sleep(1)
-
-		print "Arming motors"
-		# Copter should arm in GUIDED mode
+	
 		vehicle.mode    = VehicleMode("GUIDED")
 		vehicle.armed   = True
-
+		
 		while not vehicle.armed:
 			print " Waiting for arming..."
-			time.sleep(1)
-
-		return "OK"
+			time.sleep(1)	
+		print " armed"	
+		
+		return "OK"	
+		
 	finally:
 		unlockV()
 
-def simple_takeoff(aTargetAltitude):
+def disarm(data):
+
+        global vehicle
+
 	lockV()
 	try:
-		print "Taking off!"
-		vehicle.simple_takeoff(aTargetAltitude)
+		print "DISARM"
+			
+		vehicle.armed   = False
+	
+		print " disarming"
+		return "OK"	
+		
+	finally:
+		unlockV()
 
+
+def takeoff(data):
+
+        global vehicle
+
+	lockV()
+	try:
+	
+		aTargetAltitude = 20 #data.operatingAltitude
+
+		#request and wait for the arm thread to be armed	
+		arm(data)
+
+		print "TAKEOFF"
+		if not vehicle.armed:
+			print " NOT ARMED"
+			return "ERROR: NOT ARMED"
+			
+		vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
+	
 		# Check that vehicle has reached takeoff altitude
-		while True:
-			print " Altitude: ", vehicle.location.global_relative_frame.alt
-
-			if vehicle.location.global_relative_frame.alt>=aTargetAltitude*0.95:
-				print "Reached target altitude"
-				break
-			time.sleep(1)
+		#while True:
+		#	print " Altitude: ", vehicle.location.global_relative_frame.alt 
+		#	if pilot.vehicle.location.global_relative_frame.alt >= aTargetAltitude * 0.95: 
+		#		print " Reached target altitude"
+		#		break
+		#	time.sleep(1)
+		
+		print " took off"			
+			
 
 		return "OK"
 	finally:
 		unlockV()
 
+def land(data):
 
+        global vehicle
+        
+	lockV()
+	try:
+		print "LAND"
+		if not vehicle.armed:
+			print " NOT ARMED"
+			return "ERROR: NOT ARMED"
+			
+		vehicle.mode = VehicleMode("LAND")
+		print " landing"
+	
+		return "OK"
+
+	finally:
+		unlockV()
+
+def position(data):
+
+        global vehicle
+        
+	lockV()
+	try:
+		print "POSITION"
+		if not vehicle.armed:
+			print " NOT ARMED"
+			return "ERROR: NOT ARMED"
+			
+		return "OK"
+
+	finally:
+		unlockV()
+		
+def rtl(data):
+
+        global vehicle
+        
+	lockV()
+	try:
+		print "RTL"
+		if not vehicle.armed:
+			print " NOT ARMED"
+			return "ERROR: NOT ARMED"
+
+		return "OK"
+
+	finally:
+		unlockV()
+		
+		
+def goto(data):
+
+        global vehicle
+        
+	lockV()
+	try:
+		print "GOTO"
+		point1 = LocationGlobalRelative(42.5231211,-71.1877078, 30)
+		vehicle.simple_goto(point1)
+		return "OK"
+
+	finally:
+		unlockV()
 
 

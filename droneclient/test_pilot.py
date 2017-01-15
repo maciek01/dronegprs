@@ -19,9 +19,10 @@ while True:
 		print "Local north: %s" % pilot.vehicle.location.local_frame.north
 		print "Local east: %s" % pilot.vehicle.location.local_frame.east
 		print "Local down: %s" % pilot.vehicle.location.local_frame.down
-		print "Home location lat: %s" % pilot.vehicle.home_location.lat
-		print "Home location lon: %s" % pilot.vehicle.home_location.lon
-		print "Home location alt: %s" % pilot.vehicle.home_location.alt
+		if pilot.vehicle.home_location != None:
+			print "Home location lat: %s" % pilot.vehicle.home_location.lat
+			print "Home location lon: %s" % pilot.vehicle.home_location.lon
+			print "Home location alt: %s" % pilot.vehicle.home_location.alt
 		print "GPS visisble sats: %s" % pilot.vehicle.gps_0.satellites_visible
 		print "GPS fix type: %s" % pilot.vehicle.gps_0.fix_type
 		print "GPS eph: %s cm" % pilot.vehicle.gps_0.eph
