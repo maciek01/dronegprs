@@ -3,6 +3,7 @@
 import sys, traceback
 import threading
 import time, datetime, json
+import pilot
 
 from dronekit import connect, VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil

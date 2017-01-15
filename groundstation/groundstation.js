@@ -2,15 +2,18 @@
  * 
  */
 
-var SERVER_URL = "http://home.kolesnik.org:9090";
-//var SERVER_URL = "http://localhost:9090";
+var SERVER_URL = getURLParameter("local") == "true" ? "http://localhost:9090" : "http://home.kolesnik.org:9090";
 
-var debug = false;
-//var debug = true;
+var debug = getURLParameter("debug") == "true";
+// var debug = true;
 
 var marker = null;
 
 var mainMap = null;
+
+var contextMenu = null;
+
+var allMarkers = [];
 
 var fakeDroneHeartbeat = {
 	heartbeat : {
@@ -47,6 +50,19 @@ var fakeDroneHeartbeat = {
 
 var heartbeats = null;
 
+function getURLParameter(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) {
+            return sParameterName[1];
+        }
+    }
+    
+    return "";
+}
+
 function getDroneLocationURL(unitId) {
 	return SERVER_URL + "/heartbeat/" + unitId;
 }
@@ -61,7 +77,7 @@ function getActionURL() {
 
 function getDroneLocation(callback, unitId) {
 	if (debug) {
-		//make it rotate a bit with every refresh
+		// make it rotate a bit with every refresh
 
 		fakeDroneHeartbeat.heartbeat.heading += 10;
 
@@ -72,7 +88,7 @@ function getDroneLocation(callback, unitId) {
 
 		return;
 	}
-	//$.getJSON(getDroneLocationURL(unitId), callback);
+	// $.getJSON(getDroneLocationURL(unitId), callback);
 	$.get(getDroneLocationURL(unitId), {}, callback).fail(function() {
 		// Handle error here
 		callback(null);
@@ -81,7 +97,7 @@ function getDroneLocation(callback, unitId) {
 
 function getAllDrones(callback) {
 	if (debug) {
-		//make it rotate a bit with every refresh
+		// make it rotate a bit with every refresh
 
 		fakeDroneHeartbeat.heartbeat.heading += 10;
 
@@ -137,13 +153,13 @@ function initMap(data) {
 			}
 		};
 	}
-	//if no gps lock
+	// if no gps lock
 	if (data.heartbeat.gpsLat == null)
 		data.heartbeat.gpsLat = 0;
 	if (data.heartbeat.gpsLon == null)
 		data.heartbeat.gpsLon = 0;
 
-	//center the map
+	// center the map
 	mainMap = new google.maps.Map(document.getElementById('map'), {
 		zoom : 20,
 		center : {
@@ -154,6 +170,44 @@ function initMap(data) {
 
 	// every 1 second
 	window.setInterval(updateMarker, 1000);
+	
+	contextMenu = google.maps.event.addListener(
+	        mainMap,
+	        "rightclick",
+	        function( event ) {
+	            // use JS Dom methods to create the menu
+	            // use event.pixel.x and event.pixel.y 
+	            // to position menu at mouse position
+	            console.log( event );
+	            
+	            placeMarker(event.latLng);
+	            
+	        }
+	    );
+}
+
+function placeMarker(location) {
+    var marker = new google.maps.Marker({
+        position: location, 
+        map: mainMap
+    });
+    
+    allMarkers.push(marker);
+    
+    marker.addListener('click', function() {
+    	
+        map.setZoom(8);
+        map.setCenter(marker.getPosition());
+        
+        
+      });
+}
+
+function removeMarkers(){
+    for(i=0; i < allMarkers.length; i++){
+    	allMarkers[i].setMap(null);
+    }
+    allMarkers = [];
 }
 
 function isInBounds(aMarker) {
@@ -162,9 +216,9 @@ function isInBounds(aMarker) {
 
 function updateMarker() {
 
-	//		a.forEach(function(element) {
-	//		    console.log(element);
-	//		});
+	// a.forEach(function(element) {
+	// console.log(element);
+	// });
 
 	getDroneLocation(function(data) {
 
@@ -177,7 +231,7 @@ function updateMarker() {
 				}
 			};
 		}
-		//if no GPS Lock
+		// if no GPS Lock
 		if (data.heartbeat.gpsLat == null)
 			data.heartbeat.gpsLat = 0;
 		if (data.heartbeat.gpsLon == null)
@@ -228,7 +282,7 @@ function buildActionRequest(unitId, command) {
 }
 
 function handleActionResponse(data) {
-	//???
+	// ???
 }
 
 function arm() {

@@ -7,32 +7,33 @@ import datetime
 import sys, traceback
 import gps, pilot
 import command_processor
+import argparse
 
 
 def reportGPSData():
 	global unitID
 
-        data = {
-                "unitId" : unitID,
-                "stateTimestampMS" : gps.current_milli_time(),
-                "gpsLatLong" : gps.GPSLAT + " / " + gps.GPSLON,
-                "gpsTime" : gps.GPSTIME,
-                "gpsStatus" : gps.GPSSTATUS,
-                "gpsLastStatusMS" : gps.GPSLASTSTATUSMS,
-                "unitCallbackPort" : "8080"
-        }
+	data = {
+		"unitId" : unitID,
+		"stateTimestampMS" : gps.current_milli_time(),
+		"gpsLatLong" : gps.GPSLAT + " / " + gps.GPSLON,
+		"gpsTime" : gps.GPSTIME,
+		"gpsStatus" : gps.GPSSTATUS,
+		"gpsLastStatusMS" : gps.GPSLASTSTATUSMS,
+		"unitCallbackPort" : "8080"
+	}
 
-        return data
+	return data
 
 def reportPilotData():
-        global unitID
+	global unitID
 
 	if pilot.vehicle == None:
 		return None
 
-        data = {
+	data = {
 		#1s reporting
-                "unitId" : unitID,
+		"unitId" : unitID,
 
 		"stateTimestampMS" : pilot.current_milli_time(),
 		"gpsLatLon" : "",
@@ -78,9 +79,13 @@ if __name__ == '__main__':
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
 	content_type_header     = "application/json"
-	host                    = "http://home.kolesnik.org:9090"
+	defHost                    = "http://home.kolesnik.org:9090"
+	
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--connect", default=defHost)
+	args = parser.parse_args()
 
-	url = host + "/heartbeat"
+	url = args.connect + "/heartbeat"
 
 	headers = {'Content-Type': content_type_header}
 
