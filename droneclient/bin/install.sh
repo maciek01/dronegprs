@@ -22,7 +22,7 @@ sudo ln -s /home/pi/dronegprs/droneclient/etc/ppp/peers/fonaUSB2 /etc/ppp/peers/
 sudo ln -s /home/pi/dronegprs/droneclient/etc/ppp/peers/fonaUSB3 /etc/ppp/peers/fonaUSB3
 
 #install client daemon
-sudo ln -s /home/pi/dronegprs/droneclient/droneclientd.sh /etc/init.d/droneclientd
+sudo ln -s /home/pi/dronegprs/droneclient/bin/droneclientd.sh /etc/init.d/droneclientd
 sudo update-rc.d droneclientd defaults
 
 

@@ -15,7 +15,7 @@
 case "$1" in 
     start)
         echo "Starting droneclientd"
-        sudo -u pi /home/pi/dronegprs/droneclient/run.sh
+        sudo -u pi /home/pi/dronegprs/droneclient/bin/run.sh
         ;;
     stop)
         echo "Stopping droneclientd"
