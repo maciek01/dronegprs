@@ -97,12 +97,13 @@ def arm(data):
 	lockV()
 	try:
 		print "ARM"
-		
-		while not vehicle.is_armable:
-			print " Waiting for vehicle to initialise..."
-			time.sleep(1)
+
+		#this doesnt work with pixracer - is_armable stays false
+		#while not vehicle.is_armable:
+		#	print " Waiting for vehicle to initialise..."
+		#	time.sleep(1)
 	
-		vehicle.mode    = VehicleMode("GUIDED")
+		vehicle.mode    = VehicleMode("GUIDED") #pix racer never changes mode to GUIDED
 		vehicle.armed   = True
 		
 		while not vehicle.armed:
@@ -177,7 +178,7 @@ def land(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
-		vehicle.mode = VehicleMode("LAND")
+		vehicle.mode = VehicleMode("LAND") #on pixracer this mode is not recognised
 		print " landing"
 	
 		return "OK"
