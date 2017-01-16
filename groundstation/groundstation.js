@@ -178,27 +178,42 @@ function initMap(data) {
 	            // use JS Dom methods to create the menu
 	            // use event.pixel.x and event.pixel.y 
 	            // to position menu at mouse position
-	            console.log( event );
 	            
 	            placeMarker(event.latLng);
 	            
 	        }
 	    );
+	
+
+	
+
+	
 }
 
 function placeMarker(location) {
     var marker = new google.maps.Marker({
         position: location, 
-        map: mainMap
+        map: mainMap,
+        draggable: true,
+        raiseOnDrag: true,
+        labelContent: "WP 1",
+        labelAnchor: new google.maps.Point(22, 0),
+        labelClass: "labels", // the CSS class for the label
+        labelStyle: {opacity: 0.75}
     });
     
     allMarkers.push(marker);
     
-    marker.addListener('click', function() {
+    marker.addListener('rightclick', function() {
     	
-        map.setZoom(8);
-        map.setCenter(marker.getPosition());
-        
+        //mainMap.setZoom(20);
+        //mainMap.setCenter(marker.getPosition());
+    	
+    	var infowindow = new google.maps.InfoWindow({
+            content: "<div style='width:100px'>rightclick</div>"
+          });
+    	
+        infowindow.open(mainMap, marker);
         
       });
 }

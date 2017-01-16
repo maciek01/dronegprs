@@ -150,7 +150,11 @@ def takeoff(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
-		vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
+		#vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
+		
+		vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+                                                  0, 0, 0, 0, 0, 0, 0, aTargetAltitude)
+		
 	
 		# Check that vehicle has reached takeoff altitude
 		#while True:
@@ -179,6 +183,11 @@ def land(data):
 			return "ERROR: NOT ARMED"
 			
 		vehicle.mode = VehicleMode("LAND") #on pixracer this mode is not recognised
+		
+		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+                #                                  0, 0, 0, 0, 0, 0, 0, altitude)
+		
+		
 		print " landing"
 	
 		return "OK"
@@ -230,8 +239,21 @@ def goto(data):
 	lockV()
 	try:
 		print "GOTO"
-		point1 = LocationGlobalRelative(42.5231211,-71.1877078, 30)
+		if not vehicle.armed:
+			print " NOT ARMED"
+			return "ERROR: NOT ARMED"
+		
+		parameters = data['command']['parameters']
+		
+		for i in parameters:
+			if i['name'] == "lat":
+				lat = i['value']
+			if i['name'] == "lon":
+				lon = i['value']
+		
+		point1 = LocationGlobalRelative(float(lat), float(lon), 30)
 		vehicle.simple_goto(point1)
+		print " going to "
 		return "OK"
 
 	finally:
