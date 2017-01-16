@@ -213,6 +213,10 @@ def rtl(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 
+                vehicle.mode = VehicleMode("RTL")
+                print " returning home"
+
+
 		return "OK"
 
 	finally:
