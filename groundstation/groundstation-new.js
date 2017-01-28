@@ -215,7 +215,8 @@ function updateMarker() {
 			marker = mainMap.addMarker({
 				lat : data.heartbeat.gpsLat,
 				lng : data.heartbeat.gpsLon,
-				title: 'drone1',
+				title: data.heartbeat.unitId,
+				label: data.heartbeat.unitId,
 				icon : {
 					path : google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
 					scale : 10,
@@ -226,6 +227,7 @@ function updateMarker() {
 				  alert('You clicked in this marker');
 				}
 			});
+
 			
 		} else {
 			marker.setPosition({
@@ -248,6 +250,7 @@ function updateInfo(data) {
 
         if ("drone1" == data.heartbeat.unitId) {
 
+                $("#unit").html(data.heartbeat.unitId);
                 $("#heading").html(data.heartbeat.heading);
                 $("#gps-speed").html(data.heartbeat.gpsSpeed.toFixed(2) + " m/s");
                 $("#alt-baro").html(data.heartbeat.baroAlt.toFixed(2) + " m");
