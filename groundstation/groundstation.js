@@ -280,7 +280,19 @@ function updateMarker() {
 				rotation : data.heartbeat.heading
 			});
 		}
+		updateInfo(data);
 	}, "drone1");
+}
+
+function updateInfo(data) {
+
+
+	//if ("drone1" == data.heartbeat.unitId) {
+
+		$("#heading").html(data.heartbeat.heading);
+
+	//}
+
 }
 
 function buildActionRequest(unitId, command) {

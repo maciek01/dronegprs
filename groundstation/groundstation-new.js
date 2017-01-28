@@ -239,8 +239,28 @@ function updateMarker() {
 				rotation : data.heartbeat.heading
 			});
 		}
+		updateInfo(data);
 	}, "drone1");
 }
+
+function updateInfo(data) {
+
+
+        if ("drone1" == data.heartbeat.unitId) {
+
+                $("#heading").html(data.heartbeat.heading);
+                $("#gps-speed").html(data.heartbeat.gpsSpeed.toFixed(2) + " m/s");
+                $("#alt-baro").html(data.heartbeat.baroAlt.toFixed(2) + " m");
+                $("#alt-gps").html(data.heartbeat.gpsAlt.toFixed(2) + " m");
+                $("#gps-sats").html(data.heartbeat.gpsNumSats);
+                $("#gps-lock").html(data.heartbeat.gpsLock);
+                $("#bat").html(data.heartbeat.currVolts + "V " + data.heartbeat.currVoltsLevel + "%");
+                $("#curr").html(data.heartbeat.currMah * 1000 + " mAh");
+
+        }
+
+}
+
 
 /********************* DATA FUNCTIONS ******************************************/
 
