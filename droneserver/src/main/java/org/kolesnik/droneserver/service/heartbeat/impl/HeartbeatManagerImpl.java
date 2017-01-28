@@ -55,7 +55,7 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 		}
 		
 		//fetch commands from the command queue
-		lastHeartbeat.setActionRequests(Main.commandProcessorInstance.getAllActionRequests(heartbeat.getUnitId()));
+		lastHeartbeat.setActionRequests(Main.commandProcessorInstance.listAllActionRequests(heartbeat.getUnitId(), true));
 		
 		return lastHeartbeat;
 	}

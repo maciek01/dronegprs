@@ -51,7 +51,7 @@ public class CommandProcessorImpl implements CommandProcessor {
 	}
 	
 	@Override
-	public synchronized ActionRequest[] getAllActionRequests(String unitId) {
+	public synchronized ActionRequest[] listAllActionRequests(String unitId, boolean consume) {
 
 		ConcurrentLinkedQueue<ActionRequest> queue = requestQueues.get(unitId);
 		if (queue == null) {
@@ -59,7 +59,9 @@ public class CommandProcessorImpl implements CommandProcessor {
 		}
 		
 		ActionRequest[] array = queue.toArray(new ActionRequest[queue.size()]);
-		requestQueues.remove(unitId);
+		if (consume) {
+			requestQueues.remove(unitId);
+		}
 		return array;
 	}
 

@@ -125,14 +125,14 @@ public class Main {
             	response.header("Access-Control-Allow-Origin", "*");
             	
             	//TODO - dont leak model, base not found on an exception
-        		Object heartbeat = heartbeatManagerInstance.getHeartbeat(request.params(":unitId"));
+        		Object data = heartbeatManagerInstance.getHeartbeat(request.params(":unitId"));
         		
-        		if (heartbeat == null) {
+        		if (data == null) {
         			response.status(HTTP_REQUEST_NOT_FOUND);
                 	return "";
         		}
         		
-				return processResponse(response, heartbeat);
+				return processResponse(response, data);
             } catch (Exception ex) {
             	ex.printStackTrace();
             	response.status(HTTP_REQUEST_SERVER_ERROR);
@@ -173,6 +173,30 @@ public class Main {
         });
 		
 		
+        
+        /**
+         * define heartbeat get handling - for a specific unit
+         */
+        get("/actions/:unitId", (request, response) -> {
+
+            try {
+            	response.header("Access-Control-Allow-Origin", "*");
+            	
+            	//TODO - dont leak model, base not found on an exception
+        		Object data = commandProcessorInstance.listAllActionRequests(request.params(":unitId"), false);
+        		
+        		if (data == null) {
+        			response.status(HTTP_REQUEST_NOT_FOUND);
+                	return "";
+        		}
+        		
+				return processResponse(response, data);
+            } catch (Exception ex) {
+            	ex.printStackTrace();
+            	response.status(HTTP_REQUEST_SERVER_ERROR);
+            	return "SERVER ERROR";
+            }
+        });        
 	}
 
 	/**

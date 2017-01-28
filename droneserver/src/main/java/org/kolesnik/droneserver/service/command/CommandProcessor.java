@@ -27,11 +27,11 @@ public interface CommandProcessor {
 	ActionRequest getActionRequest(String unitId);
 	
 	/**
-	 * 
+	 * list pending action requests for specified unit
 	 * @param unitId
+	 * @param consume if true - empty the queue
 	 * @return action request
 	 */
-	ActionRequest[] getAllActionRequests(String unitId);
-	
+	ActionRequest[] listAllActionRequests(String unitId, boolean consume);
 
 }
