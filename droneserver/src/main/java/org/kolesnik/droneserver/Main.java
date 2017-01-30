@@ -6,6 +6,7 @@ package org.kolesnik.droneserver;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.delete;
 import static spark.Spark.threadPool;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.StringWriter;
 import org.kolesnik.droneserver.model.command.ActionRequest;
 import org.kolesnik.droneserver.model.common.ServiceContext;
 import org.kolesnik.droneserver.model.heartbeat.Heartbeat;
+import org.kolesnik.droneserver.service.NotFound;
 import org.kolesnik.droneserver.service.command.CommandProcessor;
 import org.kolesnik.droneserver.service.command.impl.CommandProcessorImpl;
 import org.kolesnik.droneserver.service.heartbeat.HeartbeatManager;
@@ -175,28 +177,77 @@ public class Main {
 		
         
         /**
-         * define heartbeat get handling - for a specific unit
+         * define command to get pending actions - for a specific unit
          */
         get("/actions/:unitId", (request, response) -> {
 
             try {
             	response.header("Access-Control-Allow-Origin", "*");
             	
-            	//TODO - dont leak model, base not found on an exception
-        		Object data = commandProcessorInstance.listAllActionRequests(request.params(":unitId"), false);
-        		
-        		if (data == null) {
+            	try {
+            		return processResponse(response,
+            			commandProcessorInstance.listAllActionRequests(request.params(":unitId"), false));
+            	} catch (NotFound ex) {
         			response.status(HTTP_REQUEST_NOT_FOUND);
                 	return "";
         		}
-        		
-				return processResponse(response, data);
             } catch (Exception ex) {
             	ex.printStackTrace();
             	response.status(HTTP_REQUEST_SERVER_ERROR);
             	return "SERVER ERROR";
             }
-        });        
+        });
+        
+        
+        /**
+         * define command to get pending actions - for a specific unit
+         */
+        delete("/actions/:unitId", (request, response) -> {
+
+            try {
+            	response.header("Access-Control-Allow-Origin", "*");
+            	
+            	try {
+            		commandProcessorInstance.removeAllActionRequests(request.params(":unitId"));
+            	} catch (NotFound ex) {
+        			response.status(HTTP_REQUEST_NOT_FOUND);
+                	return "";
+        		}
+        		
+				return processResponse(response, "");
+            } catch (Exception ex) {
+            	ex.printStackTrace();
+            	response.status(HTTP_REQUEST_SERVER_ERROR);
+            	return "SERVER ERROR";
+            }
+        });
+        
+                
+        /**
+         * HACK define command to get pending actions - for a specific unit
+         */
+        get("/actions/delete/:unitId", (request, response) -> {
+
+            try {
+            	response.header("Access-Control-Allow-Origin", "*");
+            	
+            	try {
+            		commandProcessorInstance.removeAllActionRequests(request.params(":unitId"));
+            	} catch (NotFound ex) {
+        			response.status(HTTP_REQUEST_NOT_FOUND);
+                	return "";
+        		}
+        		
+				return processResponse(response, "");
+            } catch (Exception ex) {
+            	ex.printStackTrace();
+            	response.status(HTTP_REQUEST_SERVER_ERROR);
+            	return "SERVER ERROR";
+            }
+        });
+        
+        
+        
 	}
 
 	/**

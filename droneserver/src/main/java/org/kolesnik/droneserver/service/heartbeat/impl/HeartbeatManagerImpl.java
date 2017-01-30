@@ -11,6 +11,7 @@ import org.kolesnik.droneserver.Main;
 import org.kolesnik.droneserver.model.heartbeat.Heartbeat;
 import org.kolesnik.droneserver.model.heartbeat.HeartbeatWrapper;
 import org.kolesnik.droneserver.model.heartbeat.HeartbeatsWrapper;
+import org.kolesnik.droneserver.service.NotFound;
 import org.kolesnik.droneserver.service.heartbeat.HeartbeatManager;
 
 /**
@@ -55,7 +56,11 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 		}
 		
 		//fetch commands from the command queue
-		lastHeartbeat.setActionRequests(Main.commandProcessorInstance.listAllActionRequests(heartbeat.getUnitId(), true));
+		try {
+			lastHeartbeat.setActionRequests(Main.commandProcessorInstance.listAllActionRequests(heartbeat.getUnitId(), true));
+		} catch (NotFound e) {
+			//ignore
+		}
 		
 		return lastHeartbeat;
 	}

@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.kolesnik.droneserver.model.command.ActionRequest;
 import org.kolesnik.droneserver.model.command.ActionResponse;
+import org.kolesnik.droneserver.service.NotFound;
 import org.kolesnik.droneserver.service.command.CommandProcessor;
 
 /**
@@ -51,11 +52,11 @@ public class CommandProcessorImpl implements CommandProcessor {
 	}
 	
 	@Override
-	public synchronized ActionRequest[] listAllActionRequests(String unitId, boolean consume) {
+	public synchronized ActionRequest[] listAllActionRequests(String unitId, boolean consume) throws NotFound {
 
 		ConcurrentLinkedQueue<ActionRequest> queue = requestQueues.get(unitId);
 		if (queue == null) {
-			return null;
+			throw new NotFound(unitId);
 		}
 		
 		ActionRequest[] array = queue.toArray(new ActionRequest[queue.size()]);
@@ -65,4 +66,14 @@ public class CommandProcessorImpl implements CommandProcessor {
 		return array;
 	}
 
+	
+	@Override
+	public void removeAllActionRequests(String unitId) throws NotFound {
+		ConcurrentLinkedQueue<ActionRequest> queue = requestQueues.get(unitId);
+		if (queue == null) {
+			throw new NotFound(unitId);
+		}
+		requestQueues.remove(unitId);
+	}
+	
 }
