@@ -57,6 +57,14 @@ var heartbeats = null;
 
 initMapWithRemoteCoords();
 
+$(function() {
+    $('#spinner').spinner({
+        min: 2,
+        max: 500,
+        step: 1
+    });
+});
+
 /******************************** UI FUNCTION **********************************/
 
 function initMapWithRemoteCoords() {

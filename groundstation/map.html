@@ -6,6 +6,7 @@
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
     
     <meta charset="utf-8">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
@@ -105,6 +106,8 @@
       <input type="button" value="LAND" onclick="land();"></input>
       <input type="button" value="RETURN HOME" onclick="returnToHome();"></input>
       <input type="button" value="PAUSE" onclick="pause();"></input>
+      <label>Operating Alt:</label>
+      <input id="spinner" value="20"/>
     </div>
 
     <div id="uav-data">
@@ -158,7 +161,9 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAmtuMeDnxKNPTzDfkLQs5aFkeFI5PP0sY"></script>
     <script src="gmaps.js"></script>
     
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
     <script src="groundstation.js"></script>
     
     
