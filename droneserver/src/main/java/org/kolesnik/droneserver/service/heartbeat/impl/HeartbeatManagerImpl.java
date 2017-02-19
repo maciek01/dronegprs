@@ -59,7 +59,7 @@ public class HeartbeatManagerImpl implements HeartbeatManager {
 		try {
 			lastHeartbeat.setActionRequests(Main.commandProcessorInstance.listAllActionRequests(heartbeat.getUnitId(), true));
 		} catch (NotFound e) {
-			//ignore
+			lastHeartbeat.setActionRequests(null);
 		}
 		
 		return lastHeartbeat;
