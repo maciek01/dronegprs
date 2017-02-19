@@ -97,17 +97,23 @@
   <body>
   <!-- Add an input button to initiate the toggle method on the overlay. -->
     <div id="actions-panel">
-      <label>Select vehicle</label>
-	  <select id="drones"></select>
-	  <label>Select command</label>
-      <input type="button" value="ARM" onclick="arm();"></input>
-      <input type="button" value="DISARM" onclick="disarm();"></input>
-      <input type="button" value="TAKEOFF" onclick="takeoff();"></input>
-      <input type="button" value="LAND" onclick="land();"></input>
-      <input type="button" value="RETURN HOME" onclick="returnToHome();"></input>
-      <input type="button" value="PAUSE" onclick="pause();"></input>
-      <label>Operating Alt:</label>
-      <input id="spinner" value="20"/>
+      <div>
+        <label>Select vehicle</label>
+  	  <select id="drones"></select>
+  	  <label>Select command</label>
+        <input type="button" value="ARM" onclick="arm();"></input>
+        <input type="button" value="DISARM" onclick="disarm();"></input>
+        <input type="button" value="TAKEOFF" onclick="takeoff();"></input>
+        <input type="button" value="LAND" onclick="land();"></input>
+        <input type="button" value="RETURN HOME" onclick="returnToHome();"></input>
+        <input type="button" value="PAUSE" onclick="pause();"></input>
+      </div>
+      <div>
+        <label>Operating Alt:</label>
+        <input id="spinnerAlt" value="20" readonly/>
+        <label>Operating Speed:</label>
+        <input id="spinnerSpeed" value="10" readonly/>
+      </div>
     </div>
 
     <div id="uav-data">

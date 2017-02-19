@@ -27,6 +27,9 @@ public class Heartbeat {
 	private Double homeLon;
 	private Double homeAlt;	
 	
+	private Integer operatingAlt;
+	private Integer operatingSpeed;
+	
 	private Double gpsSpeed;
 	private String gpsTime;
 	private String gpsStatus;
@@ -87,6 +90,12 @@ public class Heartbeat {
 		}
 		if (heartbeat.homeAlt != null) {
 			this.homeAlt = heartbeat.homeAlt;
+		}		
+		if (heartbeat.operatingAlt != null) {
+			this.operatingAlt = heartbeat.operatingAlt;
+		}		
+		if (heartbeat.operatingSpeed != null) {
+			this.operatingSpeed = heartbeat.operatingSpeed;
 		}		
 		if (heartbeat.gpsSpeed != null) {
 			this.gpsSpeed = heartbeat.gpsSpeed;
@@ -511,6 +520,34 @@ public class Heartbeat {
 	 */
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the operatingAlt
+	 */
+	public Integer getOperatingAlt() {
+		return operatingAlt;
+	}
+
+	/**
+	 * @param operatingAlt the operatingAlt to set
+	 */
+	public void setOperatingAlt(Integer operatingAlt) {
+		this.operatingAlt = operatingAlt;
+	}
+
+	/**
+	 * @return the operatingSpeed
+	 */
+	public Integer getOperatingSpeed() {
+		return operatingSpeed;
+	}
+
+	/**
+	 * @param operatingSpeed the operatingSpeed to set
+	 */
+	public void setOperatingSpeed(Integer operatingSpeed) {
+		this.operatingSpeed = operatingSpeed;
 	}
 
 }

@@ -40,6 +40,13 @@ def position(data):
 def goto(data):
 	return pilot.goto(data)
 
+def alt(data):
+	return pilot.alt(data)
+	
+def speed(data):
+	return pilot.speed(data)	
+
+
 ######################### ACTIONS ##############################################
 
 actions = {
@@ -52,7 +59,9 @@ actions = {
 	"LAND" : land,
 	"POSITION" : position,
 	"RTL" : rtl,
-	"GOTO" : goto
+	"GOTO" : goto,
+	"ALT" : alt,
+	"SPEED" : speed
 }
 
 ################################# MAIN THREAD ##################################

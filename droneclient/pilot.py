@@ -12,6 +12,9 @@ current_milli_time = lambda: int(time.time() * 1000)
 
 
 
+operatingAlt = 20
+operatingSpeed = 10
+
 vehicle = None
 vehicleLock = threading.RLock()
 URL = None
@@ -140,7 +143,7 @@ def takeoff(data):
 	lockV()
 	try:
 	
-		aTargetAltitude = 20 #data.operatingAltitude
+		aTargetAltitude = operatingAlt
 
 		#request and wait for the arm thread to be armed	
 		arm(data)
@@ -153,7 +156,7 @@ def takeoff(data):
 		#vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
 		
 		vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
-                                                  0, 0, 0, 0, 0, 0, 0, aTargetAltitude)
+                                                  0, 0, 0, 0, 0, 0, 0, float(aTargetAltitude))
 		
 	
 		# Check that vehicle has reached takeoff altitude
@@ -235,6 +238,7 @@ def rtl(data):
 def goto(data):
 
         global vehicle
+        global operatingAlt
         
 	lockV()
 	try:
@@ -251,12 +255,58 @@ def goto(data):
 			if i['name'] == "lon":
 				lon = i['value']
 		
-		point1 = LocationGlobalRelative(float(lat), float(lon), 30)
+		point1 = LocationGlobalRelative(float(lat), float(lon), float(operatingAlt))
 		vehicle.simple_goto(point1)
 		print " going to "
 		return "OK"
 
 	finally:
 		unlockV()
+
+		
+def alt(data):
+
+        global vehicle
+        global operatingAlt
+        
+	lockV()
+	try:
+		print "ALT"
+		
+		parameters = data['command']['parameters']
+		
+		for i in parameters:
+			if i['name'] == "alt":
+				operatingAlt = i['value']
+		
+		print " operating alt is now " + operatingAlt
+		return "OK"
+
+	finally:
+		unlockV()
+		
+def speed(data):
+
+        global vehicle
+        global operatingSpeed
+        
+	lockV()
+	try:
+		print "SPEED"
+		
+		parameters = data['command']['parameters']
+		
+		for i in parameters:
+			if i['name'] == "speed":
+				operatingSpeed = i['value']
+		
+		print " operating speed is now " + operatingSpeed
+		return "OK"
+
+	finally:
+		unlockV()
+
+
+
 
 

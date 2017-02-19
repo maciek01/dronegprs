@@ -45,6 +45,9 @@ def reportPilotData():
 		"homeLat" : pilot.vehicle.home_location.lat if pilot.vehicle.home_location != None else None,
 		"homeLon" : pilot.vehicle.home_location.lon if pilot.vehicle.home_location != None else None,
 		"homeAlt" : pilot.vehicle.home_location.alt if pilot.vehicle.home_location != None else None,
+		
+		"operatingAlt" : pilot.operatingAlt,
+		"operatingSpeed" : pilot.operatingSpeed,
 
 		"gpsSpeed" : pilot.vehicle.groundspeed,
 		"gpsTime" : "none",

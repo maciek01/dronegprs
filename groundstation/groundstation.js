@@ -16,6 +16,10 @@ var mainMap = null;
 
 var contextMenu = null;
 
+var lastAlt = 0;
+
+var lastSpeed = 0;
+
 var currentWPIndex = 1;
 
 var allMarkers = [];
@@ -58,10 +62,25 @@ var heartbeats = null;
 initMapWithRemoteCoords();
 
 $(function() {
-    $('#spinner').spinner({
+    $('#spinnerAlt').spinner({
         min: 2,
         max: 500,
-        step: 1
+        step: 1,
+        stop:function(e,ui){
+            setAlt($('#spinnerAlt').val());
+        }
+    });
+});
+
+
+$(function() {
+    $('#spinnerSpeed').spinner({
+        min: 1,
+        max: 15,
+        step: 1,
+        stop:function(e,ui){
+            setSpeed($('#spinnerSpeed').val());
+        }
     });
 });
 
@@ -247,6 +266,8 @@ function updateInfo(data) {
 
 		$("#unit").html(data.heartbeat.unitId);
 		$("#heading").html(data.heartbeat.heading);
+		$("#spinnerAlt").val(data.heartbeat.operatingAlt);
+		$("#spinnerSpeed").val(data.heartbeat.operatingSpeed);
 		$("#gps-speed").html(data.heartbeat.gpsSpeed.toFixed(2) + " m/s");
 		$("#alt-baro").html(data.heartbeat.baroAlt.toFixed(2) + " m");
 		$("#alt-gps").html(data.heartbeat.gpsAlt.toFixed(2) + " m");
@@ -458,3 +479,34 @@ function gotoXYZ(lat, lon) {
 
 			});
 }
+
+
+function setSpeed(speed) {
+
+	var parameters = [ {
+		name : "speed",
+		value : speed
+	}];
+
+	sendAction(buildActionRequest(currentUnit, "SPEED", parameters),
+			function() {
+
+			});
+}
+
+
+function setAlt(alt) {
+
+	var parameters = [ {
+		name : "alt",
+		value : alt
+	}];
+
+	sendAction(buildActionRequest(currentUnit, "ALT", parameters),
+			function() {
+
+			});
+}
+
+
+
