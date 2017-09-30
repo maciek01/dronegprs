@@ -8,6 +8,9 @@ sudo ln -s /home/pi/dronegprs/groundstation/groundstationd.sh /etc/init.d/ground
 
 sudo update-rc.d groundstationd defaults
 
+sudo curl -sSL https://get.docker.com | sh
+sudo usermod -aG docker pi
+docker pull nginx
 
 
 
