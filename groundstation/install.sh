@@ -10,7 +10,9 @@ sudo update-rc.d groundstationd defaults
 
 sudo curl -sSL https://get.docker.com | sh
 sudo usermod -aG docker pi
+
 docker pull nginx
+docker pull postgres
 
 
 
