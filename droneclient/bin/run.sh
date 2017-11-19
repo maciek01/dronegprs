@@ -1,4 +1,11 @@
+#!/bin/bash
+
+#exec 1> >(logger -s -t $(basename $0)) 2>&1
+
+
+
 cd /home/pi/dronegprs/droneclient
+
 
 #start gprs
 
@@ -27,7 +34,9 @@ echo $IP
 
 #start mavlink
 screen -d -m /home/pi/dronegprs/droneclient/bin/mavproxy.sh 2>&1 >>/dev/null &
+#screen -d -m /home/pi/dronegprs/droneclient/bin/mavproxy.sh 2>&1 &
 
 #start drone controller
-/usr/bin/python /home/pi/dronegprs/droneclient/Main.py 2>&1 >>/dev/null &
+#/usr/bin/python /home/pi/dronegprs/droneclient/src/Main.py 2>&1 >>/dev/null &
+/usr/bin/python /home/pi/dronegprs/droneclient/src/Main.py 2>&1 >>/home/pi/pilot.log &
 

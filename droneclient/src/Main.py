@@ -78,6 +78,8 @@ def reportPilotData():
 
 if __name__ == '__main__':
 
+	print "STARTING MAIN MODULE"
+
 	unitID = "drone1"
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
@@ -96,10 +98,12 @@ if __name__ == '__main__':
 	# disabled as now this port is connected to FC
 	#gps.gpsinit("/dev/ttyAMA0", 38400)
 
+	print "STARTING PILOT MODULE"
 	#initialize pilot
 	pilot.pilotinit("udp:localhost:14550", 115200)
 
 
+	print "STARTING COMMAND PROCESSOR MODULE"
 	#initialize command queue
 	command_processor.processorinit()
 

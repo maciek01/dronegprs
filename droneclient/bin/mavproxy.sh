@@ -1,4 +1,4 @@
 
 
 
-mavproxy.py --master=/dev/ttyAMA0 --baudrate 57600 --aircraft MyCopter --out localhost:14550
+mavproxy.py --master=/dev/ttyAMA0 --baudrate 57600 --aircraft drone1 --out localhost:14550

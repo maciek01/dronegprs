@@ -11,15 +11,22 @@
 # Description:       This service is used to manage drone 
 ### END INIT INFO
 
+DAEMON=/home/pi/dronegprs/droneclient/bin/run.sh
+DAEMON_OPTS=""
+NAME=droneclientd
+DESC="droneclientd"
+PID=/var/run/droneclientd.pid
+
 
 case "$1" in 
     start)
-        echo "Starting droneclientd"
-        sudo -u pi /home/pi/dronegprs/droneclient/bin/run.sh
+	echo -n "Starting $DESC: "
+	start-stop-daemon --start --chuid pi --pidfile "$PID" --start --exec "$DAEMON" -- $DAEMON_OPTS
+	echo "$NAME."
         ;;
     stop)
-        echo "Stopping droneclientd"
-        sudo -u pi killall /usr/bin/python
+	echo -n "Stopping $DESC: "
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --exec $DAEMON
         ;;
     *)
         echo "Usage: /etc/init.d/droneclientd start|stop"
