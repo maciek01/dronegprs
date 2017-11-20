@@ -2,9 +2,6 @@
 
 #exec 1> >(logger -s -t $(basename $0)) 2>&1
 
-cd /home/pi/dronegprs/droneclient
-
-
 #start gprs
 
 sleep 2
@@ -17,7 +14,6 @@ sleep 5
 
 #sudo pon fonaUSB0 debug dump logfd 2 updetach
 sudo pon fonaUSB0
-echo $! >/var/run/fonad/fonad.pid
 
 sleep 5
 

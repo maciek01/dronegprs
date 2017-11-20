@@ -1,5 +1,4 @@
-#!/bin/bash
-# /etc/init.d/fonad
+#!/bin/sh
 
 ### BEGIN INIT INFO
 # Provides:          fonad
@@ -7,34 +6,65 @@
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Example initscript
-# Description:       This service is used to manage fonad 
+# Short-Description: fonad service
+# Description:       fonad starts pppd for gprs comms
 ### END INIT INFO
 
-DAEMON=/home/pi/dronegprs/droneclient/bin/startFona.sh
+# Change the next 3 lines to suit where you install your script and what you want to call it
+DIR=/home/pi/dronegprs/droneclient/bin
+DAEMON=$DIR/startFona.sh
+DAEMON_NAME=fonad
+
+# Add any command line options for your daemon here
 DAEMON_OPTS=""
-NAME=fonad
-DESC="fonad"
-PID=/var/run/fonad/fonad.pid
 
+# This next line determines what user the script runs as.
+# Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
+DAEMON_USER=pi
+HOME_DIR=/home/$DAEMON_USER
 
-case "$1" in 
-    start)
-	echo -n "Starting $DESC: "
-	mkdir -p /var/run/fonad
-	chown pi:pi /var/run/fonad
-	start-stop-daemon --start --chuid pi --pidfile "$PID" --start --exec "$DAEMON" -- $DAEMON_OPTS
-	echo "$NAME."
+# The process ID of the script when it runs is stored here:
+PIDFILE=/var/run/$DAEMON_NAME/$DAEMON_NAME.pid
+
+. /lib/lsb/init-functions
+
+do_start () {
+    log_daemon_msg "Starting user $DAEMON_NAME daemon"
+
+    cd $HOME_DIR
+    sudo mkdir -p /var/run/$DAEMON_NAME
+    sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
+
+    start-stop-daemon --start --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
+
+    log_end_msg $?
+}
+do_stop () {
+    log_daemon_msg "Stopping user $DAEMON_NAME daemon"
+    start-stop-daemon --stop --remove-pidfile --pidfile $PIDFILE --retry 10
+    log_end_msg $?
+}
+
+case "$1" in
+
+    start|stop)
+        do_${1}
         ;;
-    stop)
-	echo -n "Stopping $DESC: "
-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --exec $DAEMON
+
+    restart|reload|force-reload)
+        do_stop
+        do_start
         ;;
+
+    status)
+        status_of_proc "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?
+        ;;
+
     *)
-        echo "Usage: /etc/init.d/fonad start|stop"
+        echo "Usage: /etc/init.d/$DAEMON_NAME {start|stop|restart|status}"
         exit 1
         ;;
-esac
 
+esac
 exit 0
 
