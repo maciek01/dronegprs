@@ -15,12 +15,14 @@ DAEMON=/home/pi/dronegprs/droneclient/bin/startFona.sh
 DAEMON_OPTS=""
 NAME=fonad
 DESC="fonad"
-PID=/var/run/fonad.pid
+PID=/var/run/fonad/fonad.pid
 
 
 case "$1" in 
     start)
 	echo -n "Starting $DESC: "
+	mkdir -p /var/run/fonad
+	chown pi:pi /var/run/fonad
 	start-stop-daemon --start --chuid pi --pidfile "$PID" --start --exec "$DAEMON" -- $DAEMON_OPTS
 	echo "$NAME."
         ;;

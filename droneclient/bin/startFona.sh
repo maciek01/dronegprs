@@ -17,6 +17,8 @@ sleep 5
 
 #sudo pon fonaUSB0 debug dump logfd 2 updetach
 sudo pon fonaUSB0
+echo $! >/var/run/fonad/fonad.pid
+
 sleep 5
 
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`

@@ -2,11 +2,11 @@
 sudo apt-get install python-pip python-dev screen python-wxgtk2.8 python-matplotlib python-opencv python-numpy python-dev libxml2-dev libxslt-dev ppp screen elinks
 
 
-sudo pip install httplib2
-sudo pip install pyserial
-#sudo pip install pymavlink
-sudo pip install mavproxy
-sudo pip install dronekit
+sudo pip install --upgrade httplib2
+sudo pip install --upgrade pyserial
+#sudo pip install --upgrade pymavlink
+sudo pip install --upgrade mavproxy
+sudo pip install --upgrade dronekit
 
 #on sim PC:
 #sudo pip install dronekit-sitl
