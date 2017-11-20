@@ -24,7 +24,7 @@ DAEMON_USER=pi
 HOME_DIR=/home/$DAEMON_USER
 
 # The process ID of the script when it runs is stored here:
-PIDFILE=/var/run/$DAEMON_NAME/$DAEMON_NAME.pid
+PIDFILE=/var/run/$DAEMON_NAME/pid
 
 . /lib/lsb/init-functions
 
@@ -35,7 +35,7 @@ do_start () {
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
-    start-stop-daemon --start --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
+    start-stop-daemon --start --background --no-close --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
 
     log_end_msg $?
 }
