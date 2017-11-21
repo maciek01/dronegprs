@@ -32,6 +32,7 @@ do_start () {
     log_daemon_msg "Starting user $DAEMON_NAME daemon"
 
     cd $HOME_DIR
+    sudo -u $DAEMON_USER /usr/sbin/logrotate -s $HOME_DIR/logstatus $HOME_DIR/dronegprs/droneclient/logrotate/pi.conf
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
