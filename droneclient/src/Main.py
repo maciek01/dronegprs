@@ -107,6 +107,7 @@ if __name__ == '__main__':
 	#initialize command queue
 	command_processor.processorinit()
 
+	print "STARTING COMMAND LOOP"
 	while True:
 		try:
 			time.sleep(1)

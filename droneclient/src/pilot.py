@@ -153,19 +153,11 @@ def takeoff(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
-		#vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
+		vehicle.simple_takeoff(float(aTargetAltitude)) # Take off to target altitude
 		
-		vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
-                                                  0, 0, 0, 0, 0, 0, 0, float(aTargetAltitude))
+		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+                #                                  0, 0, 0, 0, 0, 0, 0, float(aTargetAltitude))
 		
-	
-		# Check that vehicle has reached takeoff altitude
-		#while True:
-		#	print " Altitude: ", vehicle.location.global_relative_frame.alt 
-		#	if pilot.vehicle.location.global_relative_frame.alt >= aTargetAltitude * 0.95: 
-		#		print " Reached target altitude"
-		#		break
-		#	time.sleep(1)
 		
 		print " took off"			
 			
@@ -185,9 +177,9 @@ def land(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
-		vehicle.mode = VehicleMode("LAND") #on pixracer this mode is not recognised
+		vehicle.mode = VehicleMode("LAND") #on pixracer this mode is not recognized
 		
-		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
+		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_LAND,
                 #                                  0, 0, 0, 0, 0, 0, 0, altitude)
 		
 		
@@ -205,9 +197,9 @@ def position(data):
 	lockV()
 	try:
 		print "POSITION"
-		if not vehicle.armed:
-			print " NOT ARMED"
-			return "ERROR: NOT ARMED"
+			
+		vehicle.mode = VehicleMode("LOITER")
+					
 			
 		return "OK"
 
@@ -247,6 +239,8 @@ def goto(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 		
+		vehicle.mode    = VehicleMode("GUIDED")
+		
 		parameters = data['command']['parameters']
 		
 		for i in parameters:
@@ -256,7 +250,7 @@ def goto(data):
 				lon = i['value']
 		
 		point1 = LocationGlobalRelative(float(lat), float(lon), float(operatingAlt))
-		vehicle.simple_goto(point1)
+		vehicle.simple_goto(point1, float(operatingSpeed))
 		print " going to "
 		return "OK"
 
@@ -273,11 +267,14 @@ def alt(data):
 	try:
 		print "ALT"
 		
+		vehicle.mode    = VehicleMode("GUIDED")
+		
 		parameters = data['command']['parameters']
 		
 		for i in parameters:
 			if i['name'] == "alt":
 				operatingAlt = i['value']
+				vehicle.attitude = float(operatingAlt)
 		
 		print " operating alt is now " + operatingAlt
 		return "OK"
@@ -294,11 +291,14 @@ def speed(data):
 	try:
 		print "SPEED"
 		
+		vehicle.mode    = VehicleMode("GUIDED")
+		
 		parameters = data['command']['parameters']
 		
 		for i in parameters:
 			if i['name'] == "speed":
 				operatingSpeed = i['value']
+				vehicle.groundspeed = float(operatingSpeed)
 		
 		print " operating speed is now " + operatingSpeed
 		return "OK"
