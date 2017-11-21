@@ -11,15 +11,12 @@
 ### END INIT INFO
 
 # Change the next 3 lines to suit where you install your script and what you want to call it
-#DIR=/home/pi/dronegprs/droneclient/bin
 DIR=/usr/bin
-#DAEMON=$DIR/mavproxy.sh
 DAEMON=$DIR/screen
 DAEMON_NAME=mavlinkd
 
 # Add any command line options for your daemon here
-#DAEMON_OPTS=""
-DAEMON_OPTS="-dmS mavlinkd -L -s /bin/bash /usr/local/bin/mavproxy.py --master=/dev/ttyAMA0 --baudrate 57600 --aircraft drone1 --out localhost:14550"
+DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /usr/local/bin/mavproxy.py --master=/dev/ttyAMA0 --baudrate 57600 --aircraft drone1 --out localhost:14550"
 
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.

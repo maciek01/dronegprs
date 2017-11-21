@@ -11,12 +11,16 @@
 ### END INIT INFO
 
 # Change the next 3 lines to suit where you install your script and what you want to call it
-DIR=/home/pi/dronegprs/droneclient/src
-DAEMON=$DIR/Main.py
+#DIR=/home/pi/dronegprs/droneclient/src
+DIR=/usr/bin
+#DAEMON=$DIR/Main.py
+DAEMON=$DIR/screen
 DAEMON_NAME=droneclientd
 
 # Add any command line options for your daemon here
-DAEMON_OPTS=""
+#DAEMON_OPTS=""
+DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/droneclient/src/Main.py"
+
 
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
@@ -35,7 +39,8 @@ do_start () {
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
-    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
+    #start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
+    sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
 
     log_end_msg $?
 }
