@@ -14,6 +14,10 @@ current_milli_time = lambda: int(time.time() * 1000)
 
 operatingAlt = 20
 operatingSpeed = 10
+requestedLat = None
+requestedLon = None
+savedLat = None
+savedLon = None
 
 vehicle = None
 vehicleLock = threading.RLock()
@@ -109,6 +113,10 @@ def arm(data):
 		vehicle.mode    = VehicleMode("GUIDED") #pix racer never changes mode to GUIDED
 		vehicle.armed   = True
 		
+		#cancel resume
+		savedLat = None
+		savedLon = None		
+		
 		while not vehicle.armed:
 			print " Waiting for arming..."
 			time.sleep(1)	
@@ -128,6 +136,10 @@ def disarm(data):
 		print "DISARM"
 			
 		vehicle.armed   = False
+		
+		#cancel resume
+		savedLat = None
+		savedLon = None		
 	
 		print " disarming"
 		return "OK"	
@@ -153,11 +165,16 @@ def takeoff(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
+		vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
+		
 		vehicle.simple_takeoff(float(aTargetAltitude)) # Take off to target altitude
 		
 		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
                 #                                  0, 0, 0, 0, 0, 0, 0, float(aTargetAltitude))
-		
+
+		#cancel resume
+		savedLat = None
+		savedLon = None		
 		
 		print " took off"			
 			
@@ -177,11 +194,18 @@ def land(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
+		vehicle.channels.overrides = {}
+		
 		vehicle.mode = VehicleMode("LAND") #on pixracer this mode is not recognized
 		
 		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_LAND,
                 #                                  0, 0, 0, 0, 0, 0, 0, altitude)
-		
+
+		#cancel last goto		
+		savedLat = None
+		savedLon = None                
+                requestedLat = None
+                requestedLon = None
 		
 		print " landing"
 	
@@ -193,22 +217,64 @@ def land(data):
 def position(data):
 
         global vehicle
+	global requestedLat
+        global requestedLon
+        global savedLat
+        global savedLon 
         
 	lockV()
 	try:
 		print "POSITION"
 			
+		vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
 		vehicle.mode = VehicleMode("LOITER")
-					
+		
+		#save last goto
+		savedLat = requestedLat
+		savedLon = requestedLon
+		requestedLat = None
+		requestedLon = None
+		
 			
 		return "OK"
 
 	finally:
 		unlockV()
+
+def resume(data):
+
+        global vehicle
+	global requestedLat
+        global requestedLon
+        global savedLat
+        global savedLon 
+        
+	lockV()
+	try:
+		print "RESUME"
+
+		if savedLat != None and savedLon != None:
+			requestedLat = savedLat
+			requestedLon = savedLon
+			vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
+			vehicle.mode = VehicleMode("GUIDED")
+			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
+			vehicle.simple_goto(point1, float(operatingSpeed))
+			savedLat = None
+			savedLon = None
+		
+			
+		return "OK"
+
+	finally:
+		unlockV()
+
 		
 def rtl(data):
 
         global vehicle
+        global requestedLat
+        global requestedLon        
         
 	lockV()
 	try:
@@ -217,7 +283,16 @@ def rtl(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 
+		vehicle.channels.overrides = {}
+		
                 vehicle.mode = VehicleMode("RTL")
+
+		#cancel last goto
+		savedLat = None
+		savedLon = None                
+                requestedLat = None
+                requestedLon = None
+                
                 print " returning home"
 
 
@@ -231,6 +306,8 @@ def goto(data):
 
         global vehicle
         global operatingAlt
+        global requestedLat
+        global requestedLon
         
 	lockV()
 	try:
@@ -239,18 +316,25 @@ def goto(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 		
-		vehicle.mode    = VehicleMode("GUIDED")
+		vehicle.mode = VehicleMode("GUIDED")
 		
 		parameters = data['command']['parameters']
 		
 		for i in parameters:
 			if i['name'] == "lat":
 				lat = i['value']
+				requestedLat = lat
 			if i['name'] == "lon":
 				lon = i['value']
+				requestedLon = lon
 		
-		point1 = LocationGlobalRelative(float(lat), float(lon), float(operatingAlt))
+		point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
 		vehicle.simple_goto(point1, float(operatingSpeed))
+
+		#cancel resume
+		savedLat = None
+		savedLon = None
+
 		print " going to "
 		return "OK"
 
@@ -262,19 +346,23 @@ def alt(data):
 
         global vehicle
         global operatingAlt
+        global requestedLat
+        global requestedLon
         
 	lockV()
 	try:
 		print "ALT"
-		
-		vehicle.mode    = VehicleMode("GUIDED")
 		
 		parameters = data['command']['parameters']
 		
 		for i in parameters:
 			if i['name'] == "alt":
 				operatingAlt = i['value']
-				vehicle.attitude = float(operatingAlt)
+				if requestedLat != None and requestedLon != None:
+					#wont work in LOITER mode
+					vehicle.mode = VehicleMode("GUIDED")
+					point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
+					vehicle.simple_goto(point1, float(operatingSpeed))
 		
 		print " operating alt is now " + operatingAlt
 		return "OK"
@@ -285,18 +373,17 @@ def alt(data):
 def speed(data):
 
         global vehicle
-        global operatingSpeed
+	global operatingSpeed
         
 	lockV()
 	try:
 		print "SPEED"
 		
-		vehicle.mode    = VehicleMode("GUIDED")
-		
 		parameters = data['command']['parameters']
 		
 		for i in parameters:
 			if i['name'] == "speed":
+				vehicle.mode = VehicleMode("GUIDED")
 				operatingSpeed = i['value']
 				vehicle.groundspeed = float(operatingSpeed)
 		
