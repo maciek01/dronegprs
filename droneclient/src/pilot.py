@@ -198,13 +198,13 @@ def land(data):
 	lockV()
 	try:
 		print "LAND"
-		if not vehicle.armed:
-			print " NOT ARMED"
-			return "ERROR: NOT ARMED"
+		#if not vehicle.armed:
+			#print " NOT ARMED"
+			#return "ERROR: NOT ARMED"
 			
 		vehicle.channels.overrides = {}
 		
-		vehicle.mode = VehicleMode("LAND") #on pixracer this mode is not recognized
+		vehicle.mode = VehicleMode("LAND")
 		
 		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_LAND,
                 #                                  0, 0, 0, 0, 0, 0, 0, altitude)
@@ -221,7 +221,7 @@ def land(data):
 
 	finally:
 		unlockV()
-
+#LOITER
 def position(data):
 
         global vehicle
@@ -287,9 +287,9 @@ def rtl(data):
 	lockV()
 	try:
 		print "RTL"
-		if not vehicle.armed:
-			print " NOT ARMED"
-			return "ERROR: NOT ARMED"
+		#if not vehicle.armed:
+			#print " NOT ARMED"
+			#return "ERROR: NOT ARMED"
 
 		vehicle.channels.overrides = {}
 		
