@@ -117,10 +117,18 @@ def arm(data):
 		savedLat = None
 		savedLon = None		
 		
-		while not vehicle.armed:
+		i = 0
+		while not vehicle.armed and i < 30:
 			print " Waiting for arming..."
 			time.sleep(1)	
-		print " armed"	
+			i = i + 1
+			
+		if not vehicle.armed:
+			vehicle.armed   = False
+			print " failed to arm"
+			return "ERROR"
+		else:
+			print " armed"	
 		
 		return "OK"	
 		
