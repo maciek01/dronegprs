@@ -472,7 +472,7 @@ function resume() {
 
 	});
 }
-function LOITER() {
+function loiter() {
 	sendAction(buildActionRequest(currentUnit, "LOITER"), function() {
 
 	});
