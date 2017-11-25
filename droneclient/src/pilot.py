@@ -175,9 +175,9 @@ def takeoff(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
-		vehicle.simple_takeoff(float(aTargetAltitude)) # Take off to target altitude
+		vehicle.simple_takeoff(int(aTargetAltitude)) # Take off to target altitude
 		#vehicle._master.mav.command_long_send(0, 0, mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
-		#				  0, 0, 0, 0, 0, 0, 0, float(aTargetAltitude))
+		#				  0, 0, 0, 0, 0, 0, 0, int(aTargetAltitude))
 		releaseSticks()
 
 		#cancel resume
@@ -308,8 +308,8 @@ def pause(data):
 			#stop here
 			requestedLat = vehicle.location.global_frame.lat
 			requestedLon = vehicle.location.global_frame.lon
-			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
-			vehicle.simple_goto(point1, float(operatingSpeed))
+			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
+			vehicle.simple_goto(point1, int(operatingSpeed))
 	
 
 			
@@ -336,8 +336,8 @@ def resume(data):
 			requestedLat = savedLat
 			requestedLon = savedLon
 			vehicle.mode = VehicleMode("GUIDED")
-			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
-			vehicle.simple_goto(point1, float(operatingSpeed))
+			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
+			vehicle.simple_goto(point1, int(operatingSpeed))
 			savedLat = None
 			savedLon = None
 			releaseSticks()
@@ -423,8 +423,8 @@ def goto(data):
 				lon = i['value']
 				requestedLon = lon
 		
-		point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
-		vehicle.simple_goto(point1, float(operatingSpeed))
+		point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
+		vehicle.simple_goto(point1, int(operatingSpeed))
 		releaseSticks()
 
 		#cancel resume
@@ -444,6 +444,7 @@ def alt(data):
 	global operatingAlt
 	global requestedLat
 	global requestedLon
+	global operatingSpeed
 	
 	lockV()
 	try:
@@ -457,14 +458,40 @@ def alt(data):
 				if requestedLat != None and requestedLon != None:
 					#wont work in LOITER mode
 					vehicle.mode = VehicleMode("GUIDED")
-					point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
-					vehicle.simple_goto(point1, float(operatingSpeed))
+					point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
+					vehicle.simple_goto(point1, int(operatingSpeed))
 		
 		print " operating alt is now " + operatingAlt
 		return "OK"
 
 	finally:
 		unlockV()
+		
+def altAdjust(delta):
+
+	global vehicle
+	global operatingAlt
+	global requestedLat
+	global requestedLon
+	global operatingSpeed
+	
+	lockV()
+	try:
+		operatingAlt = str(max(int(operatingAlt) + delta, 0))
+		
+		
+		if requestedLat != None and requestedLon != None:
+			#wont work in LOITER mode
+			vehicle.mode = VehicleMode("GUIDED")
+			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
+			vehicle.simple_goto(point1, int(operatingSpeed))
+		
+		print " operating alt is now " + operatingAlt
+
+		return "OK"
+
+	finally:
+		unlockV()		
 		
 def speed(data):
 
@@ -481,13 +508,63 @@ def speed(data):
 			if i['name'] == "speed":
 				vehicle.mode = VehicleMode("GUIDED")
 				operatingSpeed = i['value']
-				vehicle.groundspeed = float(operatingSpeed)
+				vehicle.groundspeed = int(operatingSpeed)
 		
 		print " operating speed is now " + operatingSpeed
 		return "OK"
 
 	finally:
 		unlockV()
+		
+def speedAdjust(delta):
+	global vehicle
+	global operatingSpeed
+	
+	lockV()
+	try:
+		operatingSpeed = str(max(min(int(operatingSpeed) + delta, 15), 1))
+		vehicle.groundspeed = int(operatingSpeed)
+		
+		print " operating speed is now " + operatingSpeed
+		
+		return "OK"
+
+	finally:
+		unlockV()
+
+def decAlt1(data):
+	print "DECALT1"
+	return altAdjust(-1)
+	
+def decAlt10(data):
+	print "DECALT10"
+	return altAdjust(-10)
+	
+def incAlt10(data):
+	print "INCALT10"
+	return altAdjust(10)
+	
+def incAlt1(data):
+	print "INCALT1"
+	return altAdjust(1)
+	
+def decSpeed1(data):
+	print "DECSPEED1"
+	return speedAdjust(-1)
+	
+def decSpeed10(data):
+	print "DECSPEED10"
+	return speedAdjust(-10)
+	
+def incSpeed10(data):
+	print "INCSPEED10"
+	return speedAdjust(10)
+	
+def incSpeed1(data):
+	print "INCSPEED1"
+	return speedAdjust(1)
+
+
 
 
 #override channels - center 

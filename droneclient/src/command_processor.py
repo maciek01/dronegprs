@@ -58,6 +58,29 @@ def alt(data):
 def speed(data):
 	return pilot.speed(data)	
 
+def decAlt1(data):
+	return pilot.decAlt1(data)
+	
+def decAlt10(data):
+	return pilot.decAlt10(data)
+	
+def incAlt10(data):
+	return pilot.incAlt10(data)
+	
+def incAlt1(data):
+	return pilot.incAlt1(data)
+	
+def decSpeed1(data):
+	return pilot.decSpeed1(data)
+	
+def decSpeed10(data):
+	return pilot.decSpeed10(data)
+	
+def incSpeed10(data):
+	return pilot.incSpeed10(data)
+	
+def incSpeed1(data):
+	return pilot.incSpeed1(data)
 
 ######################### ACTIONS ##############################################
 
@@ -77,7 +100,15 @@ actions = {
 	"RTL" : rtl,
 	"GOTO" : goto,
 	"ALT" : alt,
-	"SPEED" : speed
+	"SPEED" : speed,
+	"DECALT1" : decAlt1,
+	"DECALT10" : decAlt10,
+	"INCALT10" : incAlt10,
+	"INCALT1" : incAlt1,
+	"DECSPEED1" : decSpeed1,
+	"DECSPEED10" : decSpeed10,
+	"INCSPEED10" : incSpeed10,
+	"INCSPEED1" : incSpeed1
 }
 
 ################################# MAIN THREAD ##################################
