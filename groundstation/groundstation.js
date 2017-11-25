@@ -508,6 +508,27 @@ function incAlt1() {
 	});
 }
 
+function decSpeed1() {
+	sendAction(buildActionRequest(currentUnit, "DECSPEED1"), function() {
+
+	});
+}
+function decSpeed10() {
+	sendAction(buildActionRequest(currentUnit, "DECSPEED10"), function() {
+
+	});
+}
+function incSpeed10() {
+	sendAction(buildActionRequest(currentUnit, "INCSPEED10"), function() {
+
+	});
+}
+function incSpeed1() {
+	sendAction(buildActionRequest(currentUnit, "INCSPEED1"), function() {
+
+	});
+}
+
 function gotoXYZ(lat, lon) {
 
 	var parameters = [ {
