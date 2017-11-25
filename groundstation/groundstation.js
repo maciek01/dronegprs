@@ -487,6 +487,26 @@ function manual() {
 
 	});
 }
+function decAlt1() {
+	sendAction(buildActionRequest(currentUnit, "DECALT1"), function() {
+
+	});
+}
+function decAlt10() {
+	sendAction(buildActionRequest(currentUnit, "DECALT10"), function() {
+
+	});
+}
+function incAlt10() {
+	sendAction(buildActionRequest(currentUnit, "INCALT10"), function() {
+
+	});
+}
+function incAlt1() {
+	sendAction(buildActionRequest(currentUnit, "INCALT1"), function() {
+
+	});
+}
 
 function gotoXYZ(lat, lon) {
 
