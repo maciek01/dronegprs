@@ -36,6 +36,18 @@ def disarm(data):
 
 def position(data):
 	return pilot.position(data)	
+	
+def pause(data):
+	return pilot.pause(data)
+	
+def resume(data):
+	return pilot.resume(data)
+	
+def loiter(data):
+	return pilot.loiter(data)
+	
+def manual(data):
+	return pilot.manual(data)
 		
 def goto(data):
 	return pilot.goto(data)
@@ -58,6 +70,10 @@ actions = {
 	"TAKEOFF" : takeoff,
 	"LAND" : land,
 	"POSITION" : position,
+	"PAUSE" : pause,
+	"RESUME" : resume,
+	"MANUAL" : manual,
+	"LOITER" : loiter,
 	"RTL" : rtl,
 	"GOTO" : goto,
 	"ALT" : alt,

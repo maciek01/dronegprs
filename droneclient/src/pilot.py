@@ -173,7 +173,7 @@ def takeoff(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 			
-		vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
+		#centerSticks()
 		
 		vehicle.simple_takeoff(float(aTargetAltitude)) # Take off to target altitude
 		
@@ -194,6 +194,10 @@ def takeoff(data):
 def land(data):
 
         global vehicle
+	global requestedLat
+        global requestedLon
+        global savedLat
+        global savedLon
         
 	lockV()
 	try:
@@ -202,7 +206,7 @@ def land(data):
 			#print " NOT ARMED"
 			#return "ERROR: NOT ARMED"
 			
-		vehicle.channels.overrides = {}
+		releaseSticks()
 		
 		vehicle.mode = VehicleMode("LAND")
 		
@@ -221,7 +225,7 @@ def land(data):
 
 	finally:
 		unlockV()
-#LOITER
+
 def position(data):
 
         global vehicle
@@ -234,7 +238,35 @@ def position(data):
 	try:
 		print "POSITION"
 			
-		vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
+		centerSticks()
+		vehicle.mode = VehicleMode("POSHOLD")
+		
+		#save last goto
+		savedLat = requestedLat
+		savedLon = requestedLon
+		requestedLat = None
+		requestedLon = None
+		
+			
+		return "OK"
+
+	finally:
+		unlockV()
+		
+
+def loiter(data):
+
+        global vehicle
+	global requestedLat
+        global requestedLon
+        global savedLat
+        global savedLon 
+        
+	lockV()
+	try:
+		print "LOITER"
+			
+		centerSticks()
 		vehicle.mode = VehicleMode("LOITER")
 		
 		#save last goto
@@ -242,6 +274,40 @@ def position(data):
 		savedLon = requestedLon
 		requestedLat = None
 		requestedLon = None
+		
+			
+		return "OK"
+
+	finally:
+		unlockV()		
+
+def pause(data):
+
+        global vehicle
+	global requestedLat
+        global requestedLon
+        global savedLat
+        global savedLon 
+        
+	lockV()
+	try:
+		print "PAUSE"
+			
+		if not vehicle.armed:
+			print " NOT ARMED"
+			return "ERROR: NOT ARMED"
+		
+		vehicle.mode = VehicleMode("GUIDED")
+		
+		if pilot.vehicle.location.global_frame != None:		
+			point1 = LocationGlobalRelative(float(pilot.vehicle.location.global_frame.lat), float(pilot.vehicle.location.global_frame.lon), float(operatingAlt))
+			vehicle.simple_goto(point1, float(operatingSpeed))
+	
+			#save last goto
+			savedLat = requestedLat
+			savedLon = requestedLon
+			requestedLat = pilot.vehicle.location.global_frame.lat
+			requestedLon = pilot.vehicle.location.global_frame.lon
 		
 			
 		return "OK"
@@ -264,7 +330,7 @@ def resume(data):
 		if savedLat != None and savedLon != None:
 			requestedLat = savedLat
 			requestedLon = savedLon
-			vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
+			#centerSticks()
 			vehicle.mode = VehicleMode("GUIDED")
 			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), float(operatingAlt))
 			vehicle.simple_goto(point1, float(operatingSpeed))
@@ -277,12 +343,31 @@ def resume(data):
 	finally:
 		unlockV()
 
+#release channel overrides
+def manual(data):
+
+        global vehicle
+        
+	lockV()
+	try:
+		print "STABILIZED"
+
+		releaseSticks()
+		#vehicle.mode = VehicleMode("GUIDED")
+			
+		return "OK"
+
+	finally:
+		unlockV()
+
 		
 def rtl(data):
 
         global vehicle
         global requestedLat
-        global requestedLon        
+        global requestedLon
+	global savedLat
+	global savedLon           
         
 	lockV()
 	try:
@@ -291,7 +376,7 @@ def rtl(data):
 			#print " NOT ARMED"
 			#return "ERROR: NOT ARMED"
 
-		vehicle.channels.overrides = {}
+		releaseSticks()
 		
                 vehicle.mode = VehicleMode("RTL")
 
@@ -402,6 +487,15 @@ def speed(data):
 		unlockV()
 
 
-
+#override channels - center 
+def centerSticks():
+	global vehicle
+	vehicle.channels.overrides = {'1':1500, '2':1500, '3':1500, '4':1500}
+	
+#remove channel overrides
+def releaseSticks():
+	global vehicle
+	vehicle.channels.overrides = {}
+	
 
 

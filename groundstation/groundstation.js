@@ -131,6 +131,10 @@ function initMap(data) {
 	 addControl("TAKEOFF", takeoff);	
 	 addControl("LAND", land);
 	 addControl("PAUSE", pause);
+ 	 addControl("RESUME", resume);
+ 	 addControl("POSITION", position);
+ 	 addControl("LOITER", loiter);
+ 	 addControl("MANUAL", manual);
 	 addControl("RETURN HOME", returnToHome);
 	
 	 var controlDiv = document.createElement('div');
@@ -459,7 +463,27 @@ function returnToHome() {
 	});
 }
 function pause() {
+	sendAction(buildActionRequest(currentUnit, "PAUSE"), function() {
+
+	});
+}
+function resume() {
+	sendAction(buildActionRequest(currentUnit, "RESUME"), function() {
+
+	});
+}
+function LOITER() {
+	sendAction(buildActionRequest(currentUnit, "LOITER"), function() {
+
+	});
+}
+function position() {
 	sendAction(buildActionRequest(currentUnit, "POSITION"), function() {
+
+	});
+}
+function manual() {
+	sendAction(buildActionRequest(currentUnit, "MANUAL"), function() {
 
 	});
 }
