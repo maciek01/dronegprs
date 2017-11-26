@@ -2,10 +2,7 @@
  * 
  */
 
-var SERVER_URL = getURLParameter("local") == "true" ? "http://localhost:9090"
-		//: "http://home.kolesnik.org:9090";
-		//: "http://home.kolesnik.org:9091/uavserver/v1";
-		: "http://localhost:8000/uavserver/v1";
+var SERVER_URL = "/uavserver/v1";
 
 var debug = getURLParameter("debug") == "true";
 // var debug = true;
