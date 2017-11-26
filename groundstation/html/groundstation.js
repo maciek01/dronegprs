@@ -3,7 +3,9 @@
  */
 
 var SERVER_URL = getURLParameter("local") == "true" ? "http://localhost:9090"
-		: "http://home.kolesnik.org:9090";
+		//: "http://home.kolesnik.org:9090";
+		//: "http://home.kolesnik.org:9091/uavserver/v1";
+		: "http://localhost:8000/uavserver/v1";
 
 var debug = getURLParameter("debug") == "true";
 // var debug = true;
@@ -91,7 +93,7 @@ function initMapWithRemoteCoords() {
 	getDroneLocation(initMap, currentUnit);
 
 	getAllDrones(function(data) {
-		heartbeats = data;
+		heartbeats = data.data;
 		var options = $("#drones");
 		$.each(heartbeats.heartbeats, function() {
 			options.append($("<option />").val(this.heartbeat.unitId).text(
@@ -102,7 +104,7 @@ function initMapWithRemoteCoords() {
 }
 
 function initMap(data) {
-	if (!data || !data.heartbeat) {
+	if (!data || !data.data || !data.data.heartbeat) {
 		data = {
 			heartbeat : {
 				gpsLat : 0,
@@ -110,6 +112,8 @@ function initMap(data) {
 				heading : 0
 			}
 		};
+	} else {
+		data = data.data;
 	}
 	// if no gps lock
 	if (data.heartbeat.gpsLat == null)
@@ -215,7 +219,7 @@ function updateMarkers() {
 
 	getDroneLocation(function(data) {
 
-		if (!data || !data.heartbeat) {
+		if (!data || !data.data || !data.data.heartbeat) {
 			data = {
 				heartbeat : {
 					gpsLat : 0,
@@ -223,6 +227,8 @@ function updateMarkers() {
 					heading : 0
 				}
 			};
+		} else {
+			data = data.data;
 		}
 		// if no GPS Lock
 		if (data.heartbeat.gpsLat == null)
@@ -286,7 +292,8 @@ function updateInfo(data) {
 		listActions(currentUnit, function(commands) {
 			
 			var html = "";
-			if (commands) {
+			if (commands && commands.data) {
+				commands = commands.data;
 				$.each(commands, function() {
 					html += "<div id=\"command-list-item\">"+this.command.name+"</div>";
 				});
@@ -336,7 +343,7 @@ function getDroneLocation(callback, unitId) {
 		if (fakeDroneHeartbeat.heartbeat.heading > 360)
 			fakeDroneHeartbeat.heartbeat.heading -= 360;
 
-		callback(fakeDroneHeartbeat);
+		callback({data:fakeDroneHeartbeat});
 
 		return;
 	}
@@ -385,7 +392,8 @@ function getAllDrones(callback) {
 			heartbeats : [ fakeDroneHeartbeat ]
 		}
 
-		callback(fakeDroneHeartbeat);
+		//TODO: why not heartbeats??
+		callback({data:fakeDroneHeartbeat});
 
 		return;
 	}
@@ -398,12 +406,18 @@ function getAllDrones(callback) {
 function sendAction(data, callback) {
 
 	$.ajax({
+        processData:false,
 		url : getActionURL(),
-		type : 'post',
+		type : 'POST',
+        contentType:"application/json",
+        //headers: { 'Content-Type': 'application/json' },
 		dataType : 'json',
 		success : callback,
 		data : JSON.stringify(data)
+        //data : data
 	});
+
+	console.log(JSON.stringify(data));
 }
 
 function buildActionRequest(unitId, command, parameters) {
