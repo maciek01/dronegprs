@@ -71,10 +71,10 @@ def reportPilotData():
 		"currMah" : pilot.vehicle.battery.current,
 
 		#30 s reporting
-                "unitCallbackPort" : "8080"
-        }
+		"unitCallbackPort" : "8080"
+		}
 
-        return data
+	return data
 
 if __name__ == '__main__':
 
@@ -84,13 +84,13 @@ if __name__ == '__main__':
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
 	content_type_header     = "application/json"
-	defHost                    = "http://home.kolesnik.org:9090"
+	defHost                    = "http://home.kolesnik.org:8000"
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--connect", default=defHost)
 	args = parser.parse_args()
 
-	url = args.connect + "/heartbeat"
+	url = args.connect + "/uavserver/v1/heartbeat"
 
 	headers = {'Content-Type': content_type_header}
 
@@ -120,14 +120,16 @@ if __name__ == '__main__':
 		except Exception as inst:
 			noop = None
 			#comment out the following if runnign as daemon
-			#traceback.print_exc()
+			traceback.print_exc()
 			continue
 
 		try:
 			if content != None:
 				actions = json.loads(content)
-				if actions != None:
-					for i in actions:
+				print "COMMANDS:" + content
+				if actions != None and actions['data'] != None and actions['data']['actionRequests'] != None:
+					print "actionRequests: " + json.dumps(actions['data']['actionRequests'])
+					for i in actions['data']['actionRequests']:
 						command_processor.commandQueue.put(i)
 
 		except Exception as inst:

@@ -115,6 +115,7 @@ actions = {
 def processCommands():
 
         global commandQueue
+        global actions
 
         while True:
                 try:
