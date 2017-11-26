@@ -417,7 +417,7 @@ function sendAction(data, callback) {
         //data : data
 	});
 
-	console.log(JSON.stringify(data));
+	//console.log(JSON.stringify(data));
 }
 
 function buildActionRequest(unitId, command, parameters) {
