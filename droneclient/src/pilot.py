@@ -5,7 +5,7 @@ import threading
 import time, datetime, json
 #import pilot
 
-from dronekit import connect, VehicleMode, LocationGlobalRelative
+from dronekit import connect, VehicleMode, LocationGlobalRelative, LocationGlobal
 from pymavlink import mavutil
 
 current_milli_time = lambda: int(time.time() * 1000)
@@ -363,6 +363,17 @@ def manual(data):
 	finally:
 		unlockV()
 
+def reHome(data):
+	global vehicle
+	
+	lockV()
+	try:
+		print "REHOME"
+		vehicle.home_location=vehicle.location.global_frame
+		return "OK"
+
+	finally:
+		unlockV()
 		
 def rtl(data):
 
@@ -432,6 +443,29 @@ def goto(data):
 		savedLon = None
 
 		print " going to "
+		return "OK"
+
+	finally:
+		unlockV()
+
+def setHome(data):
+	global vehicle
+	lockV()
+	try:
+		print "SETHOME"
+		
+		parameters = data['command']['parameters']
+		
+		for i in parameters:
+			if i['name'] == "lat":
+				lat = i['value']
+			if i['name'] == "lon":
+				lon = i['value']
+		
+		point1 = LocationGlobal(float(lat), float(lon), vehicle.home_location.alt)
+		if vehicle.home_location != None:
+			vehicle.home_location=point1
+
 		return "OK"
 
 	finally:
@@ -563,14 +597,6 @@ def incSpeed10(data):
 def incSpeed1(data):
 	print "INCSPEED1"
 	return speedAdjust(1)
-
-def reHome(data):
-	global vehicle
-	vehicle.home_location=vehicle.location.global_frame
-
-def setHome(data):
-	global vehicle
-	vehicle.home_location=vehicle.location.global_frame
 
 
 #override channels - center 
