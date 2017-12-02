@@ -85,6 +85,9 @@ def incSpeed1(data):
 def setHome(data):
 	return pilot.setHome(data)
 
+def reHome(data):
+	return pilot.reHome(data)
+
 ######################### ACTIONS ##############################################
 
 actions = {
@@ -101,6 +104,8 @@ actions = {
 	"MANUAL" : manual,
 	"LOITER" : loiter,
 	"RTL" : rtl,
+	"REHOME" : reHome,
+	"SETHOME" : setHome,
 	"GOTO" : goto,
 	"ALT" : alt,
 	"SPEED" : speed,
