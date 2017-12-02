@@ -146,7 +146,7 @@ function initMap(data) {
 	mainMap.setContextMenu({
 		control : 'map',
 		options : [ {
-			title : 'Add Waypoint',
+			title : 'ADD WAYPOINT',
 			name : 'add_waypoint',
 			style : {
 				margin : '7px',
@@ -167,11 +167,19 @@ function initMap(data) {
 
 			}
 		}, {
-			title : 'Go here',
+			title : 'GO HERE',
 			name : 'go_here',
 			action : function(e) {
 
 				gotoXYZ(e.latLng.lat(), e.latLng.lng());
+
+			}
+		}, {
+			title : 'SET HOME',
+			name : 'set_home',
+			action : function(e) {
+
+				setHome(e.latLng.lat(), e.latLng.lng());
 
 			}
 		} ]
@@ -593,6 +601,22 @@ function gotoXYZ(lat, lon) {
 	} ];
 
 	sendAction(buildActionRequest(currentUnit, "GOTO", parameters),
+			function() {
+
+			});
+}
+
+function setHome(lat, lon) {
+
+	var parameters = [ {
+		name : "lat",
+		value : lat
+	}, {
+		name : "lon",
+		value : lon
+	} ];
+
+	sendAction(buildActionRequest(currentUnit, "SETHOME", parameters),
 			function() {
 
 			});
