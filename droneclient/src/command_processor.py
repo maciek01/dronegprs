@@ -82,6 +82,9 @@ def incSpeed10(data):
 def incSpeed1(data):
 	return pilot.incSpeed1(data)
 
+def setHome(data):
+	return pilot.setHome(data)
+
 ######################### ACTIONS ##############################################
 
 actions = {

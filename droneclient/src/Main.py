@@ -40,6 +40,7 @@ def reportPilotData():
 		"gpsLat" : pilot.vehicle.location.global_frame.lat if pilot.vehicle.location.global_frame != None else None,
 		"gpsLon" : pilot.vehicle.location.global_frame.lon if pilot.vehicle.location.global_frame != None else None,
 		"gpsAlt" : pilot.vehicle.location.global_frame.alt if pilot.vehicle.location.global_frame != None else None,
+		"gpsAltRel" : pilot.vehicle.location.global_relative_frame.alt if pilot.vehicle.location.global_relative_frame != None else None,
 
 		"homeLatLon" : "",
 		"homeLat" : pilot.vehicle.home_location.lat if pilot.vehicle.home_location != None else None,
@@ -54,17 +55,26 @@ def reportPilotData():
 		"gpsStatus" : "none",
 		"gpsLastStatusMS" : pilot.current_milli_time() - pilot.vehicle.last_heartbeat,
 
-		"airSpeed" : 0,
+		"airSpeed" : pilot.vehicle.airspeed,
 		"heading" : pilot.vehicle.heading,
+		#"altitude" : pilot.vehicle.attitude,
 		"baroAlt" : 0,
 		"sonarAlt" : 0,
+		"lidarAlt" : 0,
 		"status" : pilot.vehicle.system_status.state,
+		"mode" : pilot.vehicle.mode.name,
+		"armed" : pilot.vehicle.armed,
 
 		#5 sec reporting
 		"gpsNumSats" : pilot.vehicle.gps_0.satellites_visible,
 		"gpsLock" : pilot.vehicle.gps_0.fix_type,
 		"gpsHError" : pilot.vehicle.gps_0.eph,
 		"gpsVError" : pilot.vehicle.gps_0.epv,
+
+		#"gps2NumSats" : pilot.vehicle.gps_1.satellites_visible if pilot.vehicle.gps_1 != None else None,
+		#"gps2Lock" : pilot.vehicle.gps_1.fix_type if pilot.vehicle.gps_1 != None else None,
+		#"gps2HError" : pilot.vehicle.gps_1.eph if pilot.vehicle.gps_1 != None else None,
+		#"gps2VError" : pilot.vehicle.gps_1.epv if pilot.vehicle.gps_1 != None else None,
 
 		"currVolts" : pilot.vehicle.battery.voltage,
 		"currVoltsLevel" : pilot.vehicle.battery.level,
@@ -106,6 +116,21 @@ if __name__ == '__main__':
 	print "STARTING COMMAND PROCESSOR MODULE"
 	#initialize command queue
 	command_processor.processorinit()
+
+	#wait for vehicel connection
+	while pilot.vehicle == None:
+		time.sleep(1)
+
+	# Get Vehicle Home location - will be `None` until first set by autopilot
+	while pilot.vehicle.home_location == None:
+		cmds = pilot.vehicle.commands
+		cmds.download()
+		cmds.wait_ready()
+		if pilot.vehicle.home_location == None:
+			print " Waiting for home location ..."
+
+	# We have a home location.
+	print "\n Home location: %s" % pilot.vehicle.home_location
 
 	print "STARTING COMMAND LOOP"
 	while True:

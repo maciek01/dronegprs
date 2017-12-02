@@ -564,7 +564,9 @@ def incSpeed1(data):
 	print "INCSPEED1"
 	return speedAdjust(1)
 
-
+def setHome(data):
+	global vehicle
+	vehicle.home_location=vehicle.location.global_frame
 
 
 #override channels - center 
