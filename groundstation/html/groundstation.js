@@ -11,6 +11,8 @@ var currentUnit = "drone1";
 
 var marker = null;
 
+var homeMarker = null;
+
 var mainMap = null;
 
 var contextMenu = null;
@@ -131,12 +133,12 @@ function initMap(data) {
 	 addControl("DISARM", disarm);
 	 addControl("TAKEOFF", takeoff);	
 	 addControl("LAND", land);
+	 addControl("RETURN HOME", returnToHome);
 	 addControl("PAUSE", pause);
  	 addControl("RESUME", resume);
  	 addControl("POSITION", position);
  	 addControl("LOITER", loiter);
  	 addControl("MANUAL", manual);
-	 addControl("RETURN HOME", returnToHome);
 	
 	 var controlDiv = document.createElement('div');
 	 */
@@ -144,7 +146,7 @@ function initMap(data) {
 	mainMap.setContextMenu({
 		control : 'map',
 		options : [ {
-			title : 'Add Waypoint',
+			title : 'ADD WAYPOINT',
 			name : 'add_waypoint',
 			style : {
 				margin : '7px',
@@ -165,11 +167,19 @@ function initMap(data) {
 
 			}
 		}, {
-			title : 'Go here',
+			title : 'GO HERE',
 			name : 'go_here',
 			action : function(e) {
 
 				gotoXYZ(e.latLng.lat(), e.latLng.lng());
+
+			}
+		}, {
+			title : 'SET HOME',
+			name : 'set_home',
+			action : function(e) {
+
+				setHome(e.latLng.lat(), e.latLng.lng());
 
 			}
 		} ]
@@ -233,6 +243,7 @@ function updateMarkers() {
 		if (data.heartbeat.gpsLon == null)
 			data.heartbeat.gpsLon = 0;
 
+		//draw drone
 		if (marker == null) {
 
 			marker = mainMap.addMarker({
@@ -263,6 +274,37 @@ function updateMarkers() {
 				rotation : data.heartbeat.heading
 			});
 		}
+		//draw home
+		if (homeMarker == null) {
+
+			homeMarker = mainMap.addMarker({
+				lat : data.heartbeat.homeLat,
+				lng : data.heartbeat.homeLon,
+				title : "home-"+data.heartbeat.unitId,
+				label : "home-"+data.heartbeat.unitId,
+				icon : {
+					path : google.maps.SymbolPath.CIRCLE,
+					scale : 10,
+					strokeColor : "red"
+					//rotation : data.heartbeat.heading
+				},
+				click : function(e) {
+					alert('You clicked in this marker');
+				}
+			});
+
+		} else {
+			homeMarker.setPosition({
+				lat : data.heartbeat.homeLat,
+				lng : data.heartbeat.homeLon
+			});
+			homeMarker.setIcon({
+				path : google.maps.SymbolPath.CIRCLE,
+				scale : 10,
+				strokeColor : "red"
+				//rotation : data.heartbeat.heading
+			});
+		}
 		updateInfo(data);
 	}, currentUnit);
 }
@@ -272,12 +314,15 @@ function updateInfo(data) {
 	if (currentUnit == data.heartbeat.unitId) {
 
 		$("#unit").html(data.heartbeat.unitId);
+		$("#uavMode").html(data.heartbeat.mode);
+		$("#armed").html(data.heartbeat.armed ? "ARMED" : "DISARMED");
 		$("#heading").html(data.heartbeat.heading);
 		$("#spinnerAlt").val(data.heartbeat.operatingAlt);
 		$("#spinnerSpeed").val(data.heartbeat.operatingSpeed);
 		$("#gps-speed").html(data.heartbeat.gpsSpeed.toFixed(2) + " m/s");
 		$("#alt-baro").html(data.heartbeat.baroAlt.toFixed(2) + " m");
-		$("#alt-gps").html(data.heartbeat.gpsAlt.toFixed(2) + " m");
+		//$("#alt-gps").html(data.heartbeat.gpsAlt.toFixed(2) + " m");
+		$("#alt-gps").html(data.heartbeat.gpsAltRel.toFixed(2) + " m");
 		$("#gps-sats").html(data.heartbeat.gpsNumSats);
 		$("#gps-lock").html(data.heartbeat.gpsLock);
 		$("#bat").html(
@@ -498,6 +543,11 @@ function manual() {
 
 	});
 }
+function rehome() {
+	sendAction(buildActionRequest(currentUnit, "REHOME"), function() {
+
+	});
+}
 function decAlt1() {
 	sendAction(buildActionRequest(currentUnit, "DECALT1"), function() {
 
@@ -551,6 +601,22 @@ function gotoXYZ(lat, lon) {
 	} ];
 
 	sendAction(buildActionRequest(currentUnit, "GOTO", parameters),
+			function() {
+
+			});
+}
+
+function setHome(lat, lon) {
+
+	var parameters = [ {
+		name : "lat",
+		value : lat
+	}, {
+		name : "lon",
+		value : lon
+	} ];
+
+	sendAction(buildActionRequest(currentUnit, "SETHOME", parameters),
 			function() {
 
 			});

@@ -111,6 +111,7 @@
         <input type="button" value="POSITION" onclick="position();"></input>
         <input type="button" value="LOITER" onclick="loiter();"></input>
         <input type="button" value="MANUAL" onclick="manual();"></input>
+        <input type="button" value="REHOME" onclick="rehome();"></input>
       </div>
       <div>
         <label>Operating Alt:</label>
@@ -131,6 +132,11 @@
     <div id="uav-data">
       <div id="data-header">
         <label id="unit">--</label>
+        <label id="armed">--</label>
+      </div>
+      <div id="data-item">
+        <label>MODE:</label>
+        <label id="uavMode">--</label>
       </div>
       <div id="data-item">
         <label>HEADING:</label>

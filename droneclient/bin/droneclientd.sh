@@ -36,7 +36,7 @@ do_start () {
     log_daemon_msg "Starting user $DAEMON_NAME daemon"
 
     cd $HOME_DIR
-    rm -ef /home/pi/dronegprs/droneclient/src/*.pyc
+    rm -rf /home/pi/dronegprs/droneclient/src/*.pyc
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
