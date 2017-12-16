@@ -25,6 +25,17 @@ URL = None
 BAUD = None
 
 
+
+########################### STATE OBSERVERS ####################################
+# Add mode attribute callback using decorator (callbacks added this way cannot be removed).
+#@vehicle.on_attribute('mode')
+#def decorated_mode_callback(self, attr_name, value):
+    # `attr_name` is the observed attribute (used if callback is used for multiple attributes)
+    # `attr_name` - the observed attribute (used if callback is used for multiple attributes)
+    # `value` is the updated attribute value.
+    #print " CALLBACK: Mode changed to", value
+
+
 ########################### THREAD HELPERS #####################################
 
 def lockV():
