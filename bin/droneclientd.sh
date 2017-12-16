@@ -11,7 +11,7 @@
 ### END INIT INFO
 
 # Change the next 3 lines to suit where you install your script and what you want to call it
-#DIR=/home/pi/dronegprs/droneclient/src
+#DIR=/home/pi/dronegprs/src
 DIR=/usr/bin
 #DAEMON=$DIR/Main.py
 DAEMON=$DIR/screen
@@ -19,7 +19,7 @@ DAEMON_NAME=droneclientd
 
 # Add any command line options for your daemon here
 #DAEMON_OPTS=""
-DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/droneclient/src/Main.py"
+DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/src/Main.py"
 
 
 # This next line determines what user the script runs as.
@@ -36,7 +36,7 @@ do_start () {
     log_daemon_msg "Starting user $DAEMON_NAME daemon"
 
     cd $HOME_DIR
-    rm -rf /home/pi/dronegprs/droneclient/src/*.pyc
+    rm -rf /home/pi/dronegprs/src/*.pyc
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
