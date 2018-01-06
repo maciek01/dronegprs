@@ -57,10 +57,9 @@ def reportPilotData():
 
 		"airSpeed" : pilot.vehicle.airspeed,
 		"heading" : pilot.vehicle.heading,
-		#"altitude" : pilot.vehicle.attitude,
-		"baroAlt" : 0,
-		"sonarAlt" : 0,
-		"lidarAlt" : 0,
+		"baroAlt" : pilot.vehicle.rangefinder.distance if pilot.vehicle.rangefinder != None else 0,
+		"sonarAlt" : pilot.vehicle.rangefinder.distance if pilot.vehicle.rangefinder != None else 0,
+		"lidarAlt" : pilot.vehicle.rangefinder.distance if pilot.vehicle.rangefinder != None else 0,
 		"status" : pilot.vehicle.system_status.state,
 		"mode" : pilot.vehicle.mode.name,
 		"armed" : pilot.vehicle.armed,
