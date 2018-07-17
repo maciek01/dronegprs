@@ -17,3 +17,4 @@ Each UAV will report its stats (position, speed, altitude, heading, battery stat
 Groud station will allow operatios to monitor/visualize each UAV status/location, and command it remotely (via REST service deployed onboard). Examples of command: land immediately, return to home/abord the mission, deploy payload, alter course/go to waypoint, alter mission, swarm, travel to another UAV.
 
 
+ground station console: http://home.kolesnik.org:8000/map.html
