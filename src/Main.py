@@ -127,6 +127,8 @@ if __name__ == '__main__':
 		cmds.wait_ready()
 		if pilot.vehicle.home_location == None:
 			print " Waiting for home location ..."
+			time.sleep(1)
+
 
 	# We have a home location.
 	print "\n Home location: %s" % pilot.vehicle.home_location
