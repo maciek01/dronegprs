@@ -94,6 +94,7 @@ if __name__ == '__main__':
 	http                    = httplib2.Http()
 	content_type_header     = "application/json"
 	defHost                    = "http://home.kolesnik.org:8000"
+	content = None
 	
 	parser = argparse.ArgumentParser()
 	parser.add_argument("--connect", default=defHost)
@@ -128,6 +129,17 @@ if __name__ == '__main__':
 		if pilot.vehicle.home_location == None:
 			print " Waiting for home location ..."
 			time.sleep(1)
+			try:
+				data = reportPilotData()
+				if data != None:
+					http.request( url, 'POST', json.dumps(data), headers=headers)
+				else:
+					continue
+			except Exception as inst:
+				noop = None
+				#comment out the following if runnign as daemon
+				traceback.print_exc()
+				continue
 
 
 	# We have a home location.
