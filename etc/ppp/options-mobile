@@ -1,8 +1,6 @@
 ttyUSB2
 921600
 lock
-
-modem
 passive
 novj
 defaultroute
@@ -16,6 +14,7 @@ maxfail 0
 debug
 
 # No modem control lines with FONA.
+#modem
 local
 
 # No hardware flow control on the serial link with FONA
