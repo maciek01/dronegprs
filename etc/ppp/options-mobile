@@ -1,7 +1,7 @@
 ttyUSB2
 921600
 lock
-crtscts
+
 modem
 passive
 novj
@@ -14,3 +14,10 @@ persist
 holdoff 10
 maxfail 0
 debug
+
+# No modem control lines with FONA.
+local
+
+# No hardware flow control on the serial link with FONA
+#crtscts
+nocrtscts
