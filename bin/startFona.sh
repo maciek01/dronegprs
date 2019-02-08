@@ -13,7 +13,8 @@ echo "AT+CFUN=1,1" >>/dev/ttyUSB0
 sleep 5
 
 #sudo pon fonaUSB0 debug dump logfd 2 updetach
-sudo pon fonaUSB0
+#sudo pon fonaUSB0
+sudo pon mobile-noauth-USB2
 
 sleep 5
 
