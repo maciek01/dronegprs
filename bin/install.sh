@@ -11,17 +11,23 @@ sudo pip install --upgrade dronekit
 #on sim PC:
 #sudo pip install dronekit-sitl
 
+#install pppd for wireless
 
+sudo ln -s /home/pi/dronegprs/etc/ppp/chatscripts /etc/ppp/chatscripts
+sudo ln -s /home/pi/dronegprs/etc/ppp/options-mobile /etc/ppp/options-mobile
 
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB0 /etc/ppp/peers/mobile-noauth-USB0
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB1 /etc/ppp/peers/mobile-noauth-USB1
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB2 /etc/ppp/peers/mobile-noauth-USB2
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB3 /etc/ppp/peers/mobile-noauth-USB3
 
-
-#install gprs
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB0 /etc/ppp/peers/fonaUSB0
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB1 /etc/ppp/peers/fonaUSB1
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB2 /etc/ppp/peers/fonaUSB2
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB3 /etc/ppp/peers/fonaUSB3
 
 #install client daemon
+
 sudo ln -s /home/pi/dronegprs/bin/droneclientd.sh /etc/init.d/droneclientd
 sudo ln -s /home/pi/dronegprs/bin/mavlinkd.sh /etc/init.d/mavlinkd
 sudo ln -s /home/pi/dronegprs/bin/fonad.sh /etc/init.d/fonad
