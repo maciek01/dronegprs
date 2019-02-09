@@ -12,7 +12,10 @@ do
 done
 
 #stop wifi
-sudo ifconfig wlan0 down
+if [ ! -f /home/pi/wifi ]; then
+    echo "turn wifi off"
+    sudo ifconfig wlan0 down
+fi
 
 
 
