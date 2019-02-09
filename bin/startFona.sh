@@ -2,6 +2,15 @@
 
 #exec 1> >(logger -s -t $(basename $0)) 2>&1
 
+
+#wait for USB
+
+while [ `lsusb |grep Qualcomm|wc -l ` -eq '0' ]
+do
+    sleep 1
+done
+
+
 #start gprs
 
 sleep 2
