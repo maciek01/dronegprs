@@ -12,7 +12,7 @@ do
 done
 
 #stop wifi
-if [ ! -f /home/pi/wifi ]; then
+if [ ! -f $HOME/wifi ]; then
     echo "turn wifi off"
     sudo ifconfig wlan0 down
 fi
@@ -35,7 +35,7 @@ sleep 1
 
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
 echo $IP
-echo $IP >/home/pi/ppp0-ip
+echo $IP >$HOME/ppp0-ip
 
 #sudo route del default
 #sudo route add default ppp0
