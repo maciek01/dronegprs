@@ -5,7 +5,7 @@ import json
 import time
 import datetime
 import sys, traceback
-import gps, pilot
+import gps, pilot, modem
 import command_processor
 import argparse
 
@@ -79,6 +79,9 @@ def reportPilotData():
 		"currVoltsLevel" : pilot.vehicle.battery.level,
 		"currMah" : pilot.vehicle.battery.current,
 
+		"modemstatus" : modem.MODEMSTATUS,
+		"modemsignal" : modem.MODEMSIGNAL,
+
 		#30 s reporting
 		"unitCallbackPort" : "8080"
 		}
@@ -107,6 +110,9 @@ if __name__ == '__main__':
 	#initialize gps
 	# disabled as now this port is connected to FC
 	#gps.gpsinit("/dev/ttyAMA0", 38400)
+
+	#initialize modem monitor
+	modem.modeminit("/dev/ttyUSB3", 38400, 5)
 
 	print "STARTING PILOT MODULE"
 	#initialize pilot
