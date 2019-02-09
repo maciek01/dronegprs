@@ -2,6 +2,8 @@
 
 #exec 1> >(logger -s -t $(basename $0)) 2>&1
 
+#clear state
+
 sudo ifconfig wlan0 up
 
 #wait for USB
@@ -17,19 +19,27 @@ if [ ! -f $HOME/wifi ]; then
     sudo ifconfig wlan0 down
 fi
 
+#modem is up
+
+sleep 2
+
+>$HOME/modemup
 
 
 #start gprs
 
+MODEM="$($HOME/dronegprs/src/getModem.py)"
+
 sleep 2
-echo "ATZ" >>/dev/ttyUSB2
+echo "ATZ" >>$MODEM
 sleep 2
-echo "AT+CFUN=1,1" >>/dev/ttyUSB2
+echo "AT+CFUN=1,1" >>$MODEM
 sleep 5
 
 #sudo pon fonaUSB0 debug dump logfd 2 updetach
 #sudo pon fonaUSB0
-pon mobile-noauth-USB2
+
+pon mobile-noauth-${MODEM: -4}
 
 sleep 1
 

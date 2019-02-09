@@ -112,7 +112,17 @@ if __name__ == '__main__':
 	#gps.gpsinit("/dev/ttyAMA0", 38400)
 
 	#initialize modem monitor
-	modem.modeminit("/dev/ttyUSB3", 38400, 5)
+	firstModem = modem.findModem([
+		"/dev/ttyUSB0",
+		"/dev/ttyUSB1",
+		"/dev/ttyUSB2",
+		"/dev/ttyUSB3",
+		"/dev/ttyUSB4",
+		"/dev/ttyUSB5",
+		"/dev/ttyUSB6"], 38400)
+	if firstModem != "":
+		print("Monitoring modem " + firstModem)
+		modem.modeminit(firstModem, 38400, 5, True)
 
 	print "STARTING PILOT MODULE"
 	#initialize pilot

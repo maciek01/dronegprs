@@ -37,6 +37,7 @@ do_start () {
 
     cd $HOME_DIR
     rm -rf /home/pi/dronegprs/src/*.pyc
+    rm -rf /home/pi/modemup
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
