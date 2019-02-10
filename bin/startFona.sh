@@ -23,12 +23,23 @@ fi
 
 sleep 2
 
->$HOME/modemup
 
 
 #start gprs
 
-MODEM="$($HOME/dronegprs/src/getModem.py)"
+#MODEM="$($HOME/dronegprs/src/getModem.py)"
+MODEM="/dev/ttyUSB2"
+
+echo "Modem id "$MODEM - ${MODEM: -4}
+
+echo $MODEM > $HOME/modemline
+
+if [ "$MODEM" == "" ]; then
+	echo "no modem line"
+	exit
+else
+      echo "modem found"
+fi
 
 sleep 2
 echo "ATZ" >>$MODEM
@@ -43,10 +54,20 @@ pon mobile-noauth-${MODEM: -4}
 
 sleep 1
 
+
+#wait for USB
+
+while [ `ifconfig |grep ppp0|wc -l ` -eq '0' ]
+do
+    sleep 1
+done
+
+>$HOME/modemup
+
+
+
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
 echo $IP
 echo $IP >$HOME/ppp0-ip
 
-#sudo route del default
-#sudo route add default ppp0
 
