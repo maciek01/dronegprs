@@ -24,16 +24,22 @@ vehicleLock = threading.RLock()
 URL = None
 BAUD = None
 
+#MAVLINK status
+curr_tot = 0
+voltages = None
 
 
-########################### STATE OBSERVERS ####################################
-# Add mode attribute callback using decorator (callbacks added this way cannot be removed).
-#@vehicle.on_attribute('mode')
-#def decorated_mode_callback(self, attr_name, value):
-    # `attr_name` is the observed attribute (used if callback is used for multiple attributes)
-    # `attr_name` - the observed attribute (used if callback is used for multiple attributes)
-    # `value` is the updated attribute value.
-    #print " CALLBACK: Mode changed to", value
+
+########################### STATE AND MESSAGE OBSERVERS ########################
+
+def onMavLink_attr_mode(self, name, value):
+	print " CALLBACK: Mode changed to", value
+
+def onMavLink_msg_BATTERY_STATUS(self, name, message):
+	global curr_tot
+	global voltages
+	curr_tot = message.current_consumed
+	voltages = message.voltages
 
 
 ########################### THREAD HELPERS #####################################
@@ -69,6 +75,19 @@ def initVehicle():
 				vehicle = None
 				#traceback.print_exc()
 				time.sleep(5)
+
+
+		#register listeners
+
+		@vehicle.on_message('BATTERY_STATUS')
+		def listener_msg_BATTERY_STATUS(self, name, message):
+			onMavLink_msg_BATTERY_STATUS(self, name, message)
+
+		@vehicle.on_attribute('mode')
+		def listener_attr_mode(self, name, value):
+			onMavLink_attr_mode(self, name, value)
+
+
 	finally:
 		unlockV()
 

@@ -77,7 +77,9 @@ def reportPilotData():
 
 		"currVolts" : pilot.vehicle.battery.voltage,
 		"currVoltsLevel" : pilot.vehicle.battery.level,
-		"currMah" : pilot.vehicle.battery.current,
+		"currA" : pilot.vehicle.battery.current,
+		"currTotmAh" : pilot.curr_tot,
+		"voltages" : pilot.voltages,
 
 		"modemstatus" : modem.MODEMSTATUS,
 		"modemsignal" : modem.MODEMSIGNAL,

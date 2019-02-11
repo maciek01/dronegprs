@@ -128,9 +128,7 @@ def isModem(port, baud):
 	global serialPort
 	global TESTRESULT
 
-	cnt = 0
-        while cnt < 60 and not os.path.isfile("/home/pi/modemup"):
-		cnt = cnt + 1
+        while not os.path.isfile("/home/pi/modemup"):   #create file by hand to break the loop
                 time.sleep(1)
 
 	if not os.path.isfile("/home/pi/modemup"):
