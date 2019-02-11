@@ -12,8 +12,8 @@ current_milli_time = lambda: int(time.time() * 1000)
 
 
 
-operatingAlt = 20
-operatingSpeed = 10
+operatingAlt = 100
+operatingSpeed = 15
 requestedLat = None
 requestedLon = None
 savedLat = None
