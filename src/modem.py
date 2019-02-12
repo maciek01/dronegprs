@@ -3,7 +3,7 @@
 import sys, traceback
 import serial, threading
 import time, datetime
-import os.path
+import os.path, csv
 
 
 
@@ -19,6 +19,17 @@ MODEMSTATUS = "OFF"
 MODEMSIGNAL = "NONE"
 LASTRESULT = ""
 TESTRESULT = False
+EXPECT_BODY = False
+
+mt_idx = 0
+mt_status = 1
+mt_src_addr = 2
+mt_fill = 3
+mt_date = 4
+
+mt_header = [None,None,None,None,None]
+mt_body = None
+
 
 serialPort = None
 
@@ -30,13 +41,38 @@ def handle_newline(line):
 	global MODEMSIGNAL
 	global LASTRESULT
 	global TESTRESULT
+	global EXPECT_BODY
+
+	global mt_header
+	global mt_body
+
 
 	MODEMSTATUS = "ON"
 	LASTRESULT = line
+
+	if EXPECT_BODY:
+		mt_body = line
+		EXPECT_BODY = False
+		print mt_body
 	if line.startswith("+CSQ:"):
 		MODEMSIGNAL = line[6:]
 	if line.startswith("+CPIN: READY"):
 		TESTRESULT = True
+	if line.startswith("+CMGL: "):
+		reader = csv.reader(line[7:].split('\n'), delimiter=',')
+		idx = 0
+		for row in reader:
+			mt_header[idx] = row
+			idx = idx + 1
+		EXPECT_BODY = True
+		print mt_header
+	if line.startswith("+CMGR: "):
+                reader = csv.reader(line[7:].split('\n'), delimiter=',')
+                idx = 1
+                for row in reader:
+			mt_header[idx] = row
+			idx = idx + 1
+		EXPECT_BODY = True
 
 
 def handle_data(data):
@@ -115,6 +151,15 @@ def get_status(sleepS):
 		time.sleep(sleepS)
 
 	print("connected TX")
+	serialPort.write("AT+CMGF=1\r\n")
+	time.sleep(1)
+	serialPort.write("AT+CGSMS=1\r\n")
+	time.sleep(1)
+	serialPort.write("AT+CSMP=17,167,0,242\r\n") #flash message
+	time.sleep(1)
+        serialPort.write("AT+CMGL=\"ALL\"\r\n") #examine inbox
+
+
 	while readOn:
 		try:	
 			time.sleep(sleepS)
