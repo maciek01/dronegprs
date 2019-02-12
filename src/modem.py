@@ -20,6 +20,7 @@ MODEMSIGNAL = "NONE"
 LASTRESULT = ""
 TESTRESULT = False
 EXPECT_BODY = False
+RESP = None
 
 mt_idx = 0
 mt_status = 1
@@ -27,7 +28,7 @@ mt_src_addr = 2
 mt_fill = 3
 mt_date = 4
 
-mt_header = [None,None,None,None,None]
+mt_header = None
 mt_body = None
 
 
@@ -42,6 +43,7 @@ def handle_newline(line):
 	global LASTRESULT
 	global TESTRESULT
 	global EXPECT_BODY
+	global RESP
 
 	global mt_header
 	global mt_body
@@ -49,29 +51,23 @@ def handle_newline(line):
 
 	MODEMSTATUS = "ON"
 	LASTRESULT = line
-
+	print line
 	if EXPECT_BODY:
 		mt_body = line
 		EXPECT_BODY = False
-		print mt_body
+		if mt_body.lower().startswith("stat") and mt_header[mt_status] == "REC UNREAD":
+			RESP = ["AT+CMGD=" + mt_header[mt_idx] + "\r\n", "AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n", "HELLO\r",  chr(26)]
+
 	if line.startswith("+CSQ:"):
 		MODEMSIGNAL = line[6:]
+
 	if line.startswith("+CPIN: READY"):
 		TESTRESULT = True
+
 	if line.startswith("+CMGL: "):
 		reader = csv.reader(line[7:].split('\n'), delimiter=',')
-		idx = 0
 		for row in reader:
-			mt_header[idx] = row
-			idx = idx + 1
-		EXPECT_BODY = True
-		print mt_header
-	if line.startswith("+CMGR: "):
-                reader = csv.reader(line[7:].split('\n'), delimiter=',')
-                idx = 1
-                for row in reader:
-			mt_header[idx] = row
-			idx = idx + 1
+			mt_header = row
 		EXPECT_BODY = True
 
 
@@ -146,6 +142,7 @@ def read_from_port(modemport, modembaud):
 def get_status(sleepS):
         global readOn
         global serialPort
+	global RESP
 
 	while serialPort == None and readOn:
 		time.sleep(sleepS)
@@ -157,16 +154,28 @@ def get_status(sleepS):
 	time.sleep(1)
 	serialPort.write("AT+CSMP=17,167,0,242\r\n") #flash message
 	time.sleep(1)
-        serialPort.write("AT+CMGL=\"ALL\"\r\n") #examine inbox
-
 
 	while readOn:
-		try:	
+		try:
+			if RESP != None:
+				for line in RESP:
+					serialPort.write(line)
+					print line
+					time.sleep(2)
+				RESP = None
+
 			time.sleep(sleepS)
 			serialPort.write("AT+CSQ\r\n")
+
+			sendInboxReq(serialPort)
+
                 except Exception as inst:
                         traceback.print_exc()
+
 	print("disconnected TX")
+
+def sendInboxReq(ser):
+	ser.write("AT+CMGL=\"ALL\"\r\n") #examine inbox
 
 def isModem(port, baud):
 
