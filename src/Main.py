@@ -84,6 +84,9 @@ def reportPilotData():
 		"modemstatus" : modem.MODEMSTATUS,
 		"modemsignal" : modem.MODEMSIGNAL,
 
+		"message" : pilot.statusMessage,
+		"messageSev" : pilot.statusSev,
+
 		#30 s reporting
 		"unitCallbackPort" : "8080"
 		}

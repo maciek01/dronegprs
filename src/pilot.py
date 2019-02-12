@@ -27,6 +27,8 @@ BAUD = None
 #MAVLINK status
 curr_tot = 0
 voltages = None
+statusMessage = ""
+statusSev = -1 #https://mavlink.io/en/messages/common.html#MAV_SEVERITY
 
 
 
@@ -40,6 +42,13 @@ def onMavLink_msg_BATTERY_STATUS(self, name, message):
 	global voltages
 	curr_tot = message.current_consumed
 	voltages = message.voltages
+
+def onMavLink_msg_STATUSTEXT(self, name, message):
+	global statusMessage
+	global statusSev
+
+	statusMessage = message.text
+	statusSev = message.severity
 
 
 ########################### THREAD HELPERS #####################################
@@ -82,6 +91,10 @@ def initVehicle():
 		@vehicle.on_message('BATTERY_STATUS')
 		def listener_msg_BATTERY_STATUS(self, name, message):
 			onMavLink_msg_BATTERY_STATUS(self, name, message)
+
+		@vehicle.on_message('STATUSTEXT')
+		def listener_msg_STATUSTEXT(self, name, message):
+			onMavLink_msg_STATUSTEXT(self, name, message)
 
 		@vehicle.on_attribute('mode')
 		def listener_attr_mode(self, name, value):
