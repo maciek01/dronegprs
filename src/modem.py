@@ -15,12 +15,17 @@ getLine = ""
 rx_thread = None
 tx_thread = None
 
+portLock = threading.RLock()
+
+
 MODEMSTATUS = "OFF"
 MODEMSIGNAL = "NONE"
 LASTRESULT = ""
 TESTRESULT = False
 EXPECT_BODY = False
 RESP = None
+
+pilotData = None
 
 mt_idx = 0
 mt_status = 1
@@ -35,6 +40,13 @@ mt_body = None
 serialPort = None
 
 current_milli_time = lambda: int(time.time() * 1000)
+
+
+def lockP():
+        portLock.acquire()
+
+def unlockP():
+        portLock.release()
 
 def handle_newline(line):
 
@@ -51,12 +63,25 @@ def handle_newline(line):
 
 	MODEMSTATUS = "ON"
 	LASTRESULT = line
+
 	print line
 	if EXPECT_BODY:
 		mt_body = line
 		EXPECT_BODY = False
-		if mt_body.lower().startswith("stat") and mt_header[mt_status] == "REC UNREAD":
-			RESP = ["AT+CMGD=" + mt_header[mt_idx] + "\r\n", "AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n", "HELLO\r",  chr(26)]
+		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC UNREAD":
+
+			msg_parts = splitMsg(smsStatus())
+
+			newResp = ["AT+CMGD=" + mt_header[mt_idx] + "\r\n"]
+
+			for part in msg_parts:
+				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+				newResp.append(part + chr(26))
+
+			RESP = newResp
+
+		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC READ":
+			RESP = ["AT+CMGD=" + mt_header[mt_idx] + "\r\n"]
 
 	if line.startswith("+CSQ:"):
 		MODEMSIGNAL = line[6:]
@@ -71,6 +96,54 @@ def handle_newline(line):
 		EXPECT_BODY = True
 
 
+def splitMsg(msg):
+	maxLen = 120
+
+	lines = msg.split('\r')
+	sms = ""
+	newMsgs = []
+	for item in lines:
+
+		if len(sms) != 0 and len(sms) + len(item) + 1 > maxLen:
+			newMsgs.append(sms[:maxLen])
+			sms = item[:maxLen]
+		else:
+			sms = sms + ('\r' if sms != "" else '') + item[:maxLen]
+	if sms != "":
+		newMsgs.append(sms[:maxLen])
+		sms = ""
+
+	return newMsgs
+
+
+
+def smsStatus():
+	global MODEMSIGNAL
+	global pilotData
+
+	res = ""
+
+	data = pilotData
+
+	if data != None:
+		res = res + "gps Lat:" + str(data["gpsLat"]) + "\r"
+		res = res + "gps Lon:" + str(data["gpsLon"]) + "\r"
+		res = res + "gps Alt:" + str(data["gpsAlt"]) + "\r"
+		res = res + "gps Speed:" + str(data["gpsSpeed"]) + "\r"
+		res = res + "gps Sats:" + str(data["gpsNumSats"]) + "\r"
+		res = res + "heading:" + str(data["heading"]) + "\r"
+		res = res + "bat V:" + str(data["currVolts"]) + "\r"
+		res = res + "bat mAh:" + str(data["currTotmAh"]) + "\r"
+		res = res + "bat Curr:" + str(data["currA"]) + "\r"
+	res = res + "GSM SIGNAL:" + MODEMSIGNAL
+	if data != None:
+		res = res + "\rlast msg:" + str(data["message"]) + "\r"
+
+	return res
+
+
+
+
 def handle_data(data):
 	global buffer
 	global getLine
@@ -78,7 +151,6 @@ def handle_data(data):
 		if d == '\n':
 			getLine = buffer
 			buffer = ""
-			#print ("modem RX=",getLine)
 			handle_newline(getLine)
 		elif d != '\r':
 			buffer = buffer + str(d)
@@ -121,8 +193,12 @@ def read_from_port(modemport, modembaud):
 
 	while readOn and ser != None:
 		try:
-			if ser.inWaiting() > 0:
-				handle_data(ser.read(ser.inWaiting()))
+			lockP()
+			try:
+				if ser.inWaiting() > 0:
+					handle_data(ser.read(ser.inWaiting()))
+			finally:
+				unlockP()
 			MODEMSTATUS = "ON"
 			time.sleep(1)
 		except Exception as inst:
@@ -148,25 +224,17 @@ def get_status(sleepS):
 		time.sleep(sleepS)
 
 	print("connected TX")
-	serialPort.write("AT+CMGF=1\r\n")
-	time.sleep(1)
-	serialPort.write("AT+CGSMS=1\r\n")
-	time.sleep(1)
-	serialPort.write("AT+CSMP=17,167,0,242\r\n") #flash message
-	time.sleep(1)
+	initSMS(serialPort)
 
 	while readOn:
 		try:
+			time.sleep(sleepS)
+
 			if RESP != None:
-				for line in RESP:
-					serialPort.write(line)
-					print line
-					time.sleep(2)
+				sendRESP()
 				RESP = None
 
-			time.sleep(sleepS)
-			serialPort.write("AT+CSQ\r\n")
-
+			sendSigReq(serialPort)
 			sendInboxReq(serialPort)
 
                 except Exception as inst:
@@ -174,8 +242,53 @@ def get_status(sleepS):
 
 	print("disconnected TX")
 
+def sendRESP():
+	for line in RESP:
+		lockP()
+		try:
+			serialPort.write(line)
+			flushPort(serialPort)
+			time.sleep(2)
+				
+		finally:
+			unlockP()
+
+
+def flushPort(ser):
+	ser.flush()
+
+def initSMS(ser):
+	lockP()
+	try:
+		ser.write("AT+CMGF=1\r\n")
+		flushPort(ser)
+		time.sleep(0.5)
+		ser.write("AT+CGSMS=1\r\n")
+		flushPort(ser)
+		time.sleep(0.5)
+		ser.write("AT+CSMP=17,167,0,242\r\n") #flash message
+		flushPort(ser)
+		time.sleep(0.5)
+	finally:
+		unlockP()
+
 def sendInboxReq(ser):
-	ser.write("AT+CMGL=\"ALL\"\r\n") #examine inbox
+	lockP()
+	try:
+		ser.write("AT+CMGL=\"ALL\"\r\n") #examine inbox
+		flushPort(ser)
+		time.sleep(0.5)
+	finally:
+		unlockP()
+
+def sendSigReq(ser):
+	lockP()
+	try:
+		ser.write("AT+CSQ\r\n")
+		flushPort(ser)
+		time.sleep(0.5)
+	finally:
+		unlockP()
 
 def isModem(port, baud):
 

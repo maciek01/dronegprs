@@ -10,6 +10,9 @@ import command_processor
 import argparse
 
 
+globalData = None
+
+
 def reportGPSData():
 	global unitID
 
@@ -152,6 +155,8 @@ if __name__ == '__main__':
 			time.sleep(1)
 			try:
 				data = reportPilotData()
+				globalData = data
+				modem.pilotData = data
 				if data != None:
 					http.request( url, 'POST', json.dumps(data), headers=headers)
 				else:
@@ -172,6 +177,8 @@ if __name__ == '__main__':
 			time.sleep(1)
 			#data = reportGPSData()
 			data = reportPilotData()
+			globalData = data
+			modem.pilotData = data
 			if data != None:
 				response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
 			else:
