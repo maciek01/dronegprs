@@ -1,5 +1,6 @@
 
-sudo apt-get install python-pip python-dev screen python-wxgtk2.8 python-matplotlib python-opencv python-numpy python-dev libxml2-dev libxslt-dev ppp screen elinks
+sudo apt-get install python-pip python-dev screen python-wxgtk2.8 python-matplotlib \
+python-opencv python-numpy python-dev libxml2-dev libxslt-dev ppp screen elinks python3-lxml python-lxml
 
 
 sudo pip install --upgrade httplib2
@@ -36,7 +37,10 @@ sudo update-rc.d mavlinkd defaults
 sudo update-rc.d fonad defaults
 
 
-sudo usermod -G dip pi
+sudo usermod -a -G dip pi
+
+#sudo usermod -G pi,adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi,dip pi
+
 
 
 
