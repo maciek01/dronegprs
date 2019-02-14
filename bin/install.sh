@@ -36,7 +36,7 @@ sudo update-rc.d mavlinkd defaults
 sudo update-rc.d fonad defaults
 
 
-usermod -G dip pi
+sudo usermod -G dip pi
 
 
 
