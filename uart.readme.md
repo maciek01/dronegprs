@@ -1,4 +1,7 @@
 
+https://www.raspberrypi.org/documentation/configuration/uart.md
+
+
 #setting up RPi3 UART
 
 
