@@ -37,7 +37,10 @@ sudo update-rc.d mavlinkd defaults
 sudo update-rc.d fonad defaults
 
 
-sudo usermod -G dip pi
+sudo usermod -a -G dip pi
+
+#sudo usermod -G pi,adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi,dip pi
+
 
 
 
