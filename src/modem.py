@@ -232,6 +232,7 @@ def get_status(sleepS):
 	print("connected TX")
 	initSMS(serialPort)
 
+	cnt = 0 # use ERROR response check
 	while readOn:
 		try:
 			time.sleep(sleepS)
@@ -242,6 +243,11 @@ def get_status(sleepS):
 
 			sendSigReq(serialPort)
 			sendInboxReq(serialPort)
+
+			cnt = cnt + 1
+			if cnt % 10 == 0:
+				cnt = 0
+				initSMS(serialPort) #reinitialize sms
 
                 except Exception as inst:
                         traceback.print_exc()
