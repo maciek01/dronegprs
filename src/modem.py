@@ -5,9 +5,15 @@ import serial, threading
 import time, datetime
 import os.path, csv
 
+#external status
 
+MODEMSTATUS = "OFF"
+MODEMSIGNAL = "NONE"
+LASTRESULT = ""
+TESTRESULT = False
 
 readOn = False
+
 
 buffer = ""
 getLine = ""
@@ -17,13 +23,8 @@ tx_thread = None
 
 portLock = threading.RLock()
 
-
-MODEMSTATUS = "OFF"
-MODEMSIGNAL = "NONE"
-LASTRESULT = ""
-TESTRESULT = False
-EXPECT_BODY = False
-RESP = None
+expect_body = False
+resp = None
 
 pilotData = None
 
@@ -54,8 +55,8 @@ def handle_newline(line):
 	global MODEMSIGNAL
 	global LASTRESULT
 	global TESTRESULT
-	global EXPECT_BODY
-	global RESP
+	global expect_body
+	global resp
 
 	global mt_header
 	global mt_body
@@ -65,23 +66,28 @@ def handle_newline(line):
 	LASTRESULT = line
 
 	print line
-	if EXPECT_BODY:
+	if expect_body:
 		mt_body = line
-		EXPECT_BODY = False
+		expect_body = False
+		newResp = []
 		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC UNREAD":
 
 			msg_parts = splitMsg(smsStatus())
 
-			newResp = ["AT+CMGD=" + mt_header[mt_idx] + "\r\n"]
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
 
 			for part in msg_parts:
 				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
 				newResp.append(part + chr(26))
-
-			RESP = newResp
-
 		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC READ":
-			RESP = ["AT+CMGD=" + mt_header[mt_idx] + "\r\n"]
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
+		if not mt_body.lower().strip().startswith("stat"):
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
+			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+			newResp.append("Valid commands: stat rtl help" + chr(26))
+
+		if len(newResp) != 0:
+			resp = newResp
 
 	if line.startswith("+CSQ:"):
 		MODEMSIGNAL = line[6:]
@@ -93,7 +99,7 @@ def handle_newline(line):
 		reader = csv.reader(line[7:].split('\n'), delimiter=',')
 		for row in reader:
 			mt_header = row
-		EXPECT_BODY = True
+		expect_body = True
 
 
 def splitMsg(msg):
@@ -218,7 +224,7 @@ def read_from_port(modemport, modembaud):
 def get_status(sleepS):
         global readOn
         global serialPort
-	global RESP
+	global resp
 
 	while serialPort == None and readOn:
 		time.sleep(sleepS)
@@ -230,9 +236,9 @@ def get_status(sleepS):
 		try:
 			time.sleep(sleepS)
 
-			if RESP != None:
+			if resp != None:
 				sendRESP()
-				RESP = None
+				resp = None
 
 			sendSigReq(serialPort)
 			sendInboxReq(serialPort)
@@ -243,7 +249,7 @@ def get_status(sleepS):
 	print("disconnected TX")
 
 def sendRESP():
-	for line in RESP:
+	for line in resp:
 		lockP()
 		try:
 			serialPort.write(line)
