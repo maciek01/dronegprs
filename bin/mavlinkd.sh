@@ -16,7 +16,7 @@ DAEMON=$DIR/screen
 DAEMON_NAME=mavlinkd
 
 # Add any command line options for your daemon here
-DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /usr/local/bin/mavproxy.py --master=/dev/ttyAMA0 --baudrate 57600 --aircraft drone1 --out localhost:14550"
+DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /usr/local/bin/mavproxy.py --master=/dev/serial0 --baudrate 57600 --aircraft drone1 --out localhost:14550"
 
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.

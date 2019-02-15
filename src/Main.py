@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
 	#initialize gps
 	# disabled as now this port is connected to FC
-	#gps.gpsinit("/dev/ttyAMA0", 38400)
+	#gps.gpsinit("/dev/serial0", 38400)
 
 	#initialize modem monitor
 	firstModem = modem.findModem([

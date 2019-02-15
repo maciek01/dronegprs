@@ -9,7 +9,12 @@ https://www.raspberrypi.org/documentation/configuration/uart.md
 
 Add to the end of the file
 
-  dtoverlay=pi3-disable-bt
+dtoverlay=pi3-disable-bt
+
+console=tty1
+
+enable_uart=1
+
 
 We also need to run to stop BT modem trying to use UART
 
@@ -36,6 +41,9 @@ Or:
   console=/dev/serial0,115200 
 
 Or anything involving console= that isn't console=tty1, remove it. Make sure not to accidentally add a line break to that file, it should remain all one line with spaces between the options, but no spaces around any =.
+
+dwc_otg.lpm_enable=0 console=tty1 root=PARTUUID=7ad5c2ec-02 rootfstype=ext4 elevator=deadline fsck.repair=yes rootwait
+
 
 The other aspect is the login started by the init system. On Raspbian jessie, check:
 

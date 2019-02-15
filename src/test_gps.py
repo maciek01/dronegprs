@@ -3,7 +3,7 @@
 
 import gps,time
 
-gps.gpsinit("/dev/ttyAMA0", 38400)
+gps.gpsinit("/dev/serial0", 38400)
 
 while True:
 	print "Lat/Lon: " + gps.GPSLAT + " / " + gps.GPSLON
