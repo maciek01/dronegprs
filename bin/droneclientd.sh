@@ -13,13 +13,11 @@
 # Change the next 3 lines to suit where you install your script and what you want to call it
 #DIR=/home/pi/dronegprs/src
 DIR=/usr/bin
-#DAEMON=$DIR/Main.py
 DAEMON=$DIR/screen
 DAEMON_NAME=droneclientd
 
 # Add any command line options for your daemon here
-#DAEMON_OPTS=""
-DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/src/Main.py"
+DAEMON_OPTS="-c /tmp/screenrc.$$ -dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/src/Main.py"
 
 
 # This next line determines what user the script runs as.
@@ -32,6 +30,11 @@ PIDFILE=/var/run/$DAEMON_NAME/pid
 
 . /lib/lsb/init-functions
 
+#setup screen config
+cat << EOF >/tmp/screenrc.$$
+logfile $HOME_DIR/pilot.log
+EOF
+
 do_start () {
     log_daemon_msg "Starting user $DAEMON_NAME daemon"
 
@@ -43,6 +46,7 @@ do_start () {
 
     #start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
     sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
+    rm /tmp/screenrc.$$
 
     log_end_msg $?
 }

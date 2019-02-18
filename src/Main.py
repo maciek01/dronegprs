@@ -130,11 +130,14 @@ if __name__ == '__main__':
 		"/dev/ttyUSB6"], 38400)
 	if firstModem != "":
 		print("Monitoring modem " + firstModem)
-		modem.modeminit(firstModem, 38400, 5, True)
+		modem.modeminit(firstModem, 57600, 5, True)
 
 	print "STARTING PILOT MODULE"
 	#initialize pilot
-	pilot.pilotinit("udp:localhost:14550", 115200)
+	pilot.pilotinit("udp:localhost:14550", 57600)
+	#pilot.pilotinit("udpbcast:192.168.2.255:14550", 57600)
+	#pilot.pilotinit("udpin:0.0.0.0:14550", 57600)
+	#pilot.pilotinit("/dev/pts/2", 57600)
 
 
 	print "STARTING COMMAND PROCESSOR MODULE"

@@ -71,11 +71,8 @@ def handle_newline(line):
 		expect_body = False
 		newResp = []
 		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC UNREAD":
-
-			msg_parts = splitMsg(smsStatus())
-
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
-
+			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
 				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
 				newResp.append(part + chr(26))
@@ -85,6 +82,11 @@ def handle_newline(line):
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
 			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
 			newResp.append("Valid commands: stat rtl help" + chr(26))
+			msg_parts = splitMsg(smsStatus())
+			for part in msg_parts:
+                                newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+                                newResp.append(part + chr(26))
+
 
 		if len(newResp) != 0:
 			resp = newResp

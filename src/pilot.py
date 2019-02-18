@@ -79,6 +79,7 @@ def initVehicle():
 		while vehicle == None:
 			try:
 				vehicle = connect(URL, baud=BAUD, wait_ready=True)
+				#vehicle = connect(URL, baud=BAUD, wait_ready=False)
 
 			except Exception as inst:
 				vehicle = None

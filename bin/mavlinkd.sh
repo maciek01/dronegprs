@@ -16,7 +16,8 @@ DAEMON=$DIR/screen
 DAEMON_NAME=mavlinkd
 
 # Add any command line options for your daemon here
-DAEMON_OPTS="-dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /usr/local/bin/mavproxy.py --master=/dev/serial0 --baudrate 57600 --aircraft drone1 --out localhost:14550"
+DAEMON_OPTS="-c /tmp/screenrc.$$ -dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /usr/local/bin/mavproxy.py --master=/dev/serial0 --baudrate 57600 --aircraft drone1 --out localhost:14550 --non-interactive"
+
 
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
@@ -28,8 +29,15 @@ PIDFILE=/var/run/$DAEMON_NAME/pid
 
 . /lib/lsb/init-functions
 
+#setup screen config
+cat << EOF >/tmp/screenrc.$$
+logfile $HOME_DIR/mavproxy.log
+EOF
+
 do_start () {
     log_daemon_msg "Starting user $DAEMON_NAME daemon"
+
+
 
     cd $HOME_DIR
     sudo -u $DAEMON_USER /usr/sbin/logrotate -s $HOME_DIR/logstatus $HOME_DIR/dronegprs/logrotate/pi.conf
@@ -39,6 +47,7 @@ do_start () {
     #start-stop-daemon --start --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
     #sudo -u $DAEMON_USER -- sh -c 'cd $HOME_DIR ; $DAEMON $DAEMON_OPTS & echo $! >$PIDFILE'
     sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
+    rm /tmp/screenrc.$$
 
     log_end_msg $?
 }
