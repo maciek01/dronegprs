@@ -25,6 +25,8 @@ DAEMON_OPTS="-c /tmp/screenrc.$$ -dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/ba
 DAEMON_USER=pi
 HOME_DIR=/home/$DAEMON_USER
 
+DAEMON_OPTS="$DAEMON_OPTS --config $HOME_DIR/main.cfg"
+
 # The process ID of the script when it runs is stored here:
 PIDFILE=/var/run/$DAEMON_NAME/pid
 

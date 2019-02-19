@@ -354,6 +354,13 @@ def modeminit(modemport, modembaud, sleepS, isMonitor):
 
 	readOn = True
 
+        while not os.path.isfile("/home/pi/modemup"):   #create file by hand to break the loop
+                time.sleep(1)
+
+        if not os.path.isfile("/home/pi/modemup"):
+                return False
+
+
 	rx_thread = threading.Thread(target=read_from_port, args=(modemport,modembaud,))
 	rx_thread.daemon = True
 	rx_thread.start()

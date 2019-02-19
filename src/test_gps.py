@@ -7,6 +7,8 @@ gps.gpsinit("/dev/serial0", 38400)
 
 while True:
 	print "Lat/Lon: " + gps.GPSLAT + " / " + gps.GPSLON
+	print "Lat: " + str(gps.GPSLATNORM)
+	print "Lon: " + str(gps.GPSLONNORM)
 	print "Time UTC: " + gps.GPSTIME
 	print "Status: " + gps.GPSSTATUS
 	print "Status ts: ", gps.GPSLASTSTATUSMS

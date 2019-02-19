@@ -8,18 +8,22 @@ import sys, traceback
 import gps, pilot, modem
 import command_processor
 import argparse
-
-
-globalData = None
+import ConfigParser
 
 
 def reportGPSData():
 	global unitID
+	global gpsPort
+
+	if gpsPort == "":
+		return None
 
 	data = {
 		"unitId" : unitID,
 		"stateTimestampMS" : gps.current_milli_time(),
-		"gpsLatLong" : gps.GPSLAT + " / " + gps.GPSLON,
+		"gpsLatLon" : gps.GPSLAT + " / " + gps.GPSLON,
+		"gpsLat" : gps.GPSLATNORM,
+		"gpsLon" : gps.GPSLONNORM,
 		"gpsTime" : gps.GPSTIME,
 		"gpsStatus" : gps.GPSSTATUS,
 		"gpsLastStatusMS" : gps.GPSLASTSTATUSMS,
@@ -30,8 +34,9 @@ def reportGPSData():
 
 def reportPilotData():
 	global unitID
+	global mavproxyPort
 
-	if pilot.vehicle == None:
+	if pilot.vehicle == None or mavproxyPort == "":
 		return None
 
 	data = {
@@ -96,60 +101,108 @@ def reportPilotData():
 
 	return data
 
+def mergeData(pilotData, gpsData):
+
+	if pilotData == None:
+		return gpsData
+	if gpsData == None:
+		return pilotData
+
+	pilotData["gpsLatLon"] = gpsData["gpsLatLon"]
+	pilotData["gpsTime"] = gpsData["gpsTime"]
+	pilotData["gpsStatus"] = gpsData["gpsStatus"]
+
+	return pilotData
+
+
+
 if __name__ == '__main__':
 
 	print "STARTING MAIN MODULE"
 
-	unitID = "drone1"
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
 	content_type_header     = "application/json"
-	defHost                    = "http://home.kolesnik.org:8000"
 	content = None
-	
+
+	#parse args	
+
 	parser = argparse.ArgumentParser()
-	parser.add_argument("--connect", default=defHost)
+	parser.add_argument("--config", default="/home/pi/main.cfg")
 	args = parser.parse_args()
 
-	url = args.connect + "/uavserver/v1/heartbeat"
+	cfg = args.config
+
+	#read config
+
+	config = ConfigParser.ConfigParser()
+	config.readfp(open(cfg, 'r'))
+
+	#read cfg params
+	mavproxyPort = config.get('main', 'mavproxyPort')
+	mavproxyBaud = config.get('main', 'mavproxyBaud')
+	gpsPort = config.get('main', 'gpsPort')
+	gpsBaud = config.get('main', 'gpsBaud')
+	modemPort = config.get('main', 'modemPort')
+	modemBaud = config.get('main', 'modemBaud')
+	modems = config.get('main', 'modems')
+	host = config.get('main', 'host')
+	uri = config.get('main', 'uri')
+	unitID = config.get('main', 'unitID')
+
+	#apply cfg defaults
+
+	unitID = unitID if unitID != "" else "drone1"
+	uri = uri if uri != "" else "/uavserver/v1/heartbeat"
+	host = host if host != "" else "http://home.kolesnik.org:8000"
+	url = host + uri
+
+
+	print "CONFIGURATION:"
+	print " unitID:", unitID
+	print " url:", url
+	print " mavproxyPort:", mavproxyPort
+	print " mavproxyBaud:", mavproxyBaud
+	print " gpsPort:", gpsPort
+	print " gpsBaud:", gpsBaud
+	print " modemPort:", modemPort
+	print " modemBaud:", modemBaud
+	print " modems:", modems
+
 
 	headers = {'Content-Type': content_type_header}
 
 	#initialize gps
-	# disabled as now this port is connected to FC
-	#gps.gpsinit("/dev/serial0", 38400)
+	if gpsPort != "":
+		print "STARTING GPS MODULE AT " + gpsPort
+		gps.gpsinit(gpsPort, int(gpsBaud))
 
 	#initialize modem monitor
-	firstModem = modem.findModem([
-		"/dev/ttyUSB0",
-		"/dev/ttyUSB1",
-		"/dev/ttyUSB2",
-		"/dev/ttyUSB3",
-		"/dev/ttyUSB4",
-		"/dev/ttyUSB5",
-		"/dev/ttyUSB6"], 38400)
+	if modemPort == "" and modems != "":
+		print("LOOK FOR AVAILABLE MODEMS ...")
+		modemList = modems.split(',')
+		firstModem = modem.findModem(modemList, int(modemBaud))
+	else:
+		firstModem = modemPort
 	if firstModem != "":
-		print("Monitoring modem " + firstModem)
-		modem.modeminit(firstModem, 57600, 5, True)
+		print("STARTING MODEM MODULE AT " + firstModem)
+		modem.modeminit(firstModem, int(modemBaud), 5, True)
 
-	print "STARTING PILOT MODULE"
 	#initialize pilot
-	pilot.pilotinit("udp:localhost:14550", 57600)
-	#pilot.pilotinit("udpbcast:192.168.2.255:14550", 57600)
-	#pilot.pilotinit("udpin:0.0.0.0:14550", 57600)
-	#pilot.pilotinit("/dev/pts/2", 57600)
-
+	if mavproxyPort != "":
+		print "STARTING PILOT MODULE AT " + mavproxyPort
+		pilot.pilotinit(mavproxyPort, int(mavproxyBaud))
 
 	print "STARTING COMMAND PROCESSOR MODULE"
 	#initialize command queue
 	command_processor.processorinit()
 
 	#wait for vehicel connection
-	while pilot.vehicle == None:
+	while pilot.vehicle == None and mavproxyPort != "":
 		time.sleep(1)
 
 	# Get Vehicle Home location - will be `None` until first set by autopilot
-	while pilot.vehicle.home_location == None:
+	while pilot.vehicle != None and pilot.vehicle.home_location == None:
 		cmds = pilot.vehicle.commands
 		cmds.download()
 		cmds.wait_ready()
@@ -157,8 +210,9 @@ if __name__ == '__main__':
 			print " Waiting for home location ..."
 			time.sleep(1)
 			try:
+				gpsData = reportGPSData()
 				data = reportPilotData()
-				globalData = data
+				data = mergeData(data, gpsData)
 				modem.pilotData = data
 				if data != None:
 					http.request( url, 'POST', json.dumps(data), headers=headers)
@@ -170,17 +224,17 @@ if __name__ == '__main__':
 				traceback.print_exc()
 				continue
 
-
-	# We have a home location.
-	print "\n Home location: %s" % pilot.vehicle.home_location
+	if pilot.vehicle != None:
+		# We have a home location.
+		print "\n Home location: %s" % pilot.vehicle.home_location
 
 	print "STARTING COMMAND LOOP"
 	while True:
 		try:
 			time.sleep(1)
-			#data = reportGPSData()
+			gpsData = reportGPSData()
 			data = reportPilotData()
-			globalData = data
+			data = mergeData(data, gpsData)
 			modem.pilotData = data
 			if data != None:
 				response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
