@@ -27,7 +27,10 @@ def reportGPSData():
 		"gpsTime" : gps.GPSTIME,
 		"gpsStatus" : gps.GPSSTATUS,
 		"gpsLastStatusMS" : gps.GPSLASTSTATUSMS,
-		"unitCallbackPort" : "8080"
+		"unitCallbackPort" : "8080",
+                "modemstatus" : modem.MODEMSTATUS,
+                "modemsignal" : modem.MODEMSIGNAL
+
 	}
 
 	return data
