@@ -44,10 +44,13 @@ do_start () {
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
 
-    #start-stop-daemon --start --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
-    #sudo -u $DAEMON_USER -- sh -c 'cd $HOME_DIR ; $DAEMON $DAEMON_OPTS & echo $! >$PIDFILE'
-    sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
-    rm /tmp/screenrc.$$
+    #start mavproxy if allowed
+    if [ ! -f $HOME_DIR/nomavlink ]; then
+        #start-stop-daemon --start --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
+        #sudo -u $DAEMON_USER -- sh -c 'cd $HOME_DIR ; $DAEMON $DAEMON_OPTS & echo $! >$PIDFILE'
+        sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
+        rm /tmp/screenrc.$$
+    fi
 
     log_end_msg $?
 }

@@ -136,15 +136,18 @@ def smsStatus():
 	if data != None:
 		res = res + "gps Lat:" + str(data["gpsLat"]) + "\r"
 		res = res + "gps Lon:" + str(data["gpsLon"]) + "\r"
-		res = res + "gps Alt:" + str(data["gpsAlt"]) + "\r"
-		res = res + "gps Speed:" + str(data["gpsSpeed"]) + "\r"
-		res = res + "gps Sats:" + str(data["gpsNumSats"]) + "\r"
-		res = res + "heading:" + str(data["heading"]) + "\r"
-		res = res + "bat V:" + str(data["currVolts"]) + "\r"
-		res = res + "bat mAh:" + str(data["currTotmAh"]) + "\r"
-		res = res + "bat Curr:" + str(data["currA"]) + "\r"
+		if "gpsAlt" not in data:
+			res = res + "no FC data\r"
+		else:
+			res = res + "gps Alt:" + str(data["gpsAlt"]) + "\r"
+			res = res + "gps Speed:" + str(data["gpsSpeed"]) + "\r"
+			res = res + "gps Sats:" + str(data["gpsNumSats"]) + "\r"
+			res = res + "heading:" + str(data["heading"]) + "\r"
+			res = res + "bat V:" + str(data["currVolts"]) + "\r"
+			res = res + "bat mAh:" + str(data["currTotmAh"]) + "\r"
+			res = res + "bat Curr:" + str(data["currA"]) + "\r"
 	res = res + "GSM SIGNAL:" + MODEMSIGNAL
-	if data != None:
+	if data != None and "message" in data:
 		res = res + "\rlast msg:" + str(data["message"]) + "\r"
 
 	return res

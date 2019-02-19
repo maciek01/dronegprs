@@ -247,7 +247,7 @@ if __name__ == '__main__':
 			continue
 
 		try:
-			if content != None:
+			if content != None and content != "":
 				actions = json.loads(content)
 				print "COMMANDS:" + content
 				if actions != None and actions['data'] != None and actions['data']['actionRequests'] != None:

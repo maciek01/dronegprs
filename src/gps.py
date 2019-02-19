@@ -78,7 +78,12 @@ def handle_data(data):
 			getLine = buffer
 			buffer = ""
 			#print (getLine)
-			handle_newline(getLine)
+			try:
+				handle_newline(getLine)
+			except Exception as inst:
+				traceback.print_exc()
+				print "line:"+getLine
+				time.sleep(5)
 		else:
 			buffer = buffer + str(d)
 
