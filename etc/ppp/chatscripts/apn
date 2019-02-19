@@ -1,1 +1,1 @@
-AT+CGDCONT=1,"IP","NXTGENPHONE"
+AT+CGDCONT=1,"IP","m2m.com.attz"
