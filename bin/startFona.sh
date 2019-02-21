@@ -62,8 +62,12 @@ do
     sleep 1
 done
 
+sleep 5
+
 >$HOME/modemup
 
+sudo cp /home/pi/dronegprs/resolv.conf.8.8.8.8 /etc/resolv.conf
+sudo cp /home/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
 
 
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
