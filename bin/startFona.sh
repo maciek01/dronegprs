@@ -45,6 +45,9 @@ done
 sleep 5
 
 >$HOME/modemup
+IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
+echo $IP
+echo $IP >$HOME/ppp0-ip
 
 #fixup dns and routing
 sudo cp /home/pi/dronegprs/resolv.conf.8.8.8.8 /etc/resolv.conf
@@ -58,7 +61,7 @@ sudo cp /home/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
 
 set +e
 sudo route delete default gw 192.168.2.1 wlan0
-sudo route add default gw 10.64.64.64 ppp0
+sudo route add default gw $IP ppp0
 set -e
 
 #new state
@@ -73,6 +76,3 @@ if [ ! -f $HOME/wifi ]; then
     sudo ifconfig wlan0 down
 fi
 
-IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
-echo $IP
-echo $IP >$HOME/ppp0-ip

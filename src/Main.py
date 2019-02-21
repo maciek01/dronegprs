@@ -175,11 +175,6 @@ if __name__ == '__main__':
 
 	headers = {'Content-Type': content_type_header}
 
-	#initialize gps
-	if gpsPort != "":
-		print "STARTING GPS MODULE AT " + gpsPort
-		gps.gpsinit(gpsPort, int(gpsBaud))
-
 	#initialize modem monitor
 	if modemPort == "" and modems != "":
 		print("LOOK FOR AVAILABLE MODEMS ...")
@@ -195,6 +190,11 @@ if __name__ == '__main__':
 	if mavproxyPort != "":
 		print "STARTING PILOT MODULE AT " + mavproxyPort
 		pilot.pilotinit(mavproxyPort, int(mavproxyBaud))
+
+	#initialize gps
+	if gpsPort != "":
+		print "STARTING GPS MODULE AT " + gpsPort
+		gps.gpsinit(gpsPort, int(gpsBaud))
 
 	print "STARTING COMMAND PROCESSOR MODULE"
 	#initialize command queue
