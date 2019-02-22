@@ -5,8 +5,8 @@ python-opencv python-numpy python-dev libxml2-dev libxslt-dev ppp screen elinks 
 
 sudo pip install --upgrade httplib2
 sudo pip install --upgrade pyserial
-#sudo pip install --upgrade pymavlink
-sudo pip install --upgrade mavproxy
+#not needed for on board
+#sudo pip install --upgrade mavproxy
 sudo pip install --upgrade dronekit
 
 #on sim PC:
