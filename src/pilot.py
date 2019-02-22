@@ -78,8 +78,9 @@ def initVehicle():
 		#open vehicle
 		while vehicle == None:
 			try:
-				vehicle = connect(URL, baud=BAUD, wait_ready=True)
-				#vehicle = connect(URL, baud=BAUD, wait_ready=False)
+				#vehicle = connect(URL, baud=BAUD, wait_ready=True)
+				vehicle = connect(URL, baud=BAUD, wait_ready=False)
+				vehicle.wait_ready(True, timeout=600)
 
 			except Exception as inst:
 				vehicle = None

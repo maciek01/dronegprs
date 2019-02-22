@@ -30,7 +30,8 @@ sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB3 /etc/ppp/peers/fonaUSB3
 #install client daemon
 
 sudo ln -s /home/pi/dronegprs/bin/droneclientd.sh /etc/init.d/droneclientd
-sudo ln -s /home/pi/dronegprs/bin/mavlinkd.sh /etc/init.d/mavlinkd
+#mavlink is only necessary to bridge over between on board and offboard computers
+#sudo ln -s /home/pi/dronegprs/bin/mavlinkd.sh /etc/init.d/mavlinkd
 sudo ln -s /home/pi/dronegprs/bin/fonad.sh /etc/init.d/fonad
 sudo update-rc.d droneclientd defaults
 sudo update-rc.d mavlinkd defaults

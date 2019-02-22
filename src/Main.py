@@ -37,9 +37,9 @@ def reportGPSData():
 
 def reportPilotData():
 	global unitID
-	global mavproxyPort
+	global mavlinkPort
 
-	if pilot.vehicle == None or mavproxyPort == "":
+	if pilot.vehicle == None or mavlinkPort == "":
 		return None
 
 	data = {
@@ -142,8 +142,8 @@ if __name__ == '__main__':
 	config.readfp(open(cfg, 'r'))
 
 	#read cfg params
-	mavproxyPort = config.get('main', 'mavproxyPort')
-	mavproxyBaud = config.get('main', 'mavproxyBaud')
+	mavlinkPort = config.get('main', 'mavlinkPort')
+	mavlinkBaud = config.get('main', 'mavlinkBaud')
 	gpsPort = config.get('main', 'gpsPort')
 	gpsBaud = config.get('main', 'gpsBaud')
 	modemPort = config.get('main', 'modemPort')
@@ -164,8 +164,8 @@ if __name__ == '__main__':
 	print "CONFIGURATION:"
 	print " unitID:", unitID
 	print " url:", url
-	print " mavproxyPort:", mavproxyPort
-	print " mavproxyBaud:", mavproxyBaud
+	print " mavlinkPort:", mavlinkPort
+	print " mavlinkBaud:", mavlinkBaud
 	print " gpsPort:", gpsPort
 	print " gpsBaud:", gpsBaud
 	print " modemPort:", modemPort
@@ -187,9 +187,9 @@ if __name__ == '__main__':
 		modem.modeminit(firstModem, int(modemBaud), 5, True)
 
 	#initialize pilot
-	if mavproxyPort != "":
-		print "STARTING PILOT MODULE AT " + mavproxyPort
-		pilot.pilotinit(mavproxyPort, int(mavproxyBaud))
+	if mavlinkPort != "":
+		print "STARTING PILOT MODULE AT " + mavlinkPort
+		pilot.pilotinit(mavlinkPort, int(mavlinkBaud))
 
 	#initialize gps
 	if gpsPort != "":
@@ -201,14 +201,14 @@ if __name__ == '__main__':
 	command_processor.processorinit()
 
 	#wait for vehicel connection
-	while pilot.vehicle == None and mavproxyPort != "":
+	while pilot.vehicle == None and mavlinkPort != "":
 		time.sleep(1)
 
 	# Get Vehicle Home location - will be `None` until first set by autopilot
 	while pilot.vehicle != None and pilot.vehicle.home_location == None:
 		cmds = pilot.vehicle.commands
 		cmds.download()
-		cmds.wait_ready()
+		cmds.wait_ready(timeout=600)
 		if pilot.vehicle.home_location == None:
 			print " Waiting for home location ..."
 			time.sleep(1)
