@@ -45,13 +45,26 @@ done
 sleep 5
 
 >$HOME/modemup
+
+#capture ppp0 interface ip
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
-echo $IP
+echo ppp0 ip $IP
 echo $IP >$HOME/ppp0-ip
 
-#fixup dns and routing
-sudo cp /home/pi/dronegprs/resolv.conf.8.8.8.8 /etc/resolv.conf
-sudo cp /home/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
+#capture wlan0 interface ip and gateway
+WLAN_IP=`/sbin/ip addr show wlan0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
+echo wlan0 ip $WLAN_IP
+echo $WLAN_IP >$HOME/wlan0-ip
+
+WLAN_GW=`/sbin/ip addr show wlan0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
+echo wlan0 gw $WLAN_GW
+echo $WLAN_GW >$HOME/wlan0-gw
+
+#fixup dns
+sudo cp $HOME/dronegprs/resolv.conf.8.8.8.8 /etc/resolv.conf
+sudo cp $HOME/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
+
+#fixup routing
 
 #default state
 #Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
@@ -64,7 +77,7 @@ sudo route delete default gw 192.168.2.1 wlan0
 sudo route add default gw $IP ppp0
 set -e
 
-#new state
+#autonomous state
 #Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 #default         10.64.64.64     0.0.0.0         UG    0      0        0 ppp0
 #10.64.64.64     *               255.255.255.255 UH    0      0        0 ppp0
