@@ -4,6 +4,7 @@ import sys, traceback
 import serial, threading
 import time, datetime
 import os.path, csv
+import command_processor
 
 #external status
 
@@ -91,18 +92,38 @@ def handle_newline(line):
 
 		expect_body = False
 		newResp = []
+		bodyHandled = False
+
+		if mt_header[mt_status] == "REC READ":
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
+
 		if mt_body.startswith("stat") and mt_header[mt_status] == "REC UNREAD":
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
 			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
 				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
 				newResp.append(part + chr(26))
-		if mt_body.startswith("stat") and mt_header[mt_status] == "REC READ":
-			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
-		if not mt_body.startswith("stat"):
+			bodyHandled = True
+		if mt_body.startswith("rtl") and mt_header[mt_status] == "REC UNREAD":
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
 			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
-			newResp.append("Valid commands: stat rtl help" + chr(26))
+			newResp.append("rtl received" + chr(26))
+			bodyHandled = True
+
+			action = {
+				"unitId": "",
+				"command": {
+					"name": "RTL",
+					"parameters": []
+				}
+			}
+
+			command_processor.commandQueue.put(action)
+
+		if not bodyHandled and mt_header[mt_status] == "REC UNREAD":
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
+			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+			newResp.append("valid commands: stat, rtl, help" + chr(26))
 			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
                                 newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
@@ -155,6 +176,7 @@ def smsStatus():
 	data = pilotData
 
 	if data != None:
+		res = res + "mode:" + str(data["mode"]) + "/" + str(data["status"]) + "\r"
 		res = res + "gps Lat:" + str(data["gpsLat"]) + "\r"
 		res = res + "gps Lon:" + str(data["gpsLon"]) + "\r"
 		if "gpsAlt" not in data:
