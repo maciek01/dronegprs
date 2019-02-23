@@ -80,12 +80,14 @@ def handle_newline(line):
 
 	print line
 	if expect_body:
-		mt_body = line.lower().strip()
+		mt_body = line
 
 		if mt_body.startswith("00"):
 			mt_body = strip00(mt_body)
 			mt_body = hex2ascii(mt_body)
 			print mt_body
+
+		mt_body = mt_body.lower().strip()
 
 		expect_body = False
 		newResp = []
