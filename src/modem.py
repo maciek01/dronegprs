@@ -49,6 +49,19 @@ def lockP():
 def unlockP():
         portLock.release()
 
+def strip00(line):
+	index00 = line.find("00")
+	while index00 != -1:
+		line = line[:index00] + line[index00+2:]
+		index00 = line.find("00")
+
+	return line
+
+def hex2ascii(line):
+
+	return line.decode("hex")
+		
+
 def handle_newline(line):
 
 	global MODEMSTATUS
@@ -67,18 +80,24 @@ def handle_newline(line):
 
 	print line
 	if expect_body:
-		mt_body = line
+		mt_body = line.lower().strip()
+
+		if mt_body.startswith("00"):
+			mt_body = strip00(mt_body)
+			mt_body = hex2ascii(mt_body)
+			print mt_body
+
 		expect_body = False
 		newResp = []
-		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC UNREAD":
+		if mt_body.startswith("stat") and mt_header[mt_status] == "REC UNREAD":
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
 			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
 				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
 				newResp.append(part + chr(26))
-		if mt_body.lower().strip().startswith("stat") and mt_header[mt_status] == "REC READ":
+		if mt_body.startswith("stat") and mt_header[mt_status] == "REC READ":
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
-		if not mt_body.lower().strip().startswith("stat"):
+		if not mt_body.startswith("stat"):
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
 			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
 			newResp.append("Valid commands: stat rtl help" + chr(26))
