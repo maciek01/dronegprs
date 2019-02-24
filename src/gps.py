@@ -24,6 +24,8 @@ GPSTIMESTAMP = 0
 GPSLASTSTATUSMS = 0
 GPSSPEED = 0
 GPSHEADING = 0
+GPSNSATS = 0
+GPSFIX = 0
 
 serialPort = None
 
@@ -40,9 +42,13 @@ def handle_newline(line):
 	global GPSLASTSTATUSMS
 	global GPSSPEED
 	global GPSHEADING
+	global GPSNSATS
+	global GPSFIX
+	
 
 	if line.startswith("$GPGLL") or line.startswith("$GNGLL") or line.startswith("$GLGLL"):
 		#print line
+		elements = line.split(',')
 		GPSLAT = line[7:9] + " " + line[9:17] + " " + line[18:19]
 		GPSLATNORM = (float(line[7:9]) + float(line[9:17]) / 60.0) * (1 if line[18:19].lower() == "n" else -1)
 		GPSLON = line[20:23] + " " + line[23:31] + " " + line[32:33]
@@ -64,8 +70,11 @@ def handle_newline(line):
 		GPSSTATUS = "UNKNOWN"
                 GPSLASTSTATUSMS = current_milli_time()
 		GPSALT=float(elements[9])
+		GPSNSATS = int(elements[7])
+		GPSFIX = int(elements[6])
 	if line.startswith("$GNRMC") and False:
                 #print line
+		elements = line.split(',')
 		GPSLAT = line[19:21] + " " + line[21:29] + " " + line[30:31]
                 GPSLATNORM = (float(line[19:21]) + float(line[21:29]) / 60.0) * (1 if line[30:31].lower() == "n" else -1)
                 GPSLON = line[32:35] + " " + line[35:43] + " " + line[44:45]
@@ -76,12 +85,16 @@ def handle_newline(line):
                 else:
                         GPSSTATUS = "INVALID"
                 GPSLASTSTATUSMS = current_milli_time()
+		speed = float(elements[7])
+		heading = float(elements[8] if elements[8] != "" else 0)
+		GPSSPEED = speed * 0.514444 #knots to mps
+		GPSHEADNING = heading
 	if line.startswith("$GNVTG"):
                 #print line
 		elements = line.split(',')
 		speed = float(elements[7])
 		heading = float(elements[1] if elements[1] != "" else 0)
-		GPSSPEED = speed * 0.277778
+		GPSSPEED = speed * 0.277778 #kmph to mps
 		GPSHEADNING = heading
 
 
