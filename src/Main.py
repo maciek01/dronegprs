@@ -30,6 +30,8 @@ def reportGPSData():
 		"heading" : gps.GPSHEADING,
 		"gpsTime" : gps.GPSTIME,
 		"gpsStatus" : gps.GPSSTATUS,
+		"gpsNumSats" : gps.GPSNSATS,
+		"gpsLock" : gps.GPSFIX,
 		"gpsLastStatusMS" : gps.GPSLASTSTATUSMS,
 		"unitCallbackPort" : "8080",
                 "modemstatus" : modem.MODEMSTATUS,
