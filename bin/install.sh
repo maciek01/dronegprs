@@ -14,6 +14,7 @@ sudo pip install --upgrade dronekit
 
 #install pppd for wireless
 
+# 3G:
 sudo ln -s /home/pi/dronegprs/etc/ppp/chatscripts /etc/ppp/chatscripts
 sudo ln -s /home/pi/dronegprs/etc/ppp/options-mobile /etc/ppp/options-mobile
 
@@ -22,6 +23,7 @@ sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB1 /etc/ppp/peers/mo
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB2 /etc/ppp/peers/mobile-noauth-USB2
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB3 /etc/ppp/peers/mobile-noauth-USB3
 
+# 2G:
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB0 /etc/ppp/peers/fonaUSB0
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB1 /etc/ppp/peers/fonaUSB1
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/fonaUSB2 /etc/ppp/peers/fonaUSB2
@@ -37,11 +39,6 @@ sudo update-rc.d droneclientd defaults
 sudo update-rc.d mavlinkd defaults
 sudo update-rc.d fonad defaults
 
-
 sudo usermod -a -G dip pi
-
 #sudo usermod -G pi,adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,gpio,i2c,spi,dip pi
-
-
-
 
