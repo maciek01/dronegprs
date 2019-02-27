@@ -60,6 +60,12 @@ WLAN_GW=`/sbin/ip addr show wlan0 | grep peer | awk ' { print $4 } ' | sed 's/\/
 echo wlan0 gw $WLAN_GW
 echo $WLAN_GW >$HOME/wlan0-gw
 
+#dont touch dns and routing if wifi is on
+if [ -f $HOME/wifi ]; then
+    echo "wifi is on - exit and leave default dns and routing in place"
+    exit
+fi
+
 #fixup dns
 sudo cp $HOME/dronegprs/resolv.conf.8.8.8.8 /etc/resolv.conf
 sudo cp $HOME/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
