@@ -95,18 +95,18 @@ def handle_newline(line):
 		bodyHandled = False
 
 		if mt_header[mt_status] == "REC READ":
-			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
 
 		if mt_body.startswith("stat") and mt_header[mt_status] == "REC UNREAD":
-			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
 			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
-				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
 				newResp.append(part + chr(26))
 			bodyHandled = True
 		if mt_body.startswith("rtl") and mt_header[mt_status] == "REC UNREAD":
-			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
-			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
+			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
 			newResp.append("rtl received" + chr(26))
 			bodyHandled = True
 
@@ -121,12 +121,12 @@ def handle_newline(line):
 			command_processor.commandQueue.put(action)
 
 		if not bodyHandled and mt_header[mt_status] == "REC UNREAD":
-			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r\n")
-			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
+			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
 			newResp.append("valid commands: stat, rtl, help" + chr(26))
 			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
-                                newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r\n")
+                                newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
                                 newResp.append(part + chr(26))
 
 
@@ -176,16 +176,16 @@ def smsStatus():
 	data = pilotData
 
 	if data != None:
-		res = res + "mode:" + str(data["mode"]) + "/" + str(data["status"]) + "\r"
 		res = res + "gps Lat:" + str(data["gpsLat"]) + "\r"
 		res = res + "gps Lon:" + str(data["gpsLon"]) + "\r"
-		if "gpsAlt" not in data:
+		res = res + "gps Alt:" + str(data["gpsAlt"]) + "\r"
+		res = res + "gps Speed:" + str(data["gpsSpeed"]) + "\r"
+		res = res + "gps Sats:" + str(data["gpsNumSats"]) + "\r"
+		res = res + "heading:" + str(data["heading"]) + "\r"
+		if "mode" not in data:
 			res = res + "no FC data\r"
 		else:
-			res = res + "gps Alt:" + str(data["gpsAlt"]) + "\r"
-			res = res + "gps Speed:" + str(data["gpsSpeed"]) + "\r"
-			res = res + "gps Sats:" + str(data["gpsNumSats"]) + "\r"
-			res = res + "heading:" + str(data["heading"]) + "\r"
+			res = res + "mode:" + str(data["mode"]) + "/" + str(data["status"]) + "\r"
 			res = res + "bat V:" + str(data["currVolts"]) + "\r"
 			res = res + "bat mAh:" + str(data["currTotmAh"]) + "\r"
 			res = res + "bat Curr:" + str(data["currA"]) + "\r"
@@ -320,13 +320,13 @@ def flushPort(ser):
 def initSMS(ser):
 	lockP()
 	try:
-		ser.write("AT+CMGF=1\r\n")
+		ser.write("AT+CMGF=1\r")
 		flushPort(ser)
 		time.sleep(0.5)
-		ser.write("AT+CGSMS=1\r\n")
+		ser.write("AT+CGSMS=1\r")
 		flushPort(ser)
 		time.sleep(0.5)
-		ser.write("AT+CSMP=17,167,0,242\r\n") #flash message
+		ser.write("AT+CSMP=17,167,0,242\r") #flash message
 		flushPort(ser)
 		time.sleep(0.5)
 	finally:
@@ -335,7 +335,7 @@ def initSMS(ser):
 def sendInboxReq(ser):
 	lockP()
 	try:
-		ser.write("AT+CMGL=\"ALL\"\r\n") #examine inbox
+		ser.write("AT+CMGL=\"ALL\"\r") #examine inbox
 		flushPort(ser)
 		time.sleep(0.5)
 	finally:
@@ -344,7 +344,7 @@ def sendInboxReq(ser):
 def sendSigReq(ser):
 	lockP()
 	try:
-		ser.write("AT+CSQ\r\n")
+		ser.write("AT+CSQ\r")
 		flushPort(ser)
 		time.sleep(0.5)
 	finally:
@@ -366,7 +366,7 @@ def isModem(port, baud):
 	if serialPort == None:
 		return False
 
-	serialPort.write("AT+CPIN?\r\n")
+	serialPort.write("AT+CPIN?\r")
 	cnt = 0
 	while cnt < 5:
                 try:
