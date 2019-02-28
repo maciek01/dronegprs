@@ -255,6 +255,16 @@ def read_from_port(modemport, modembaud):
 				unlockP()
 			MODEMSTATUS = "ON"
 			time.sleep(1)
+		except IOError as inst:
+			MODEMSTATUS = "OFF"
+			traceback.print_exc()
+			time.sleep(5)
+			try:
+				ser.close()
+			except Exception as inst:
+				traceback.print_exc()
+			openSerial(modemport, modembaud, False)
+			ser = serialPort
 		except Exception as inst:
 			MODEMSTATUS = "OFF"
 			traceback.print_exc()
