@@ -37,7 +37,7 @@ sudo ln -s /home/pi/dronegprs/bin/droneclientd.sh /etc/init.d/droneclientd
 #sudo ln -s /home/pi/dronegprs/bin/mavlinkd.sh /etc/init.d/mavlinkd
 sudo ln -s /home/pi/dronegprs/bin/fonad.sh /etc/init.d/fonad
 sudo update-rc.d droneclientd defaults
-sudo update-rc.d mavlinkd defaults
+#sudo update-rc.d mavlinkd defaults
 sudo update-rc.d fonad defaults
 
 sudo usermod -a -G dip pi
