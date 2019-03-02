@@ -11,6 +11,8 @@ sudo pip install --upgrade dronekit
 #on sim PC:
 #sudo pip install dronekit-sitl
 
+#git clone https://github.com/maciek01/dronegprs.git
+
 #install pppd for wireless
 
 # 3G:
