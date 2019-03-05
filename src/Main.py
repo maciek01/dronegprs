@@ -9,7 +9,7 @@ import gps, pilot, modem
 import command_processor
 import argparse
 import ConfigParser
-
+import dbmanager
 
 def reportGPSData():
 	global unitID
@@ -157,10 +157,12 @@ if __name__ == '__main__':
 	modems = config.get('main', 'modems')
 	host = config.get('main', 'host')
 	uri = config.get('main', 'uri')
+	dbfile = config.get('main', 'dbfile')
 	unitID = config.get('main', 'unitID')
 
 	#apply cfg defaults
 
+	dbfile = dbfile if dbfile != "" else "/home/pi/uavonboard.db"
 	unitID = unitID if unitID != "" else "drone1"
 	uri = uri if uri != "" else "/uavserver/v1/heartbeat"
 	host = host if host != "" else "http://home.kolesnik.org:8000"
@@ -177,9 +179,14 @@ if __name__ == '__main__':
 	print " modemPort:", modemPort
 	print " modemBaud:", modemBaud
 	print " modems:", modems
+	print " dbfile:", dbfile
 
 
 	headers = {'Content-Type': content_type_header}
+
+	#initialize database
+	print("STARTING DATABASE " + dbfile)
+	dbmanager.open(dbfile)
 
 	#initialize modem monitor
 	if modemPort == "" and modems != "":
