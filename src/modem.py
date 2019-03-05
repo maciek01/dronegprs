@@ -6,43 +6,56 @@ import time, datetime
 import os.path, csv
 import command_processor
 
-#external status
 
+##########################################################################
+
+#external status
 MODEMSTATUS = "OFF"
 MODEMSIGNAL = "NONE"
 LASTRESULT = ""
 TESTRESULT = False
 
+#active flag
 readOn = False
 
-
+#modem response handling
 buffer = ""
 getLine = ""
 
+#threads
 rx_thread = None
 tx_thread = None
 
+#dont read and write from the same port at the same time - needed??
 portLock = threading.RLock()
 
+#ready for SMS message content
 expect_body = False
+
+#MT message response to be sent to requestor
 resp = None
 
+#pilot state
 pilotData = None
 
+#MT structure - constants
 mt_idx = 0
 mt_status = 1
 mt_src_addr = 2
 mt_fill = 3
 mt_date = 4
 
+#MT header
 mt_header = None
-mt_body = None
 
-
+#modem port
 serialPort = None
 
+#time
 current_milli_time = lambda: int(time.time() * 1000)
 
+
+#####################################################################################
 
 def lockP():
         portLock.acquire()
@@ -59,7 +72,6 @@ def strip00(line):
 	return line
 
 def hex2ascii(line):
-
 	return line.decode("hex")
 		
 
@@ -71,9 +83,7 @@ def handle_newline(line):
 	global TESTRESULT
 	global expect_body
 	global resp
-
 	global mt_header
-	global mt_body
 
 
 	MODEMSTATUS = "ON"
@@ -94,17 +104,19 @@ def handle_newline(line):
 		newResp = []
 		bodyHandled = False
 
-		if mt_header[mt_status] == "REC READ":
+		if not bodyHandled and mt_header[mt_status] == "REC READ":
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
+                        bodyHandled = True
 
-		if mt_body.startswith("stat") and mt_header[mt_status] == "REC UNREAD":
+
+		if not bodyHandled and mt_body.startswith("stat"):
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
 			msg_parts = splitMsg(smsStatus())
 			for part in msg_parts:
 				newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
 				newResp.append(part + chr(26))
 			bodyHandled = True
-		if mt_body.startswith("rtl") and mt_header[mt_status] == "REC UNREAD":
+		if not bodyHandled and mt_body.startswith("rtl"):
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
 			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
 			newResp.append("rtl received" + chr(26))
@@ -120,30 +132,28 @@ def handle_newline(line):
 
 			command_processor.commandQueue.put(action)
 
-		if not bodyHandled and mt_header[mt_status] == "REC UNREAD":
+		if not bodyHandled:
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
 			newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
 			newResp.append("valid commands: stat, rtl, help" + chr(26))
-			msg_parts = splitMsg(smsStatus())
-			for part in msg_parts:
-                                newResp.append("AT+CMGS=\"" + mt_header[mt_src_addr] + "\"\r")
-                                newResp.append(part + chr(26))
+			bodyHandled = True
 
 
 		if len(newResp) != 0:
 			resp = newResp
 
-	if line.startswith("+CSQ:"):
-		MODEMSIGNAL = line[6:]
+	else:	#not expect_body
+		if line.startswith("+CSQ:"):
+			MODEMSIGNAL = line[6:]
 
-	if line.startswith("+CPIN: READY"):
-		TESTRESULT = True
+		if line.startswith("+CPIN: READY"):
+			TESTRESULT = True
 
-	if line.startswith("+CMGL: "):
-		reader = csv.reader(line[7:].split('\n'), delimiter=',')
-		for row in reader:
-			mt_header = row
-		expect_body = True
+		if line.startswith("+CMGL: "):
+			reader = csv.reader(line[7:].split('\n'), delimiter=',')
+			for row in reader:
+				mt_header = row
+			expect_body = True
 
 
 def splitMsg(msg):
@@ -221,6 +231,7 @@ def openSerial(modemport, modembaud, quiet):
 			traceback.print_exc()
 
 
+#reader thread
 def read_from_port(modemport, modembaud):
 	global readOn
 	global serialPort
@@ -255,7 +266,7 @@ def read_from_port(modemport, modembaud):
 				unlockP()
 			MODEMSTATUS = "ON"
 			time.sleep(1)
-		except IOError as inst:
+		except IOError as inst: #this handling is wrong - reinit the whole process instead
 			MODEMSTATUS = "OFF"
 			traceback.print_exc()
 			time.sleep(5)
@@ -279,6 +290,7 @@ def read_from_port(modemport, modembaud):
 	print("disconnected RX")
 	MODEMSTATUS = "OFF"
 
+#writter thread
 def get_status(sleepS):
         global readOn
         global serialPort
@@ -290,7 +302,6 @@ def get_status(sleepS):
 	print("connected TX")
 	initSMS(serialPort)
 
-	cnt = 0 # use ERROR response check
 	while readOn:
 		try:
 			time.sleep(sleepS)
@@ -299,15 +310,12 @@ def get_status(sleepS):
 				sendRESP()
 				resp = None
 
-			sendSigReq(serialPort)
+			#sendSigReq(serialPort) #this is now automatic
 			sendInboxReq(serialPort)
 
-			cnt = cnt + 1
-			if cnt % 10 == 0:
-				cnt = 0
-				initSMS(serialPort) #reinitialize sms
 
                 except Exception as inst:
+			initSMS(serialPort) #reinitialize sms
                         traceback.print_exc()
 
 	print("disconnected TX")
@@ -330,13 +338,16 @@ def flushPort(ser):
 def initSMS(ser):
 	lockP()
 	try:
-		ser.write("AT+CMGF=1\r")
+		ser.write("AT+CMGF=1\r") #text format
 		flushPort(ser)
 		time.sleep(0.5)
 		ser.write("AT+CGSMS=1\r")
 		flushPort(ser)
 		time.sleep(0.5)
-		ser.write("AT+CSMP=17,167,0,242\r") #flash message
+		ser.write("AT+CSMP=17,167,0,242\r") #flash/regular message
+		flushPort(ser)
+		time.sleep(0.5)
+		ser.write("AT+AUTOCSQ=1,0\r") #request signal update every 5 secs
 		flushPort(ser)
 		time.sleep(0.5)
 	finally:
