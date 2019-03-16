@@ -106,7 +106,7 @@ def handle_newline(line):
 
 		if not bodyHandled and mt_header[mt_status] == "REC READ":
 			newResp.append("AT+CMGD=" + mt_header[mt_idx] + "\r")
-                        bodyHandled = True
+			bodyHandled = True
 
 
 		if not bodyHandled and mt_body.startswith("stat"):
@@ -292,8 +292,8 @@ def read_from_port(modemport, modembaud):
 
 #writter thread
 def get_status(sleepS):
-        global readOn
-        global serialPort
+	global readOn
+	global serialPort
 	global resp
 
 	while serialPort == None and readOn:
@@ -314,9 +314,9 @@ def get_status(sleepS):
 			sendInboxReq(serialPort)
 
 
-                except Exception as inst:
+		except Exception as inst:
 			initSMS(serialPort) #reinitialize sms
-                        traceback.print_exc()
+			traceback.print_exc()
 
 	print("disconnected TX")
 
