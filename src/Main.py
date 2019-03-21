@@ -11,6 +11,7 @@ import argparse
 import ConfigParser
 import dbmanager
 
+#this is for GPS pinger mode if enabled
 def reportGPSData():
 	global unitID
 	global gpsPort
@@ -41,6 +42,7 @@ def reportGPSData():
 
 	return data
 
+#this is for mission control mode if enabled
 def reportPilotData():
 	global unitID
 	global mavlinkPort
@@ -110,6 +112,7 @@ def reportPilotData():
 
 	return data
 
+#combine both sources to unified model - pilotData
 def mergeData(pilotData, gpsData):
 
 	if pilotData == None:
@@ -163,7 +166,7 @@ if __name__ == '__main__':
 	#apply cfg defaults
 
 	dbfile = dbfile if dbfile != "" else "/home/pi/uavonboard.db"
-	unitID = unitID if unitID != "" else "drone1"
+	unitID = unitID if unitID != "" else "uav0"
 	uri = uri if uri != "" else "/uavserver/v1/heartbeat"
 	host = host if host != "" else "http://home.kolesnik.org:8000"
 	url = host + uri
@@ -217,7 +220,7 @@ if __name__ == '__main__':
 	while pilot.vehicle == None and mavlinkPort != "":
 		time.sleep(1)
 
-	# Get Vehicle Home location - will be `None` until first set by autopilot
+	# Get Vehicle Home location - will be 'None' until first set by autopilot
 	while pilot.vehicle != None and pilot.vehicle.home_location == None:
 		cmds = pilot.vehicle.commands
 		cmds.download()
