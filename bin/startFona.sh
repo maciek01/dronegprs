@@ -51,6 +51,14 @@ IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
 echo ppp0 ip $IP
 echo $IP >$HOME/ppp0-ip
 
+DEFIP=$(/sbin/ip route | awk '/default/ { print $3 }')
+echo default route $DEFIP
+echo $DEFIP >$HOME/defaultroute
+
+DEFIF=$(/sbin/ip route | awk '/default/ { print $5 }')
+echo default if $DEFIF
+echo $DEFIF >$HOME/defaultif
+
 #capture wlan0 interface ip and gateway
 WLAN_IP=`/sbin/ip addr show wlan0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
 echo wlan0 ip $WLAN_IP
@@ -79,7 +87,8 @@ sudo cp $HOME/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
 #192.168.2.0     *               255.255.255.0   U     304    0        0 wlan0
 
 set +e
-sudo route delete default gw 192.168.2.1 wlan0
+#sudo route delete default gw 192.168.2.1 wlan0
+sudo route delete default gw $DEFIP $DEFIF
 sudo route add default gw $IP ppp0
 set -e
 
