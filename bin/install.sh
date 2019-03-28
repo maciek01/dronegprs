@@ -1,5 +1,5 @@
 
-sudo apt-get install python-pip python-dev screen python-wxgtk2.8 python-matplotlib python-opencv python-numpy python-dev libxml2-dev libxslt-dev ppp screen elinks python3-lxml python-lxml git dnsutils cu sqlite3 python-pysqlite2 -y
+sudo apt-get install git python-pip python-dev screen python-wxgtk2.8 python-matplotlib python-opencv python-numpy libxml2-dev libxslt-dev ppp elinks python3-lxml python-lxml dnsutils cu sqlite3 python-pysqlite2 -y
 
 sudo pip install --upgrade future
 sudo pip install --upgrade httplib2
