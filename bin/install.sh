@@ -1,5 +1,6 @@
 
-git clone https://github.com/maciek01/dronegprs.git
+
+#git clone https://github.com/maciek01/dronegprs.git
 
 #install pppd for wireless
 
