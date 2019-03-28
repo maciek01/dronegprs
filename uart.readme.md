@@ -50,5 +50,5 @@ The other aspect is the login started by the init system. On Raspbian jessie, ch
 ls /etc/systemd/system/getty.target.wants
 If you see that serial device node (ttyS0) mentioned, disable this service:
 
-  systemctl disable serial-getty@ttyS0.service
+ sudo systemctl disable serial-getty@ttyS0.service
 
