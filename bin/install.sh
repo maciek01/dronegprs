@@ -1,17 +1,5 @@
 
-sudo apt-get install git python-pip python-dev screen python-wxgtk2.8 python-matplotlib python-opencv python-numpy libxml2-dev libxslt-dev ppp elinks python3-lxml python-lxml dnsutils cu sqlite3 python-pysqlite2 -y
-
-sudo pip install --upgrade future
-sudo pip install --upgrade httplib2
-sudo pip install --upgrade pyserial
-#not needed for on board
-#sudo pip install --upgrade mavproxy
-sudo pip install --upgrade dronekit
-
-#on sim PC:
-#sudo pip install dronekit-sitl
-
-#git clone https://github.com/maciek01/dronegprs.git
+git clone https://github.com/maciek01/dronegprs.git
 
 #install pppd for wireless
 
