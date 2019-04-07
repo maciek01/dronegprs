@@ -10,6 +10,7 @@ import command_processor
 import argparse
 import ConfigParser
 import dbmanager
+import logger
 
 #this is for GPS pinger mode if enabled
 def reportGPSData():
@@ -130,7 +131,9 @@ def mergeData(pilotData, gpsData):
 
 if __name__ == '__main__':
 
-	print "STARTING MAIN MODULE"
+	log = logger.setup_custom_logger('main')
+
+	log.info("STARTING MAIN MODULE")
 
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http()
@@ -171,48 +174,47 @@ if __name__ == '__main__':
 	host = host if host != "" else "http://home.kolesnik.org:8000"
 	url = host + uri
 
-
-	print "CONFIGURATION:"
-	print " unitID:", unitID
-	print " url:", url
-	print " mavlinkPort:", mavlinkPort
-	print " mavlinkBaud:", mavlinkBaud
-	print " gpsPort:", gpsPort
-	print " gpsBaud:", gpsBaud
-	print " modemPort:", modemPort
-	print " modemBaud:", modemBaud
-	print " modems:", modems
-	print " dbfile:", dbfile
+	log.info("CONFIGURATION:")
+	log.info(" unitID:" + unitID)
+	log.info(" url:" + url)
+	log.info(" mavlinkPort:" + mavlinkPort)
+	log.info(" mavlinkBaud:" + mavlinkBaud)
+	log.info(" gpsPort:" + gpsPort)
+	log.info(" gpsBaud:" + gpsBaud)
+	log.info(" modemPort:" + modemPort)
+	log.info(" modemBaud:" + modemBaud)
+	log.info(" modems:" + modems)
+	log.info(" dbfile:" + dbfile)
 
 
 	headers = {'Content-Type': content_type_header}
 
 	#initialize database
-	print("STARTING DATABASE " + dbfile)
+	log.info("STARTING DATABASE " + dbfile)
 	dbmanager.open(dbfile)
 
 	#initialize modem monitor
 	if modemPort == "" and modems != "":
-		print("LOOK FOR AVAILABLE MODEMS ...")
+		log.info("LOOK FOR AVAILABLE MODEMS ...")
 		modemList = modems.split(',')
 		firstModem = modem.findModem(modemList, int(modemBaud))
 	else:
 		firstModem = modemPort
 	if firstModem != "":
-		print("STARTING MODEM MODULE AT " + firstModem)
+		log.info("STARTING MODEM MODULE AT " + firstModem)
 		modem.modeminit(firstModem, int(modemBaud), 5, True)
 
 	#initialize pilot
 	if mavlinkPort != "":
-		print "STARTING PILOT MODULE AT " + mavlinkPort
+		log.info("STARTING PILOT MODULE AT " + mavlinkPort)
 		pilot.pilotinit(mavlinkPort, int(mavlinkBaud))
 
 	#initialize gps
 	if gpsPort != "":
-		print "STARTING GPS MODULE AT " + gpsPort
+		log.info("STARTING GPS MODULE AT " + gpsPort)
 		gps.gpsinit(gpsPort, int(gpsBaud))
 
-	print "STARTING COMMAND PROCESSOR MODULE"
+	log.info("STARTING COMMAND PROCESSOR MODULE")
 	#initialize command queue
 	command_processor.processorinit()
 
@@ -226,7 +228,7 @@ if __name__ == '__main__':
 		cmds.download()
 		cmds.wait_ready(timeout=600)
 		if pilot.vehicle.home_location == None:
-			print " Waiting for home location ..."
+			log.info(" Waiting for home location ...")
 			time.sleep(1)
 			try:
 				gpsData = reportGPSData()
@@ -245,9 +247,9 @@ if __name__ == '__main__':
 
 	if pilot.vehicle != None:
 		# We have a home location.
-		print "\n Home location: %s" % pilot.vehicle.home_location
+		log.info("\n Home location: %s" % pilot.vehicle.home_location)
 
-	print "STARTING COMMAND LOOP"
+	log.info("STARTING COMMAND LOOP")
 	while True:
 		try:
 			time.sleep(1)
@@ -256,8 +258,11 @@ if __name__ == '__main__':
 			data = mergeData(data, gpsData)
 			modem.pilotData = data
 			if data != None:
+				log.info("sending heartbeat")
 				response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+				log.info("heartbeat sent")
 			else:
+				log.info("nothing to send")
 				continue
 		except Exception as inst:
 			noop = None
@@ -268,9 +273,9 @@ if __name__ == '__main__':
 		try:
 			if content != None and content != "":
 				actions = json.loads(content)
-				print "COMMANDS:" + content
+				log.info("COMMANDS:" + content)
 				if actions != None and actions['data'] != None and actions['data']['actionRequests'] != None:
-					print "actionRequests: " + json.dumps(actions['data']['actionRequests'])
+					log.info("actionRequests: " + json.dumps(actions['data']['actionRequests']))
 					for i in actions['data']['actionRequests']:
 						command_processor.commandQueue.put(i)
 
