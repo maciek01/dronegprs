@@ -50,7 +50,14 @@ def reportPilotData():
 
 	if pilot.vehicle == None or mavlinkPort == "":
 		return None
-
+	
+	try:
+		pilot.vehicle.gps_1
+		gps1 = pilot.vehicle.gps_1
+	except NameError:
+		gps1 = None
+	
+	
 	data = {
 		#1s reporting
 		"unitId" : unitID,
@@ -90,10 +97,10 @@ def reportPilotData():
 		"gpsHError" : pilot.vehicle.gps_0.eph,
 		"gpsVError" : pilot.vehicle.gps_0.epv,
 
-		#"gps2NumSats" : pilot.vehicle.gps_1.satellites_visible if pilot.vehicle.gps_1 != None else None,
-		#"gps2Lock" : pilot.vehicle.gps_1.fix_type if pilot.vehicle.gps_1 != None else None,
-		#"gps2HError" : pilot.vehicle.gps_1.eph if pilot.vehicle.gps_1 != None else None,
-		#"gps2VError" : pilot.vehicle.gps_1.epv if pilot.vehicle.gps_1 != None else None,
+		"gps2NumSats" : gps1.satellites_visible if gps1 != None else None,
+		"gps2Lock" : gps1.fix_type if gps1 != None else None,
+		"gps2HError" : gps1.eph if gps1 != None else None,
+		"gps2VError" : gps1.epv if gps1 != None else None,
 
 		"currVolts" : pilot.vehicle.battery.voltage,
 		"currVoltsLevel" : pilot.vehicle.battery.level,
