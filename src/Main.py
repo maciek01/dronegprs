@@ -54,7 +54,7 @@ def reportPilotData():
 	try:
 		pilot.vehicle.gps_1
 		gps1 = pilot.vehicle.gps_1
-	except NameError:
+	except Exception:
 		gps1 = None
 	
 	
