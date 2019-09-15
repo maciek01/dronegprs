@@ -153,7 +153,10 @@ def read_from_port(gpsport, gpsbaud):
 	#wait to initialize the port
 	while serialPort == None:
 		try:
-			serialPort = serial.Serial(gpsport, baudrate=gpsbaud, timeout=None)
+			serialPort = serial.Serial(gpsport, baudrate=gpsbaud, timeout=None,
+				parity = serial.PARITY_NONE,
+				stopbits = serial.STOPBITS_ONE,
+				bytesize = serial.EIGHTBITS)
 		except Exception as inst:
 			serialPort = None
 			traceback.print_exc()
@@ -164,7 +167,15 @@ def read_from_port(gpsport, gpsbaud):
 	while readOn:
 		try:
 			if ser.inWaiting() > 0:
-				handle_data(ser.read(ser.inWaiting()))
+				#handle_data(ser.read(ser.inWaiting()))
+				newl = ser.readline()
+				#b = bytearray()
+				#b.extend(newl)
+				#print map(hex, b)
+				#print newl
+				handle_newline(newl)
+
+
 		except Exception as inst:
 			traceback.print_exc()
 	
