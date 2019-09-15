@@ -61,10 +61,15 @@ If you see that serial device node (ttyS0) mentioned, disable this service:
 #more info on gps setup and testing on serial0
 
 sudo apt-get install gpsd gpsd-clients python-gps
+
 sudo systemctl stop gpsd.socket
+
 sudo systemctl disable gpsd.socket
+
 vim /lib/systemd/system/gpsd.socket
+
 sudo kilall gpsd
+
 sudo gpsd /dev/ttyACM0 -F /var/run/gpsd.sock
 
 The linux package to read the GPS data is called GPSD.
