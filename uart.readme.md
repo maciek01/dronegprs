@@ -70,7 +70,7 @@ vim /lib/systemd/system/gpsd.socket
 
 sudo kilall gpsd
 
-sudo gpsd /dev/ttyACM0 -F /var/run/gpsd.sock
+sudo gpsd /dev/serial0 -F /var/run/gpsd.sock
 
 The linux package to read the GPS data is called GPSD.
 http://www.catb.org/gpsd/
