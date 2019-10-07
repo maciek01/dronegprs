@@ -76,7 +76,7 @@ fi
 
 #fixup dns
 sudo cp $HOME/dronegprs/resolv.conf.8.8.8.8 /etc/resolv.conf
-sudo cp $HOME/pi/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
+sudo cp $HOME/dronegprs/resolv.conf.8.8.8.8 /etc/ppp/resolv.conf
 
 #fixup routing
 
