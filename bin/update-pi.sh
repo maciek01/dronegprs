@@ -13,7 +13,7 @@ sudo apt-get install git python-pip python-dev screen python-wxgtk2.8 python-mat
 sudo pip install --upgrade future
 sudo pip install --upgrade httplib2
 sudo pip install --upgrade pyserial
-sudo pip install --upgrade dronekit
+sudo pip2 install --upgrade dronekit
 
 #not needed for on board
 #sudo pip install --upgrade mavproxy
