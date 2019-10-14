@@ -325,6 +325,33 @@ def loiter(data):
 	finally:
 		unlockV()		
 
+def auto(data):
+
+	global vehicle
+	global requestedLat
+	global requestedLon
+	global savedLat
+	global savedLon 
+	
+	lockV()
+	try:
+		print "AUTO"
+			
+		releaseSticks()
+		vehicle.mode = VehicleMode("AUTO")
+		
+		#save last goto
+		savedLat = None
+		savedLon = None
+		requestedLat = None
+		requestedLon = None
+		
+			
+		return "OK"
+
+	finally:
+		unlockV()
+		
 def pause(data):
 
 	global vehicle
