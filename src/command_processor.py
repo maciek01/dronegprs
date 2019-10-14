@@ -45,7 +45,10 @@ def resume(data):
 	
 def loiter(data):
 	return pilot.loiter(data)
-	
+
+def auto(data):
+	return pilot.auto(data)
+		
 def manual(data):
 	return pilot.manual(data)
 		
@@ -103,6 +106,7 @@ actions = {
 	"RESUME" : resume,
 	"MANUAL" : manual,
 	"LOITER" : loiter,
+	"AUTO" : auto,
 	"RTL" : rtl,
 	"REHOME" : reHome,
 	"SETHOME" : setHome,
