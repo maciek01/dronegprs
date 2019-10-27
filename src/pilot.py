@@ -428,7 +428,7 @@ def manual(data):
 	lockV()
 	try:
 		print "MANUAL"
-		vehicle.mode = VehicleMode("POSHOLD")
+		vehicle.mode = VehicleMode("LOITER")
 		releaseSticks()
 		return "OK"
 
