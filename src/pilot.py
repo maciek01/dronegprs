@@ -370,18 +370,21 @@ def pause(data):
 			print " NOT ARMED"
 			return "ERROR: NOT ARMED"
 		
-		
-		if vehicle.location.global_frame != None:		
-			vehicle.mode = VehicleMode("GUIDED")
-			releaseSticks()
-			#save last goto
-			savedLat = requestedLat
-			savedLon = requestedLon
-			#stop here
-			requestedLat = vehicle.location.global_frame.lat
-			requestedLon = vehicle.location.global_frame.lon
-			point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
-			vehicle.simple_goto(point1, int(operatingSpeed))
+		if True:
+			#just loiter
+			loiter()
+		else:
+			if vehicle.location.global_frame != None:		
+				vehicle.mode = VehicleMode("GUIDED")
+				releaseSticks()
+				#save last goto
+				savedLat = requestedLat
+				savedLon = requestedLon
+				#stop here
+				requestedLat = vehicle.location.global_frame.lat
+				requestedLon = vehicle.location.global_frame.lon
+				point1 = LocationGlobalRelative(float(requestedLat), float(requestedLon), int(operatingAlt))
+				vehicle.simple_goto(point1, int(operatingSpeed))
 	
 
 			
