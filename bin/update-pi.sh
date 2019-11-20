@@ -15,6 +15,18 @@ sudo pip install --upgrade httplib2
 sudo pip install --upgrade pyserial
 sudo pip2 install --upgrade dronekit
 
+
+#alternative:
+#pip unistall pymavlink (multiple times)
+#pip unistall dronekit (multiple times)
+#cd ~
+#git clone https://github.com/dronekit/dronekit-python.git
+#cd ./dronekit-python
+#sudo python setup.py build
+#sudo python setup.py install
+
+
+
 #not needed for on board
 #sudo pip install --upgrade mavproxy
 
