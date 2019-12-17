@@ -50,6 +50,10 @@ def onMavLink_msg_STATUSTEXT(self, name, message):
 	statusMessage = message.text
 	statusSev = message.severity
 
+def onMavLink_msg_ADSB_VEHICLE(self, name, message):
+
+	print message
+
 
 ########################### THREAD HELPERS #####################################
 
@@ -97,6 +101,10 @@ def initVehicle():
 		@vehicle.on_message('STATUSTEXT')
 		def listener_msg_STATUSTEXT(self, name, message):
 			onMavLink_msg_STATUSTEXT(self, name, message)
+
+		@vehicle.on_message('ADSB_VEHICLE')
+		def listener_msg_ADSB_VEHICLE(self, name, message):
+			onMavLink_msg_ADSB_VEHICLE(self, name, message)
 
 		@vehicle.on_attribute('mode')
 		def listener_attr_mode(self, name, value):
