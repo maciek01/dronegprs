@@ -4,6 +4,9 @@
 
 #install pppd for wireless
 
+# 4G-hologram:
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-hologram-USB2 /etc/ppp/peers/mobile-noauth-hologram-USB2
+
 # 3G:
 sudo ln -s /home/pi/dronegprs/etc/ppp/chatscripts /etc/ppp/chatscripts
 sudo ln -s /home/pi/dronegprs/etc/ppp/options-mobile /etc/ppp/options-mobile

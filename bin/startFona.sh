@@ -34,7 +34,9 @@ echo "AT+CFUN=1,1" >>$MODEM
 sleep 2
 
 #dial up
-pon mobile-noauth-${MODEM: -4}
+PROVIDER=`grep modemProvider /home/pi/main.cfg`
+PROVIDER="$(cut -d'=' -f2 <<<"$PROVIDER")"
+pon $PROVIDER-${MODEM: -4}
 sleep 1
 
 #wait for ppp0
