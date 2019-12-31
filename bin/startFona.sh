@@ -3,6 +3,7 @@
 #exec 1> >(logger -s -t $(basename $0)) 2>&1
 
 #cleanup wifi
+rm -f $HOME/modemup
 sudo ifconfig wlan0 up
 
 #wait for USB
