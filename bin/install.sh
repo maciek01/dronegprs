@@ -13,10 +13,10 @@ sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-hologram-U
 
 # LTE-att
 
-sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB0 /etc/ppp/peers/mobile-noauth-USB0
-sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB1 /etc/ppp/peers/mobile-noauth-USB1
-sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB2 /etc/ppp/peers/mobile-noauth-USB2
-sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-USB3 /etc/ppp/peers/mobile-noauth-USB3
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-att-USB0 /etc/ppp/peers/mobile-noauth-simcom7600a-att-USB0
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-att-USB1 /etc/ppp/peers/mobile-noauth-simcom7600a-att-USB1
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-att-USB2 /etc/ppp/peers/mobile-noauth-simcom7600a-att-USB2
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-att-USB3 /etc/ppp/peers/mobile-noauth-simcom7600a-att-USB3
 
 # 3G-hologram:
 
