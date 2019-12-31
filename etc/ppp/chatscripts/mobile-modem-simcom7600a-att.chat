@@ -1,6 +1,3 @@
-# Chat script for modems using Hologram SIM card
-# See hologram.io for more information
-
 ABORT 'BUSY'
 ABORT 'NO CARRIER'
 ABORT 'VOICE'
@@ -8,14 +5,14 @@ ABORT 'NO DIALTONE'
 ABORT 'NO DIAL TONE'
 ABORT 'NO ANSWER'
 ABORT 'DELAYED'
-TIMEOUT 12
 REPORT CONNECT
+TIMEOUT 6
 
 "" AT
 OK ATH
 OK ATZ
 OK ATQ0
-OK AT+CGDCONT=1,"IP","hologram"
+'OK-AT-OK' @/etc/ppp/chatscripts/apn.nxtgenphone
 OK ATDT*99***1#
 CONNECT ''
 
