@@ -5,7 +5,7 @@ import json
 import time
 import datetime
 import sys, traceback
-import gps, pilot, modem
+import gps, pilot, modem, video_manager
 import command_processor
 import argparse
 import ConfigParser
@@ -172,6 +172,7 @@ if __name__ == '__main__':
 	uri = config.get('main', 'uri')
 	dbfile = config.get('main', 'dbfile')
 	unitID = config.get('main', 'unitID')
+	videoStreamCmd = config.get('main', 'videoStreamCmd')
 
 	#apply cfg defaults
 
@@ -192,6 +193,7 @@ if __name__ == '__main__':
 	log.info(" modemBaud:" + modemBaud)
 	log.info(" modems:" + modems)
 	log.info(" dbfile:" + dbfile)
+	log.info(" videoStreamCmd:" + videoStreamCmd)
 
 
 	headers = {'Content-Type': content_type_header}
@@ -220,6 +222,9 @@ if __name__ == '__main__':
 	if gpsPort != "":
 		log.info("STARTING GPS MODULE AT " + gpsPort)
 		gps.gpsinit(gpsPort, int(gpsBaud))
+
+	#initialize video streaming
+	video_manager.init(videoStreamCmd)
 
 	log.info("STARTING COMMAND PROCESSOR MODULE")
 	#initialize command queue

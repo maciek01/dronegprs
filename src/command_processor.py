@@ -7,7 +7,7 @@ import datetime
 import sys, traceback
 import threading
 
-import pilot
+import pilot, video_manager
 
 
 commandQueue = Queue.Queue()
@@ -91,6 +91,9 @@ def setHome(data):
 def reHome(data):
 	return pilot.reHome(data)
 
+def toggleVid(data):
+	return video_manager.toggleVid(data)
+
 ######################### ACTIONS ##############################################
 
 actions = {
@@ -109,6 +112,7 @@ actions = {
 	"AUTO" : auto,
 	"RTL" : rtl,
 	"REHOME" : reHome,
+	"TOGGLEVID" : toggleVid,
 	"SETHOME" : setHome,
 	"GOTO" : goto,
 	"ALT" : alt,
