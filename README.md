@@ -31,6 +31,10 @@ and enable camera then restar RPi
 
 run:
 
+bin/update-pi.sh (may require some manual "pushing")
+
+run:
+
 bin/install.sh
 
 
