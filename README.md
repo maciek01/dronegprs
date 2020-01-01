@@ -18,3 +18,20 @@ Groud station will allow operatios to monitor/visualize each UAV status/location
 
 
 ground station console: http://home.kolesnik.org:8000/map.html
+
+
+
+SETUP
+
+run:
+
+sudo raspi-config
+
+and enable camera then restar RPi
+
+run:
+
+bin/install.sh
+
+
+
