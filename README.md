@@ -27,9 +27,12 @@ run:
 
 sudo raspi-config
 
-and enable camera then restar RPi
+and enable camera then restar RPi. Test camera: raspivid -o vid.h264
 
-run:
+It shoudl capyture 10 secs of jmpeg video
+
+
+Then run:
 
 bin/update-pi.sh (may require some manual "pushing")
 
