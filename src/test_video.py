@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import video_manager
 
 
@@ -8,6 +9,8 @@ video_manager.init("raspivid -o - -t 0 -vf -hf -w 640 -h 480 -fps 10  | ffmpeg -
 
 
 
+video_manager.toggleVid(None)
+time.sleep(30)
 video_manager.toggleVid(None)
 
 
