@@ -108,6 +108,8 @@ def reportPilotData():
 		"currTotmAh" : pilot.curr_tot,
 		"voltages" : pilot.voltages,
 
+		"videostat" : "ON" if video_manager.process != None else "OFF",
+
 		"modemstatus" : modem.MODEMSTATUS,
 		"modemsignal" : modem.MODEMSIGNAL,
 
