@@ -136,6 +136,53 @@ def mergeData(pilotData, gpsData):
 
 	return pilotData
 
+def sendHeartbeat(url):
+
+	try:
+		gpsData = reportGPSData()
+		data = reportPilotData()
+		data = mergeData(data, gpsData)
+		modem.pilotData = data
+		if data != None:
+			log.info("sending heartbeat")
+			response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+			log.info("heartbeat sent")
+		else:
+			log.info("nothing to send")
+			data = {
+				#1s reporting
+				"unitId" : unitID,
+				"videostat" : "ON" if video_manager.process != None else "OFF",
+
+				"modemstatus" : modem.MODEMSTATUS,
+				"modemsignal" : modem.MODEMSIGNAL,
+
+				#30 s reporting
+				"unitCallbackPort" : "8080"
+			}
+			log.info("sending heartbeat")
+			response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+			log.info("heartbeat sent")
+
+
+	except Exception as inst:
+		noop = None
+		#comment out the following if runnign as daemon
+		traceback.print_exc()
+		return
+
+	try:
+		if content != None and content != "":
+			actions = json.loads(content)
+			log.info("COMMANDS:" + content)
+			if actions != None and actions['data'] != None and actions['data']['actionRequests'] != None:
+				log.info("actionRequests: " + json.dumps(actions['data']['actionRequests']))
+				for i in actions['data']['actionRequests']:
+					command_processor.commandQueue.put(i)
+
+	except Exception as inst:
+		noop = None
+		traceback.print_exc()
 
 
 if __name__ == '__main__':
@@ -232,32 +279,18 @@ if __name__ == '__main__':
 	#initialize command queue
 	command_processor.processorinit()
 
-	#wait for vehicel connection
+	#wait for vehicleconnection
 	while pilot.vehicle == None and mavlinkPort != "":
 		time.sleep(1)
+		sendHeartbeat(url)
 
 	# Get Vehicle Home location - will be 'None' until first set by autopilot
 	while pilot.vehicle != None and pilot.vehicle.home_location == None:
 		cmds = pilot.vehicle.commands
 		cmds.download()
 		cmds.wait_ready(timeout=600)
-		if pilot.vehicle.home_location == None:
-			log.info(" Waiting for home location ...")
-			time.sleep(1)
-			try:
-				gpsData = reportGPSData()
-				data = reportPilotData()
-				data = mergeData(data, gpsData)
-				modem.pilotData = data
-				if data != None:
-					http.request( url, 'POST', json.dumps(data), headers=headers)
-				else:
-					continue
-			except Exception as inst:
-				noop = None
-				#comment out the following if runnign as daemon
-				traceback.print_exc()
-				continue
+		time.sleep(1)
+		sendHeartbeat(url)
 
 	if pilot.vehicle != None:
 		# We have a home location.
@@ -265,35 +298,7 @@ if __name__ == '__main__':
 
 	log.info("STARTING COMMAND LOOP")
 	while True:
-		try:
-			time.sleep(1)
-			gpsData = reportGPSData()
-			data = reportPilotData()
-			data = mergeData(data, gpsData)
-			modem.pilotData = data
-			if data != None:
-				log.info("sending heartbeat")
-				response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
-				log.info("heartbeat sent")
-			else:
-				log.info("nothing to send")
-				continue
-		except Exception as inst:
-			noop = None
-			#comment out the following if runnign as daemon
-			traceback.print_exc()
-			continue
+		time.sleep(1)
+		sendHeartbeat(url)
 
-		try:
-			if content != None and content != "":
-				actions = json.loads(content)
-				log.info("COMMANDS:" + content)
-				if actions != None and actions['data'] != None and actions['data']['actionRequests'] != None:
-					log.info("actionRequests: " + json.dumps(actions['data']['actionRequests']))
-					for i in actions['data']['actionRequests']:
-						command_processor.commandQueue.put(i)
-
-		except Exception as inst:
-			noop = None
-			traceback.print_exc()
 
