@@ -290,7 +290,9 @@ if __name__ == '__main__':
 		cmds.download()
 		cmds.wait_ready(timeout=600)
 		time.sleep(1)
-		sendHeartbeat(url)
+		if pilot.vehicle.home_location == None:
+			log.info(" Waiting for home location ...")
+			sendHeartbeat(url)
 
 	if pilot.vehicle != None:
 		# We have a home location.
