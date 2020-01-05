@@ -88,7 +88,7 @@ def initVehicle():
 
 			except Exception as inst:
 				vehicle = None
-				#traceback.print_exc()
+				traceback.print_exc()
 				time.sleep(5)
 
 
