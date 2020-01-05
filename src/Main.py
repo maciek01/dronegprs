@@ -136,7 +136,7 @@ def mergeData(pilotData, gpsData):
 
 	return pilotData
 
-def sendHeartbeat(url):
+def sendHeartbeat(url, headers):
 
 	try:
 		gpsData = reportGPSData()
@@ -281,8 +281,9 @@ if __name__ == '__main__':
 
 	#wait for vehicleconnection
 	while pilot.vehicle == None and mavlinkPort != "":
+		log.info(" Waiting for vehicle connection ...")
 		time.sleep(1)
-		sendHeartbeat(url)
+		sendHeartbeat(url, headers)
 
 	# Get Vehicle Home location - will be 'None' until first set by autopilot
 	while pilot.vehicle != None and pilot.vehicle.home_location == None:
@@ -292,7 +293,7 @@ if __name__ == '__main__':
 		time.sleep(1)
 		if pilot.vehicle.home_location == None:
 			log.info(" Waiting for home location ...")
-			sendHeartbeat(url)
+			sendHeartbeat(url, headers)
 
 	if pilot.vehicle != None:
 		# We have a home location.
@@ -301,6 +302,6 @@ if __name__ == '__main__':
 	log.info("STARTING COMMAND LOOP")
 	while True:
 		time.sleep(1)
-		sendHeartbeat(url)
+		sendHeartbeat(url, headers)
 
 
