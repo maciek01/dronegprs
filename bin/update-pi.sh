@@ -26,6 +26,6 @@ cd ./dronekit-python
 sudo python setup.py build
 sudo python setup.py install
 cd ~
-rm -rf dronekit-python
+sudo rm -rf dronekit-python
 
 sudo rpi-update
