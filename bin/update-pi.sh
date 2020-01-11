@@ -13,24 +13,17 @@ sudo apt-get install git python-pip python-dev screen python-wxgtk2.8 python-mat
 sudo pip install --upgrade future
 sudo pip install --upgrade httplib2
 sudo pip install --upgrade pyserial
-sudo pip2 install --upgrade dronekit
+#sudo pip2 install --upgrade dronekit
 
 
-#alternative:
-#pip unistall pymavlink (multiple times)
-#pip unistall dronekit (multiple times)
-#cd ~
-#git clone https://github.com/dronekit/dronekit-python.git
-#cd ./dronekit-python
-#sudo python setup.py build
-#sudo python setup.py install
+#alternative - run each multiple time:
+sudo pip uninstall pymavlink
+sudo pip uninstall dronekit
 
-
-
-#not needed for on board
-#sudo pip install --upgrade mavproxy
-
-#on sim PC:
-#sudo pip install dronekit-sitl
+cd ~
+git clone https://github.com/dronekit/dronekit-python.git
+cd ./dronekit-python
+sudo python setup.py build
+sudo python setup.py install
 
 sudo rpi-update
