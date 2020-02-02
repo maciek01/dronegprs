@@ -15,13 +15,19 @@ import logger
 
 HOST = "home.kolesnik.org"
 
-def subst(str):
+def subst(str, net = False):
 	global HOST
-	ipAddress   = socket.gethostbyname(HOST)
+	ipAddress = HOST
+	if net:
+		try:
+			ipAddress = socket.gethostbyname(HOST)
+		except Exception:
+			ipAddress = HOST
 
 	if str != None:
 		str = str.replace("${HOSTNAME}", HOST)
-		str = str.replace("${HOSTIP}", ipAddress)
+		if net:
+			str = str.replace("${HOSTIP}", ipAddress)
 
 	return str
 
@@ -276,6 +282,10 @@ if __name__ == '__main__':
 	if firstModem != "":
 		log.info("STARTING MODEM MODULE AT " + firstModem)
 		modem.modeminit(firstModem, int(modemBaud), 5, True)
+
+	#net context available
+        videoStreamCmd = subst(config.get('main', 'videoStreamCmd'), net=True)
+
 
 	#initialize pilot
 	if mavlinkPort != "":

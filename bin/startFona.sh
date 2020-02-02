@@ -47,8 +47,6 @@ do
 done
 sleep 5
 
->$HOME/modemup
-
 #capture ppp0 interface ip
 IP=`/sbin/ip addr show ppp0 | grep peer | awk ' { print $4 } ' | sed 's/\/32//'`
 echo ppp0 ip $IP
@@ -106,4 +104,6 @@ if [ ! -f $HOME/wifi ]; then
     echo "turn wifi off"
     sudo ifconfig wlan0 down
 fi
+
+>$HOME/modemup
 
