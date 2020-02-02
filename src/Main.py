@@ -4,6 +4,7 @@ import httplib2
 import json
 import time
 import datetime
+import socket
 import sys, traceback
 import gps, pilot, modem, video_manager
 import command_processor
@@ -11,6 +12,18 @@ import argparse
 import ConfigParser
 import dbmanager
 import logger
+
+HOST = "home.kolesnik.org"
+
+def subst(str):
+	global HOST
+	ipAddress   = socket.gethostbyname(HOST)
+
+	if str != None:
+		str = str.replace("${HOSTNAME}", HOST)
+		str = str.replace("${HOSTIP}", ipAddress)
+
+	return str
 
 #this is for GPS pinger mode if enabled
 def reportGPSData():
@@ -210,18 +223,20 @@ if __name__ == '__main__':
 	config.readfp(open(cfg, 'r'))
 
 	#read cfg params
-	mavlinkPort = config.get('main', 'mavlinkPort')
-	mavlinkBaud = config.get('main', 'mavlinkBaud')
-	gpsPort = config.get('main', 'gpsPort')
-	gpsBaud = config.get('main', 'gpsBaud')
-	modemPort = config.get('main', 'modemPort')
-	modemBaud = config.get('main', 'modemBaud')
-	modems = config.get('main', 'modems')
-	host = config.get('main', 'host')
-	uri = config.get('main', 'uri')
-	dbfile = config.get('main', 'dbfile')
-	unitID = config.get('main', 'unitID')
-	videoStreamCmd = config.get('main', 'videoStreamCmd')
+	HOST = config.get('main', 'HOSTNAME')
+        HOST = HOST if HOST != "" else "home.kolesnik.org"
+	mavlinkPort = subst(config.get('main', 'mavlinkPort'))
+	mavlinkBaud = subst(config.get('main', 'mavlinkBaud'))
+	gpsPort = subst(config.get('main', 'gpsPort'))
+	gpsBaud = subst(config.get('main', 'gpsBaud'))
+	modemPort = subst(config.get('main', 'modemPort'))
+	modemBaud = subst(config.get('main', 'modemBaud'))
+	modems = subst(config.get('main', 'modems'))
+	host = subst(config.get('main', 'host'))
+	uri = subst(config.get('main', 'uri'))
+	dbfile = subst(config.get('main', 'dbfile'))
+	unitID = subst(config.get('main', 'unitID'))
+	videoStreamCmd = subst(config.get('main', 'videoStreamCmd'))
 
 	#apply cfg defaults
 
