@@ -72,6 +72,7 @@ echo $WLAN_GW >$HOME/wlan0-gw
 #dont touch dns and routing if wifi is on
 if [ -f $HOME/wifi ]; then
     echo "wifi is on - exit and leave default dns and routing in place"
+    >$HOME/modemup
     exit
 fi
 
