@@ -23,7 +23,7 @@ ground station console: http://home.kolesnik.org:8000/map.html
 
 SETUP
 
-run:
+1. run:
 
 sudo raspi-config
 
@@ -31,15 +31,21 @@ and enable camera then restar RPi. Test camera: raspivid -o vid.h264
 
 It shoudl capyture 10 secs of jmpeg video
 
+2. Fix Pi crash issue:
 
-Then run:
+sudo vi /boot/config.txt
+add this line:
+over_voltage=2
+
+3. Then run:
 
 bin/update-pi.sh (may require some manual "pushing")
 
-run:
+4. run:
 
 bin/install.sh
 
+5. follow steps in bin/uart.readme.md
 
 
 VIDEO STREAM
