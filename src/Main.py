@@ -211,7 +211,7 @@ if __name__ == '__main__':
 	log.info("STARTING MAIN MODULE")
 
 	httplib2.debuglevel     = 0
-	http                    = httplib2.Http()
+	http                    = httplib2.Http(timeout=5)
 	content_type_header     = "application/json"
 	content = None
 
