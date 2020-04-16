@@ -312,13 +312,16 @@ if __name__ == '__main__':
 
 	# Get Vehicle Home location - will be 'None' until first set by autopilot
 	while pilot.vehicle != None and pilot.vehicle.home_location == None:
-		cmds = pilot.vehicle.commands
-		cmds.download()
-		cmds.wait_ready(timeout=600)
-		time.sleep(1)
-		if pilot.vehicle.home_location == None:
-			log.info(" Waiting for home location ...")
-			sendHeartbeat(log, unitID, http, url, headers)
+		try:
+			cmds = pilot.vehicle.commands
+			cmds.download()
+			cmds.wait_ready(timeout=600)
+			time.sleep(1)
+			if pilot.vehicle.home_location == None:
+				log.info(" Waiting for home location ...")
+				sendHeartbeat(log, unitID, http, url, headers)
+		except Exception as inst:
+			traceback.print_exc()
 
 	if pilot.vehicle != None:
 		# We have a home location.
