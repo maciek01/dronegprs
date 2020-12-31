@@ -315,7 +315,7 @@ if __name__ == '__main__':
 		try:
 			cmds = pilot.vehicle.commands
 			cmds.download()
-			cmds.wait_ready(timeout=600)
+			cmds.wait_ready(timeout=15)
 			time.sleep(1)
 			if pilot.vehicle.home_location == None:
 				log.info(" Waiting for home location ...")
