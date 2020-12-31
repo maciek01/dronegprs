@@ -14,6 +14,7 @@ sudo apt-get install libgstreamer1.0-0 libgstreamer1.0-0-dbg libgstreamer1.0-dev
 
 sudo pip install --upgrade future
 sudo pip install --upgrade httplib2
+sudo pip install --upgrade requests
 sudo pip install --upgrade pyserial
 #sudo pip2 install --upgrade dronekit
 

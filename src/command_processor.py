@@ -94,6 +94,9 @@ def reHome(data):
 def toggleVid(data):
 	return video_manager.toggleVid(data)
 
+def httpFS(data):
+	return pilot.rtl(data)
+
 ######################### ACTIONS ##############################################
 
 actions = {
@@ -124,7 +127,8 @@ actions = {
 	"DECSPEED1" : decSpeed1,
 	"DECSPEED10" : decSpeed10,
 	"INCSPEED10" : incSpeed10,
-	"INCSPEED1" : incSpeed1
+	"INCSPEED1" : incSpeed1,
+	"FS_HTTP" : httpFS
 }
 
 ################################# MAIN THREAD ##################################

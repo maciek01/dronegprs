@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import httplib2
+import httplib2, requests
 import json
 import time
 import datetime
@@ -14,6 +14,21 @@ import dbmanager
 import logger
 
 HOST = "home.kolesnik.org"
+
+#HTTP FAILSAFE SUPPORT
+fs_http_triggered = False
+
+#heartbeat sucess ts for FAILSAFE
+good_heartbeat = None
+#good_heartbeat = pilot.current_milli_time()
+
+#1 minute before triggerting http FS
+#FS_TRESHOLD = 6000
+FS_TRESHOLD = 60000
+
+#request timeout
+#HTTP_TIMEOUT = 0.000005
+HTTP_TIMEOUT = 5
 
 def subst(str, net = False):
 	global HOST
@@ -157,6 +172,9 @@ def mergeData(pilotData, gpsData):
 
 def sendHeartbeat(log, unitID, http, url, headers):
 
+	content = None
+	global good_heartbeat
+
 	try:
 		gpsData = reportGPSData()
 		data = reportPilotData()
@@ -164,8 +182,16 @@ def sendHeartbeat(log, unitID, http, url, headers):
 		modem.pilotData = data
 		if data != None:
 			log.info("sending heartbeat")
-			response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
-			log.info("heartbeat sent")
+			try:
+				#response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+				response = requests.post(url, json = data, headers = headers, timeout = HTTP_TIMEOUT)
+				content = response.content
+				response.close()
+				log.info("heartbeat sent")
+				good_heartbeat = pilot.current_milli_time()
+			except Exception as inst:
+				log.error("http timeout")
+				#traceback.print_exc()
 		else:
 			log.info("nothing to send")
 			data = {
@@ -180,8 +206,16 @@ def sendHeartbeat(log, unitID, http, url, headers):
 				"unitCallbackPort" : "8080"
 			}
 			log.info("sending heartbeat")
-			response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
-			log.info("heartbeat sent")
+			try:
+				#response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+				response = requests.post(url, json = data, headers = headers, timeout = HTTP_TIMEOUT)
+				content = response.content
+				response.close()
+				log.info("heartbeat sent")
+				good_heartbeat = pilot.current_milli_time()
+			except Exception as inst:
+				log.error("http timeout")
+				#traceback.print_exc()
 
 
 	except Exception as inst:
@@ -213,7 +247,6 @@ if __name__ == '__main__':
 	httplib2.debuglevel     = 0
 	http                    = httplib2.Http(timeout=5)
 	content_type_header     = "application/json"
-	content = None
 
 	#parse args	
 
@@ -266,7 +299,7 @@ if __name__ == '__main__':
 	log.info(" videoStreamCmd:" + videoStreamCmd)
 
 
-	headers = {'Content-Type': content_type_header}
+	headers = {"Content-Type": content_type_header}
 
 	#initialize database
 	log.info("STARTING DATABASE " + dbfile)
@@ -309,6 +342,9 @@ if __name__ == '__main__':
 		log.info(" Waiting for vehicle connection ...")
 		time.sleep(1)
 		sendHeartbeat(log, unitID, http, url, headers)
+		if good_heartbeat != None:
+			if pilot.current_milli_time() - good_heartbeat > FS_TRESHOLD:
+				log.info("FAILSAFE - noncritical")
 
 	# Get Vehicle Home location - will be 'None' until first set by autopilot
 	while pilot.vehicle != None and pilot.vehicle.home_location == None:
@@ -320,6 +356,9 @@ if __name__ == '__main__':
 			if pilot.vehicle.home_location == None:
 				log.info(" Waiting for home location ...")
 				sendHeartbeat(log, unitID, http, url, headers)
+				if good_heartbeat != None:
+					if pilot.current_milli_time() - good_heartbeat > FS_TRESHOLD:
+						log.info("FAILSAFE - noncritical")
 		except Exception as inst:
 			traceback.print_exc()
 
@@ -331,5 +370,17 @@ if __name__ == '__main__':
 	while True:
 		time.sleep(1)
 		sendHeartbeat(log, unitID, http, url, headers)
+		if good_heartbeat != None:
+			if pilot.current_milli_time() - good_heartbeat > FS_TRESHOLD:
+				log.error("FAILSAFE condition")
+				if not fs_http_triggered:
+					command_processor.commandQueue.put(json.loads('{"command":{"name" : "FS_HTTP"}}'))
+					log.error("HTTP FAILSAFE triggered")
+					fs_http_triggered = True
+			else:
+				if fs_http_triggered:
+					log.error("FAILSAFE cleared")
+					fs_http_triggered = False
+
 
 
