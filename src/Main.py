@@ -275,6 +275,7 @@ if __name__ == '__main__':
 	uri = subst(config.get('main', 'uri'))
 	dbfile = subst(config.get('main', 'dbfile'))
 	unitID = subst(config.get('main', 'unitID'))
+	FS_TRESHOLD = int(config.get('main', 'FS_TRESHOLD'))
 	videoStreamCmd = subst(config.get('main', 'videoStreamCmd'))
 
 	#apply cfg defaults
@@ -296,6 +297,7 @@ if __name__ == '__main__':
 	log.info(" modemBaud:" + modemBaud)
 	log.info(" modems:" + modems)
 	log.info(" dbfile:" + dbfile)
+	log.info(" FS_TRESHOLD:" + str(FS_TRESHOLD))
 	log.info(" videoStreamCmd:" + videoStreamCmd)
 
 
