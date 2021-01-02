@@ -13,38 +13,23 @@
 # Change the next 3 lines to suit where you install your script and what you want to call it
 #DIR=/home/pi/dronegprs/src
 DIR=/usr/bin
-DAEMON=$DIR/screen
 DAEMON_NAME=droneclientd
-
-# Add any command line options for your daemon here
-DAEMON_OPTS="-c /tmp/screenrc.$$ -dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/src/Main.py"
-
-
-
 DAEMON=$DIR/python
-
 # Add any command line options for your daemon here
 DAEMON_OPTS="/home/pi/dronegprs/src/Main.py"
-
-
-
 
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
 DAEMON_USER=pi
 HOME_DIR=/home/$DAEMON_USER
 
+#add config option
 DAEMON_OPTS="$DAEMON_OPTS --config $HOME_DIR/main.cfg"
 
 # The process ID of the script when it runs is stored here:
 PIDFILE=/var/run/$DAEMON_NAME/pid
 
 . /lib/lsb/init-functions
-
-#setup screen config
-cat << EOF >/tmp/screenrc.$$
-logfile $HOME_DIR/pilot.log
-EOF
 
 do_start () {
     log_daemon_msg "Starting user $DAEMON_NAME daemon"
@@ -55,7 +40,6 @@ do_start () {
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
     start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS > $HOME_DIR/pilot.log 2>&1"
-    #sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
     rm /tmp/screenrc.$$
     log_end_msg $?
 }
