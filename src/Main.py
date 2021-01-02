@@ -183,10 +183,10 @@ def sendHeartbeat(log, unitID, http, url, headers):
 		if data != None:
 			log.info("sending heartbeat")
 			try:
-				#response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
-				response = requests.post(url, json = data, headers = headers, timeout = HTTP_TIMEOUT)
-				content = response.content
-				response.close()
+				response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+				#response = requests.post(url, json = data, headers = headers, timeout = HTTP_TIMEOUT)
+				#content = response.content
+				#response.close()
 				log.info("heartbeat sent")
 				good_heartbeat = pilot.current_milli_time()
 			except Exception as inst:
@@ -207,10 +207,10 @@ def sendHeartbeat(log, unitID, http, url, headers):
 			}
 			log.info("sending heartbeat")
 			try:
-				#response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
-				response = requests.post(url, json = data, headers = headers, timeout = HTTP_TIMEOUT)
-				content = response.content
-				response.close()
+				response, content = http.request( url, 'POST', json.dumps(data), headers=headers)
+				#response = requests.post(url, json = data, headers = headers, timeout = HTTP_TIMEOUT)
+				#content = response.content
+				#response.close()
 				log.info("heartbeat sent")
 				good_heartbeat = pilot.current_milli_time()
 			except Exception as inst:
@@ -245,7 +245,7 @@ if __name__ == '__main__':
 	log.info("STARTING MAIN MODULE")
 
 	httplib2.debuglevel     = 0
-	http                    = httplib2.Http(timeout=5)
+	http                    = httplib2.Http(timeout=HTTP_TIMEOUT)
 	content_type_header     = "application/json"
 
 	#parse args	
