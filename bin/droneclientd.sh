@@ -20,6 +20,15 @@ DAEMON_NAME=droneclientd
 DAEMON_OPTS="-c /tmp/screenrc.$$ -dmS $DAEMON_NAME -t $DAEMON_NAME -L -s /bin/bash /home/pi/dronegprs/src/Main.py"
 
 
+
+DAEMON=$DIR/python
+
+# Add any command line options for your daemon here
+DAEMON_OPTS="/home/pi/dronegprs/src/Main.py"
+
+
+
+
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
 DAEMON_USER=pi
@@ -45,11 +54,9 @@ do_start () {
     rm -rf /home/pi/modemup
     sudo mkdir -p /var/run/$DAEMON_NAME
     sudo chown $DAEMON_USER:$DAEMON_USER /var/run/$DAEMON_NAME
-
-    #start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
-    sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
+    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER:$DAEMON_USER --startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS > $HOME_DIR/pilot.log 2>&1"
+    #sudo -u $DAEMON_USER $DAEMON $DAEMON_OPTS
     rm /tmp/screenrc.$$
-
     log_end_msg $?
 }
 do_stop () {
