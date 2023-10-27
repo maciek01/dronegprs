@@ -27,7 +27,10 @@ SETUP
 
 sudo raspi-config
 
+PRE bulleseye
 and enable camera then restar RPi. Test camera: raspivid -o vid.h264
+bullseye onards:
+and disable legacy camera then restar RPi. Test camera: libcamera-vid -t 10000 -o test.h264
 
 It shoudl capyture 10 secs of jmpeg video
 
@@ -50,6 +53,12 @@ bin/install.sh
 
 VIDEO STREAM
 
+PRE bullseye:
+
 gst-launch-1.0 -e -v udpsrc port=3333 ! application/x-rtp, encoding-name=JPEG, payload=26 ! rtpjpegdepay ! jpegdec ! autovideosink
+
+bullseye onwards:
+
+libcamera-vid -v 0 -t 0 --rotation 180 --inline -o udp://192.168.3.6:3333
 
 
