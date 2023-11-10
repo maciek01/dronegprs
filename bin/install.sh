@@ -11,6 +11,10 @@ sudo ln -s /home/pi/dronegprs/etc/ppp/options-mobile /etc/ppp/options-mobile
 
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-hologram-USB2 /etc/ppp/peers/mobile-noauth-simcom7600a-hologram-USB2
 
+# LTE-simbase:
+
+sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-simbase-USB2 /etc/ppp/peers/mobile-noauth-simcom7600a-simbase-USB2
+
 # LTE-att
 
 sudo ln -s /home/pi/dronegprs/etc/ppp/peers/mobile-noauth-simcom7600a-att-USB0 /etc/ppp/peers/mobile-noauth-simcom7600a-att-USB0
