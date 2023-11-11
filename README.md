@@ -27,38 +27,45 @@ SETUP
 
 sudo raspi-config
 
-PRE bulleseye
-and enable camera then restar RPi. Test camera: raspivid -o vid.h264
-bullseye onards:
-and disable legacy camera then restar RPi. Test camera: libcamera-vid -t 10000 -o test.h264
+PRE bulleseye:
+
+Enable camera then restart RPi.
+Test the camera: raspivid -o vid.h264
+
+Bullseye onwards:
+
+Make sure to disable legacy camera then restart RPi.
+Test the camera: libcamera-vid -t 10000 -o test.h264
+
 
 It shoudl capyture 10 secs of jmpeg video
 
-2. Fix Pi crash issue:
-
-sudo vi /boot/config.txt
-add this line:
-over_voltage=2
-
-3. Then run:
+2. Run:
 
 bin/update-pi.sh (may require some manual "pushing")
 
-4. run:
+3. Run:
 
 bin/install.sh
 
-5. follow steps in bin/uart.readme.md
+4. Follow steps in bin/uart.readme.md
 
 
-VIDEO STREAM
+Video and streaming tests:
 
-PRE bullseye:
+VIDEO STREAM VALIDATION (requiers gst - part of the install.sh script)
 
 gst-launch-1.0 -e -v udpsrc port=3333 ! application/x-rtp, encoding-name=JPEG, payload=26 ! rtpjpegdepay ! jpegdec ! autovideosink
 
-bullseye onwards:
+or
 
-libcamera-vid -v 0 -t 0 --rotation 180 --inline -o udp://192.168.3.6:3333
+libcamera-vid -v 0 -t 0 --nopreview --framerate 15 --codec mjpeg --bitrate 2500000 --profile baseline --rotation 180  --width 640 --height 480 --inline -o -|gst-launch-1.0 fdsrc ! jpegparse ! rtpjpegpay ! udpsink host=<web rtc host - ex: janus> port=3333
+
+
+Also, with bullseye onwards, you can test streaming to a destinaction (say, vlc on your laptop):
+
+libcamera-vid -v 0 -t 0 --nopreview --rotation 180  --inline -o udp://<destination ip>:3333
+
+
 
 
