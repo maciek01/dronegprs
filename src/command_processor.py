@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import Queue
 import json
 import time
@@ -94,6 +95,12 @@ def reHome(data):
 def toggleVid(data):
 	return video_manager.toggleVid(data)
 
+def upWifi(data):
+	return _upWifi(data)
+
+def downWifi(data):
+	return _downWifi(data)
+
 def httpFS(data):
 	return pilot.rtl(data)
 
@@ -116,6 +123,8 @@ actions = {
 	"RTL" : rtl,
 	"REHOME" : reHome,
 	"TOGGLEVID" : toggleVid,
+	"UPWIFI" : upWifi,
+	"DOWNWIFI" : downWifi,
 	"SETHOME" : setHome,
 	"GOTO" : goto,
 	"ALT" : alt,
@@ -130,6 +139,14 @@ actions = {
 	"INCSPEED1" : incSpeed1,
 	"FS_HTTP" : httpFS
 }
+
+################################# LOCAL HANDLERS ###############################
+
+def _upWifi(data):
+	return os.system("sudo ifconfig wlan0 up")
+
+def _downWifi(data):
+	return os.system("sudo ifconfig wlan0 down")
 
 ################################# MAIN THREAD ##################################
 def processCommands():
